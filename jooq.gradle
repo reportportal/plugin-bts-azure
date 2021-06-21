@@ -1,0 +1,40 @@
+jooq {
+    version = '3.12.4'
+    edition = 'OSS'
+    sample(sourceSets.main) {
+        jdbc {
+            driver = 'org.postgresql.Driver'
+            url = 'jdbc:postgresql://localhost:5432/reportportal'
+            user = 'rpuser'
+            password = 'rppass'
+        }
+        generator {
+            strategy {
+                name = 'org.jooq.codegen.example.JPrefixGeneratorStrategy'
+                // ...
+            }
+            database {
+                name = 'org.jooq.meta.postgres.PostgresDatabase'
+                inputSchema = 'example'
+                // ...
+                excludes = 'batch_.*|schema_migrations'
+            }
+            generate {
+                pojosEqualsAndHashCode = true
+                pojos = true
+                jpaAnnotations = false
+                routines = false
+                deprecationOnUnknownTypes = false
+                records = false
+            }
+            target {
+                packageName = 'com.epam.reportportal.extension.example.jooq'
+                directory = 'src/main/java/'
+            }
+        }
+    }
+}
+
+generateSampleJooqSchemaSource {
+    enabled = false
+}

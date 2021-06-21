@@ -1,0 +1,11 @@
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+project.ext {
+    releaseMode = project.hasProperty("releaseMode")
+    pluginsDir = "$buildDir/plugins"
+}
+
+wrapper {
+    gradleVersion = '5.4.1'
+}

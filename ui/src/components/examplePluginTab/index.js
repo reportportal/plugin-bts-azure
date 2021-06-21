@@ -1,0 +1,1 @@
+export { ExamplePluginTab } from './examplePluginTab';
