@@ -1,4 +1,4 @@
-# Plugin example for Report Portal
+#AzureDevOps bug tracking system integration for ReportPortal
 
 ## UI
 Preconditions:

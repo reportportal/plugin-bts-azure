@@ -60,7 +60,7 @@ public class ExampleExtension implements ReportPortalExtensionPoint, DisposableB
 
 	public static final String SCHEMA_SCRIPTS_DIR = "schema";
 
-	private static final String PLUGIN_ID = "example";
+	private static final String PLUGIN_ID = "Azure";
 
 	private final String resourcesDir;
 

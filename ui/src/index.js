@@ -3,23 +3,23 @@ import { IntegrationFormFields } from './components/integrationFormFields';
 import { IntegrationSettings } from './components/integrationSettings';
 
 window.RP.registerPlugin({
-  name: 'example',
+  name: 'Azure',
   extensions: [
     {
       name: 'integrationSettings',
-      title: 'Example plugin settings',
+      title: 'Azure plugin settings',
       type: 'uiExtension:integrationSettings',
       component: IntegrationSettings,
     },
     {
       name: 'integrationFormFields',
-      title: 'Example plugin fields',
+      title: 'Azure plugin fields',
       type: 'uiExtension:integrationFormFields',
       component: IntegrationFormFields,
     },
     {
-      name: 'example',
-      title: 'Example plugin',
+      name: 'Azure',
+      title: 'Azure',
       type: 'uiExtension:settingsTab',
       component: ExamplePluginTab,
     },
