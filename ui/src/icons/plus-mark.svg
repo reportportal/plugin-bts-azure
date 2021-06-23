@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="13" height="13" style="">
+    <rect id="backgroundrect" width="100%" height="100%" x="0" y="0" fill="none" stroke="none" class="" style=""/>
+    <g class="currentLayer" style="">
+        <path fill="#4a90d6" fill-opacity="1" stroke="#222222" stroke-opacity="1" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round" stroke-linecap="butt" stroke-dashoffset="" fill-rule="nonzero" opacity="1" marker-start="" marker-mid="" marker-end="" d="M355.86665604375884,71.06306082412293L356.7675569330494,241.33332890003672" id="svg_1"/>
+        <path fill="#989898" fill-opacity="1" stroke="#989898" stroke-opacity="1" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round" stroke-linecap="butt" stroke-dashoffset="" fill-rule="nonzero" opacity="1" marker-start="" marker-mid="" marker-end="" d="M6.402089522409237,-0.0993327444056732 L6.597910730454374,13.022115847484455 " id="svg_2" class="" transform="rotate(1.188938021659851 6.500000476837184,6.461391448974607) "/>
+        <path fill="#8ae9e9" fill-opacity="1" stroke="#989898" stroke-opacity="1" stroke-width="1" stroke-dasharray="none" stroke-linejoin="round" stroke-linecap="butt" stroke-dashoffset="" fill-rule="nonzero" opacity="1" marker-start="" marker-mid="" marker-end="" d="M6.548776794653121,-0.05326035010223662 L6.351732452272194,13.053259800880294 " class="" id="svg_5" transform="rotate(89.34893798828125 6.4502549171447745,6.500000000000001) "/>
+    </g>
+</svg>

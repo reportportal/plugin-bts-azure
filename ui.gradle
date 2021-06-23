@@ -1,0 +1,14 @@
+node {
+    version = '10.14.1'
+    npmVersion = '6.4.1'
+    download = true
+    workDir = file("${project.buildDir}/ui")
+    nodeModulesDir = file("${project.rootDir}/ui")
+}
+
+npm_run_build {
+    inputs.files fileTree("ui/src")
+    inputs.file 'ui/package.json'
+    inputs.file 'ui/package-lock.json'
+    outputs.dir 'ui/build'
+}

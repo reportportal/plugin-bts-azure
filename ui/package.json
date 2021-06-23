@@ -1,0 +1,58 @@
+{
+  "name": "example-plugin",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "webpack --mode=production",
+    "dev": "webpack --mode=development --watch",
+    "start": "static build -p 9090 -H '{\"Access-Control-Allow-Origin\": \"*\",\"Access-Control-Allow-Methods\": \"*\",\"Access-Control-Allow-Headers\": \"*\", \"Cache-Control\": \"no-cache, no-store, must-revalidate\"}'",
+    "eslint": "eslint \"./**/*.jsx\" \"./**/*.js\"",
+    "lint": "npm run eslint",
+    "format": "npm run eslint -- --fix",
+    "precommit": "lint-staged",
+    "postcommit": "git update-index --again"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-react": "^7.8.3",
+    "@babel/runtime": "^7.8.4",
+    "babel-eslint": "10.0.3",
+    "babel-loader": "^8.0.6",
+    "husky": "3.0.8",
+    "lint-staged": "9.4.2",
+    "eslint": "6.5.1",
+    "eslint-config-airbnb": "18.0.1",
+    "eslint-config-prettier": "6.4.0",
+    "eslint-import-resolver-webpack": "0.11.1",
+    "eslint-loader": "3.0.2",
+    "eslint-plugin-babel": "5.3.0",
+    "eslint-plugin-import": "2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "3.1.1",
+    "eslint-plugin-react": "7.16.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "node-static": "^0.7.11",
+    "prettier": "1.19.1",
+    "svg-inline-loader": "^0.8.2",
+    "webpack": "5.39.1",
+    "webpack-cli": "4.7.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "browserslist": [
+    "ie 11"
+  ]
+}
