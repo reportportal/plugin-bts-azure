@@ -1,1 +1,0 @@
-export { ExamplePluginTab } from './examplePluginTab';

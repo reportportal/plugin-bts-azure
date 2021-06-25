@@ -97,7 +97,7 @@ jar {
                 "Plugin-Id": "${pluginId}",
                 "Plugin-Version": "${project.version}",
                 "Plugin-Provider": "Report Portal",
-                "Plugin-Class": "com.epam.reportportal.extension.example.ExamplePlugin",
+                "Plugin-Class": "com.epam.reportportal.extension.azure.AzurePlugin",
                 "Plugin-Service": "api"
         )
     }
