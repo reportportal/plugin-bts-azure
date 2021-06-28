@@ -1,6 +1,6 @@
-import { ExamplePluginTab } from 'components/examplePluginTab';
-import { IntegrationFormFields } from './components/integrationFormFields';
-import { IntegrationSettings } from './components/integrationSettings';
+import { AzurePluginTab } from 'components/azurePluginTab';
+import { AzureIntegrationFormFields } from './components/azureIntegrationFormFields';
+import { AzureIntegrationSettings } from './components/azureIntegrationSettings';
 
 window.RP.registerPlugin({
   name: 'Azure',
@@ -9,19 +9,19 @@ window.RP.registerPlugin({
       name: 'integrationSettings',
       title: 'Azure plugin settings',
       type: 'uiExtension:integrationSettings',
-      component: IntegrationSettings,
+      component: AzureIntegrationSettings,
     },
     {
       name: 'integrationFormFields',
       title: 'Azure plugin fields',
       type: 'uiExtension:integrationFormFields',
-      component: IntegrationFormFields,
+      component: AzureIntegrationFormFields,
     },
     {
       name: 'Azure',
       title: 'Azure',
       type: 'uiExtension:settingsTab',
-      component: ExamplePluginTab,
+      component: AzurePluginTab,
     },
   ],
 });

@@ -1,0 +1,1 @@
+export { AzureIntegrationSettings } from './azureIntegrationSettings';

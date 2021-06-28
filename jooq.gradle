@@ -15,7 +15,7 @@ jooq {
             }
             database {
                 name = 'org.jooq.meta.postgres.PostgresDatabase'
-                inputSchema = 'example'
+                inputSchema = 'azure'
                 // ...
                 excludes = 'batch_.*|schema_migrations'
             }
@@ -28,7 +28,7 @@ jooq {
                 records = false
             }
             target {
-                packageName = 'com.epam.reportportal.extension.example.jooq'
+                packageName = 'com.epam.reportportal.extension.azure.jooq'
                 directory = 'src/main/java/'
             }
         }
