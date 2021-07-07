@@ -1,0 +1,27 @@
+.bts-auth-fields-info {
+  display: flex;
+  flex-direction: column;
+  padding-left: 25px;
+}
+
+.field-item {
+  display: flex;
+  flex-direction: column;
+  &:not(:last-child) {
+    margin-bottom: 25px;
+  }
+}
+
+.field-item-title {
+  margin-bottom: 10px;
+  color: #999999;
+  font-size: 12px;
+  font-family: OpenSans;
+}
+
+.field-item-value {
+  color: #393939;
+  font-size: 13px;
+  font-family: OpenSans-Semibold;
+  word-break: break-all;
+}
