@@ -1,7 +1,10 @@
 import {
+  URL_ATTRIBUTE_KEY,
+  PROJECT_ATTRIBUTE_KEY,
   USERNAME_ATTRIBUTE_KEY,
   PASSWORD_ATTRIBUTE_KEY,
   TOKEN_ATTRIBUTE_KEY,
+  CHECKBOX_ATTRIBUTE_KEY,
 } from 'components/constants';
 
 const authTypeAttributesOptions = [
@@ -39,6 +42,7 @@ export const AzureIntegrationFormFields = (props) => {
 
     if (value) {
       props.change(TOKEN_ATTRIBUTE_KEY, '');
+      props.change(CHECKBOX_ATTRIBUTE_KEY, '');
     } else {
       props.change(USERNAME_ATTRIBUTE_KEY, '');
       props.change(PASSWORD_ATTRIBUTE_KEY, '');
@@ -60,7 +64,7 @@ export const AzureIntegrationFormFields = (props) => {
         </FieldErrorHint>
       </IntegrationFormField>
       <IntegrationFormField
-        name="url"
+        name={URL_ATTRIBUTE_KEY}
         disabled={disabled}
         label="Link to BTS"
         required
@@ -72,7 +76,7 @@ export const AzureIntegrationFormFields = (props) => {
         </FieldErrorHint>
       </IntegrationFormField>
       <IntegrationFormField
-        name="project"
+        name={PROJECT_ATTRIBUTE_KEY}
         disabled={disabled}
         label="Project name in BTS"
         required
@@ -141,7 +145,11 @@ export const AzureIntegrationFormFields = (props) => {
               <InputTextArea type="text" mobileDisabled />
             </FieldErrorHint>
           </IntegrationFormField>
-          <IntegrationFormField name="postAllowed" disabled={disabled} lineAlign={lineAlign}>
+          <IntegrationFormField
+            name={CHECKBOX_ATTRIBUTE_KEY}
+            disabled={disabled}
+            lineAlign={lineAlign}
+          >
             <InputCheckbox mobileDisabled value={checked} onChange={() => setChecked(!checked)}>
               Allow users to post issues using this Token
             </InputCheckbox>
