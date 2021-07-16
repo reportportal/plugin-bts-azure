@@ -32,7 +32,7 @@ export const AzureIntegrationFormFields = (props) => {
 
   const [checked, setChecked] = React.useState(true);
 
-  const [authTypeState, setAuthTypeState] = React.useState(true);
+  const [authTypeState, setAuthTypeState] = React.useState(!!initialData[USERNAME_ATTRIBUTE_KEY]);
 
   const onChangeAuthTypeAttributesMode = (value) => {
     if (value === authTypeState) {
@@ -158,4 +158,8 @@ export const AzureIntegrationFormFields = (props) => {
       )}
     </>
   );
+};
+
+AzureIntegrationFormFields.defaultProps = {
+  initialData: {},
 };
