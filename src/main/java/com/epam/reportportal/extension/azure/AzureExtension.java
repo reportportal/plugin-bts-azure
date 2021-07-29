@@ -2,6 +2,7 @@ package com.epam.reportportal.extension.azure;
 
 import com.epam.reportportal.extension.PluginCommand;
 import com.epam.reportportal.extension.ReportPortalExtensionPoint;
+import com.epam.reportportal.extension.azure.command.connection.TestConnectionCommand;
 import com.epam.reportportal.extension.common.IntegrationTypeProperties;
 import com.epam.reportportal.extension.event.PluginEvent;
 import com.epam.reportportal.extension.event.StartLaunchEvent;
@@ -180,7 +181,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		);
 		pluginCommandMapping.put("getProjectEntities", new GetProjectEntities(projectRepository, entityServiceSupplier.get()));
 		pluginCommandMapping.put("deleteEntity", new DeleteEntityCommand(projectRepository, entityServiceSupplier.get()));
-		pluginCommandMapping.put("testConnection", (integration, params) -> true);
+		pluginCommandMapping.put("testConnection", new TestConnectionCommand());
 		return pluginCommandMapping;
 	}
 }

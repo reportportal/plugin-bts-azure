@@ -97,7 +97,7 @@ export const AzureIntegrationFormFields = (props) => {
         <FieldErrorHint>
           <InputDropdown
             mobileDisabled
-            disabled={disabled}
+            disabled
             value={authTypeState}
             onChange={onChangeAuthTypeAttributesMode}
             options={authTypeAttributesOptions}

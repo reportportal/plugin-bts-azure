@@ -39,17 +39,18 @@ export const AzureIntegrationSettings = (props) => {
         },
   ];
 
-  const getConfirmationFunc = () => (integrationData, integrationMetaData) => {
+  const getConfirmationFunc = (testConnection) => (integrationData, integrationMetaData) => {
     onUpdate(
       integrationData,
       () => {
         dispatch(hideModalAction());
+        testConnection();
       },
       integrationMetaData,
     );
   };
 
-  const editAuthorizationClickHandler = () => {
+  const editAuthorizationClickHandler = (testConnection) => {
     const {
       data: { name, integrationParameters, integrationType },
     } = props;
@@ -58,7 +59,7 @@ export const AzureIntegrationSettings = (props) => {
       showModalAction({
         id: 'addIntegrationModal',
         data: {
-          onConfirm: getConfirmationFunc(),
+          onConfirm: getConfirmationFunc(testConnection),
           instanceType: integrationType.name,
           customProps: {
             initialData: {
