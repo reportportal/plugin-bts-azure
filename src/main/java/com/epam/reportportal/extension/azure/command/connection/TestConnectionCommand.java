@@ -40,9 +40,9 @@ public class TestConnectionCommand implements PluginCommand<Boolean> {
                     API_VERSION, false, false);
             return response.getStatusCode() == 200;
         } catch (ApiException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Unable to connect to Azure DevOps: " + e.getMessage(), e);
             throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
-                    "Connection refused.");
+                    "Unable to connect to Azure DevOps. Code: " + e.getCode() + ", Message: " + e.getMessage(), e);
         }
     }
 }

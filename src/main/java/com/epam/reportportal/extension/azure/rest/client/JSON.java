@@ -13,6 +13,7 @@
 
 package com.epam.reportportal.extension.azure.rest.client;
 
+import com.epam.reportportal.extension.azure.rest.client.model.ResponseExceptionModel;
 import com.epam.reportportal.extension.azure.rest.client.model.TeamProject;
 import com.epam.reportportal.extension.azure.rest.client.model.TeamProjectReference;
 import com.epam.reportportal.extension.azure.rest.client.model.WebApiTeam;
@@ -79,6 +80,14 @@ public class JSON {
                 classByDiscriminatorValue.put("WebApiTeam".toUpperCase(), WebApiTeam.class);
                 classByDiscriminatorValue.put("WebApiTeamRef".toUpperCase(), WebApiTeamRef.class);
                 return getClassByDiscriminator(classByDiscriminatorValue, "WebApiTeam");
+            }
+          })
+          .registerTypeSelector(ResponseExceptionModel.class, new TypeSelector() {
+            @Override
+            public Class getClassForElement(JsonElement readElement) {
+                Map classByDiscriminatorValue = new HashMap();
+                classByDiscriminatorValue.put("ResponseExceptionModel".toUpperCase(), ResponseExceptionModel.class);
+                return getClassByDiscriminator(classByDiscriminatorValue, "ResponseExceptionModel");
             }
           });
         GsonBuilder builder = fireBuilder.createGsonBuilder();

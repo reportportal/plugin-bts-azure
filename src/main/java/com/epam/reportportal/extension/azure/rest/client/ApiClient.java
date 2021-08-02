@@ -17,6 +17,8 @@ import com.epam.reportportal.extension.azure.rest.client.auth.ApiKeyAuth;
 import com.epam.reportportal.extension.azure.rest.client.auth.Authentication;
 import com.epam.reportportal.extension.azure.rest.client.auth.HttpBasicAuth;
 import com.epam.reportportal.extension.azure.rest.client.auth.OAuth;
+import com.epam.reportportal.extension.azure.rest.client.model.ResponseExceptionModel;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
@@ -737,7 +739,7 @@ public class ApiClient {
             return (T) respBody;
         } else {
             throw new ApiException(
-                    "Content type \"" + contentType + "\" is not supported for type: " + returnType,
+                    "An error occurred on the Azure DevOps Server.",
                     response.code(),
                     response.headers().toMultimap(),
                     respBody);
@@ -937,15 +939,13 @@ public class ApiClient {
                 return deserialize(response, returnType);
             }
         } else {
-            String respBody = null;
-            if (response.body() != null) {
-                try {
-                    respBody = response.body().string();
-                } catch (IOException e) {
-                    throw new ApiException(response.message(), e, response.code(), response.headers().toMultimap());
-                }
+            Type retType = new TypeToken<ResponseExceptionModel>() {}.getType();
+            ResponseExceptionModel deserializedResponse = deserialize(response, retType);
+            String message = response.message();
+            if(deserializedResponse.getMessage() != null && !deserializedResponse.getMessage().isEmpty()){
+                message = deserializedResponse.getMessage();
             }
-            throw new ApiException(response.message(), response.code(), response.headers().toMultimap(), respBody);
+            throw new ApiException(message, response.code(), response.headers().toMultimap(), deserializedResponse.toString());
         }
     }
 
