@@ -37,6 +37,11 @@ dependencies {
         annotationProcessor 'com.github.reportportal:plugin-api:48e08b04'
     }
 
+    compile 'com.squareup.okhttp:okhttp:2.7.5'
+    compile 'com.squareup.okhttp:logging-interceptor:2.7.5'
+    compile 'io.gsonfire:gson-fire:1.8.0'
+    compile 'org.threeten:threetenbp:1.3.5'
+
     implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
     implementation group: 'org.glassfish', name: 'javax.el', version: '3.0.0'
     implementation group: 'javax.el', name: 'javax.el-api', version: '3.0.0'
