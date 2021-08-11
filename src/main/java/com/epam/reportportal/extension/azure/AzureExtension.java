@@ -86,7 +86,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(AzureExtension.class);
 
-    public static final String BINARY_DATA_PROPERTIES_FILE_ID = "azure-binary-data.properties";
+	public static final String BINARY_DATA_PROPERTIES_FILE_ID = "azure-binary-data.properties";
 
 	public static final String SCHEMA_SCRIPTS_DIR = "schema";
 
@@ -95,6 +95,10 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	private static final String API_VERSION = "6.0";
 
 	private static final String EXPAND = "All";
+
+	private static final String AREA = "area";
+
+	private static final String ITERATION = "iteration";
 
 	private static final Integer DEPTH = 15;
 
@@ -226,22 +230,22 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	}
 
 	@Override
-    // Never called method. Connection is tested via the command.
+	// Never called method. Connection is tested via the command.
 	public boolean testConnection(Integration system) {
 		return false;
 	}
 
 	@Override
-    // TODO: Implement in the future
+	// TODO: Implement in the future
 	public Optional<Ticket> getTicket(String id, Integration system) {
 		return Optional.empty();
 	}
 
-    @Override
-    // TODO: Implement in the future
-    public Ticket submitTicket(PostTicketRQ ticketRQ, Integration system) {
-        return null;
-    }
+	@Override
+	// TODO: Implement in the future
+	public Ticket submitTicket(PostTicketRQ ticketRQ, Integration system) {
+		return null;
+	}
 
 	@Override
 	public List<PostFormField> getTicketFields(String issueType, Integration integration) {
@@ -254,95 +258,40 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		String organizationName = organizationUrl.replace(defaultClient.getBasePath(), "");
 
 		ClassificationNodesApi nodesApi = new ClassificationNodesApi(defaultClient);
-		List<WorkItemClassificationNode> areaNodes = new ArrayList<>();
-		List<WorkItemClassificationNode> iterationNodes = new ArrayList<>();
-		try {
-            List<WorkItemClassificationNode> nodes = nodesApi
-                    .classificationNodesGetRootNodes(organizationName, projectName, API_VERSION, DEPTH);
-			for (WorkItemClassificationNode node : nodes) {
-				if (node.getStructureType().equals("area")) {
-					areaNodes = extractNestedNodes(node);
-				} else if (node.getStructureType().equals("iteration")) {
-					iterationNodes = extractNestedNodes(node);
-				}
-			}
-		} catch (ApiException e) {
-            LOGGER.error("Unable to load classification nodes: " + e.getMessage(), e);
-			throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
-					"Unable to load classification nodes. Code: " + e.getCode() + ", Message: " + e.getMessage(), e);
-		}
+		Map<String, List<WorkItemClassificationNode>> classificationNodes = getClassificationNodes(nodesApi,
+				organizationName, projectName);
+		List<WorkItemClassificationNode> areaNodes = classificationNodes.get(AREA);
+		List<WorkItemClassificationNode> iterationNodes = classificationNodes.get(ITERATION);
 
 		WorkItemTypesFieldApi issueTypeFieldsApi = new WorkItemTypesFieldApi(defaultClient);
 		FieldsApi fieldsApi = new FieldsApi(defaultClient);
-        List<PostFormField> ticketFields = new ArrayList<>();
+		List<PostFormField> ticketFields = new ArrayList<>();
 		try {
-            List<WorkItemTypeFieldWithReferences> issueTypeFields = issueTypeFieldsApi
-                    .workItemTypesFieldList(organizationName, projectName, issueType, API_VERSION, EXPAND);
+			List<WorkItemTypeFieldWithReferences> issueTypeFields = issueTypeFieldsApi
+					.workItemTypesFieldList(organizationName, projectName, issueType, API_VERSION, EXPAND);
 
-            for (WorkItemTypeFieldWithReferences field : issueTypeFields) {
-				WorkItemField detailedField = null;
-                // Skip fields that return 404 on request
-				try {
-					detailedField = fieldsApi
-							.fieldsGet(organizationName, field.getReferenceName(), projectName, API_VERSION);
-				} catch (ApiException e) {
+			for (WorkItemTypeFieldWithReferences field : issueTypeFields) {
+				WorkItemField detailedField = getFieldDetails(fieldsApi, organizationName, projectName, field);
+				// Skip fields that return 404 on request
+				if (detailedField == null) {
+					continue;
+				}
+				// Skip read-only fields and Work Item Type field cause we have the same custom field
+				if (detailedField.isReadOnly() || detailedField.getName().equals("Work Item Type")) {
 					continue;
 				}
 
-                // Skip read-only fields
-				if (detailedField.isReadOnly()) {
-					continue;
-				}
+				List<AllowedValue> allowedValues = prepareAllowedValues(field, areaNodes, iterationNodes);
+				List<String> defaultValue = prepareDefaultValue(field);
 
-                List<AllowedValue> allowed = new ArrayList<>();
-				switch (detailedField.getName()) {
-                    // Skip Work Item Type field cause we have the same custom field
-					case "Work Item Type":
-						continue;
-					case "Iteration ID":
-						for (WorkItemClassificationNode node : iterationNodes) {
-							allowed.add(new AllowedValue(node.getId().toString(), node.getName()));
-						}
-						break;
-					case "Area ID":
-						for (WorkItemClassificationNode node : areaNodes) {
-							allowed.add(new AllowedValue(node.getId().toString(), node.getName()));
-						}
-						break;
-					default:
-						for (Object value : field.getAllowedValues()) {
-							allowed.add(new AllowedValue(value.toString().replace(" ", "_"), value.toString()));
-						}
-						break;
-				}
-
-                // Add an empty line to each field with a non-empty list of allowed values
-				if (allowed.size() > 0) {
-                    allowed.add(0, new AllowedValue("Empty_String", ""));
-                }
-
-				List<String> defaultValue = new ArrayList<>();
-				if (field.getDefaultValue() != null) {
-					defaultValue.add(field.getDefaultValue().toString().replace(" ", "_"));
-				}
-
-                ticketFields.add(new PostFormField(field.getReferenceName().replace(".", "_"), field.getName(),
-                        detailedField.getType().toString(), field.isAlwaysRequired(), defaultValue, allowed));
+				ticketFields.add(new PostFormField(replaceIllegalCharacters(field.getReferenceName()), field.getName(),
+						detailedField.getType().toString(), field.isAlwaysRequired(), defaultValue, allowedValues));
 			}
-
-            List<PostFormField> sortedTicketFields = ticketFields.stream()
-                    .sorted(Comparator.comparing(PostFormField::getIsRequired).reversed()
-                            .thenComparing(PostFormField::getFieldName)).collect(Collectors.toList());
-
-			// Add to the top a custom field representing the work item type
-			sortedTicketFields.add(0, new PostFormField("issuetype", "Issue Type", "issuetype", true,
-                    List.of(issueType), new ArrayList<AllowedValue>()));
-
-			return sortedTicketFields;
+			return sortTicketFields(ticketFields, issueType);
 		} catch (ApiException e) {
-            LOGGER.error("Unable to load ticket fields: " + e.getMessage(), e);
+			LOGGER.error("Unable to load ticket fields: " + e.getMessage(), e);
 			throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
-					"Unable to load ticket fields. Code: " + e.getCode() + ", Message: " + e.getMessage(), e);
+					String.format("Unable to load ticket fields. Code: %s, Message: %s", e.getCode(), e.getMessage()), e);
 		}
 	}
 
@@ -359,11 +308,11 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		WorkItemTypesApi issueTypesApi = new WorkItemTypesApi(defaultClient);
 		try {
 			List<WorkItemType> issueTypes = issueTypesApi.workItemTypesList(organizationName, projectName, API_VERSION);
-            return issueTypes.stream().map(WorkItemType::getName).collect(Collectors.toList());
+			return issueTypes.stream().map(WorkItemType::getName).collect(Collectors.toList());
 		} catch (ApiException e) {
-            LOGGER.error("Unable to load issue types: " + e.getMessage(), e);
+			LOGGER.error("Unable to load issue types: " + e.getMessage(), e);
 			throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
-					"Unable to load issue types. Code: " + e.getCode() + ", Message: " + e.getMessage(), e);
+					String.format("Unable to load issue types. Code: %s, Message: %s", e.getCode(), e.getMessage()), e);
 		}
 	}
 
@@ -385,4 +334,100 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
         }
         return nodes;
     }
+
+	private Map<String, List<WorkItemClassificationNode>> getClassificationNodes(
+			ClassificationNodesApi nodesApi, String organizationName, String projectName
+	) {
+		List<WorkItemClassificationNode> areaNodes = new ArrayList<>();
+		List<WorkItemClassificationNode> iterationNodes = new ArrayList<>();
+		Map<String, List<WorkItemClassificationNode>> nodesGroupedByType = new HashMap<>();
+		try {
+			List<WorkItemClassificationNode> nodes = nodesApi
+					.classificationNodesGetRootNodes(organizationName, projectName, API_VERSION, DEPTH);
+			for (WorkItemClassificationNode node : nodes) {
+				if (node.getStructureType().equals(AREA)) {
+					areaNodes = extractNestedNodes(node);
+				} else if (node.getStructureType().equals(ITERATION)) {
+					iterationNodes = extractNestedNodes(node);
+				}
+			}
+			nodesGroupedByType.put(AREA, areaNodes);
+			nodesGroupedByType.put(ITERATION, iterationNodes);
+			return nodesGroupedByType;
+		} catch (ApiException e) {
+			LOGGER.error("Unable to load classification nodes: " + e.getMessage(), e);
+			throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
+					String.format("Unable to load classification nodes. Code: %s, Message: %s", e.getCode(),
+							e.getMessage()), e);
+		}
+	}
+
+	private WorkItemField getFieldDetails(
+			FieldsApi fieldsApi, String organizationName, String projectName, WorkItemTypeFieldWithReferences field
+	) throws ApiException {
+		try {
+			return fieldsApi.fieldsGet(organizationName, field.getReferenceName(), projectName, API_VERSION);
+		} catch (ApiException e) {
+			// Some special fields return 404 on request, we will skip them
+			if (e.getCode() == 404) {
+				return null;
+			} else {
+				throw e;
+			}
+		}
+	}
+
+	private List<AllowedValue> prepareAllowedValues(
+			WorkItemTypeFieldWithReferences field, List<WorkItemClassificationNode> areaNodes,
+			List<WorkItemClassificationNode> iterationNodes
+	) {
+		List<AllowedValue> allowed = new ArrayList<>();
+		switch (field.getName()) {
+			case "Iteration ID":
+				for (WorkItemClassificationNode node : iterationNodes) {
+					allowed.add(new AllowedValue(node.getId().toString(), node.getName()));
+				}
+				break;
+			case "Area ID":
+				for (WorkItemClassificationNode node : areaNodes) {
+					allowed.add(new AllowedValue(node.getId().toString(), node.getName()));
+				}
+				break;
+			default:
+				for (Object value : field.getAllowedValues()) {
+					allowed.add(new AllowedValue(replaceIllegalCharacters(value.toString()), value.toString()));
+				}
+				break;
+		}
+
+		// Add an empty line to each field with a non-empty list of allowed values
+		if (allowed.size() > 0) {
+			allowed.add(0, new AllowedValue("Empty_String", ""));
+		}
+		return allowed;
+	}
+
+	private List<String> prepareDefaultValue(WorkItemTypeFieldWithReferences field) {
+		List<String> defaultValue = new ArrayList<>();
+		if (field.getDefaultValue() != null) {
+			defaultValue.add(replaceIllegalCharacters(field.getDefaultValue().toString()));
+		}
+		return defaultValue;
+	}
+
+	// ID value should not contain spaces and dots
+	private String replaceIllegalCharacters(String id) {
+		return id.replace(" ", "_").replace(".", "_");
+	}
+
+	private List<PostFormField> sortTicketFields(List<PostFormField> ticketFields, String issueType) {
+		List<PostFormField> sortedTicketFields = ticketFields.stream()
+				.sorted(Comparator.comparing(PostFormField::getIsRequired).reversed()
+						.thenComparing(PostFormField::getFieldName)).collect(Collectors.toList());
+
+		// Add to the top a custom field representing the work item type
+		sortedTicketFields.add(0, new PostFormField("issuetype", "Issue Type", "issuetype",
+				true, List.of(issueType), new ArrayList<AllowedValue>()));
+		return sortedTicketFields;
+	}
 }
