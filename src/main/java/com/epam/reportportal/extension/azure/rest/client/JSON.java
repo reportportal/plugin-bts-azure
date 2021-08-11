@@ -13,13 +13,18 @@
 
 package com.epam.reportportal.extension.azure.rest.client;
 
+import com.epam.reportportal.extension.azure.rest.client.model.Identity;
+import com.epam.reportportal.extension.azure.rest.client.model.IdentityBase;
 import com.epam.reportportal.extension.azure.rest.client.model.ResponseExceptionModel;
 import com.epam.reportportal.extension.azure.rest.client.model.TeamProject;
 import com.epam.reportportal.extension.azure.rest.client.model.TeamProjectReference;
 import com.epam.reportportal.extension.azure.rest.client.model.WebApiTeam;
 import com.epam.reportportal.extension.azure.rest.client.model.WebApiTeamRef;
-import com.epam.reportportal.extension.azure.rest.client.model.Identity;
-import com.epam.reportportal.extension.azure.rest.client.model.IdentityBase;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemClassificationNode;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemField;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemType;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemTypeFieldInstance;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemTypeFieldWithReferences;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -88,6 +93,46 @@ public class JSON {
                 Map classByDiscriminatorValue = new HashMap();
                 classByDiscriminatorValue.put("ResponseExceptionModel".toUpperCase(), ResponseExceptionModel.class);
                 return getClassByDiscriminator(classByDiscriminatorValue, "ResponseExceptionModel");
+            }
+          })
+          .registerTypeSelector(WorkItemType.class, new TypeSelector() {
+            @Override
+            public Class getClassForElement(JsonElement readElement) {
+                Map classByDiscriminatorValue = new HashMap();
+                classByDiscriminatorValue.put("WorkItemType".toUpperCase(), WorkItemType.class);
+                return getClassByDiscriminator(classByDiscriminatorValue, "WorkItemType");
+            }
+          })
+          .registerTypeSelector(WorkItemField.class, new TypeSelector() {
+            @Override
+            public Class getClassForElement(JsonElement readElement) {
+                Map classByDiscriminatorValue = new HashMap();
+                classByDiscriminatorValue.put("WorkItemField".toUpperCase(), WorkItemField.class);
+                return getClassByDiscriminator(classByDiscriminatorValue, "WorkItemField");
+            }
+          })
+          .registerTypeSelector(WorkItemClassificationNode.class, new TypeSelector() {
+            @Override
+            public Class getClassForElement(JsonElement readElement) {
+                Map classByDiscriminatorValue = new HashMap();
+                classByDiscriminatorValue.put("WorkItemClassificationNode".toUpperCase(), WorkItemClassificationNode.class);
+                return getClassByDiscriminator(classByDiscriminatorValue, "WorkItemClassificationNode");
+            }
+          })
+          .registerTypeSelector(WorkItemTypeFieldInstance.class, new TypeSelector() {
+            @Override
+            public Class getClassForElement(JsonElement readElement) {
+                Map classByDiscriminatorValue = new HashMap();
+                classByDiscriminatorValue.put("WorkItemTypeFieldInstance".toUpperCase(), WorkItemTypeFieldInstance.class);
+                return getClassByDiscriminator(classByDiscriminatorValue, "WorkItemTypeFieldInstance");
+            }
+          })
+          .registerTypeSelector(WorkItemTypeFieldWithReferences.class, new TypeSelector() {
+            @Override
+            public Class getClassForElement(JsonElement readElement) {
+                Map classByDiscriminatorValue = new HashMap();
+                classByDiscriminatorValue.put("WorkItemTypeFieldWithReferences".toUpperCase(), WorkItemTypeFieldWithReferences.class);
+                return getClassByDiscriminator(classByDiscriminatorValue, "WorkItemTypeFieldWithReferences");
             }
           });
         GsonBuilder builder = fireBuilder.createGsonBuilder();
