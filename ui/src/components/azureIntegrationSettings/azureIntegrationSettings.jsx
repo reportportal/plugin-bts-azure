@@ -6,14 +6,13 @@ import {
   USERNAME_ATTRIBUTE_KEY,
   CHECKBOX_ATTRIBUTE_KEY,
 } from 'components/constants';
-import { AzureIntegrationFormFields } from '../azureIntegrationFormFields';
 
 export const AzureIntegrationSettings = (props) => {
   const { data, goToPreviousPage, onUpdate, isGlobal, ...extensionProps } = props;
   const {
     lib: { React, useDispatch },
     actions: { showModalAction },
-    components: { IntegrationSettings: IntegrationSettingsContainer },
+    components: { IntegrationSettings: IntegrationSettingsContainer, BtsPropertiesForIssueForm },
   } = extensionProps;
 
   const dispatch = useDispatch();
@@ -73,19 +72,36 @@ export const AzureIntegrationSettings = (props) => {
     );
   };
 
+  const getDefectFormFields = (fields, checkedFieldsIds, values) =>
+    fields
+      .filter((item) => item.required || checkedFieldsIds[item.id])
+      .map((item) => ({ ...item, value: values[item.id] }));
+
   const getEditAuthConfig = () => ({
     content: <BtsAuthFieldsInfo fieldsConfig={authFieldsConfig} />,
     onClick: editAuthorizationClickHandler,
   });
 
+  const onSubmit = (integrationData, callback, metaData) => {
+    const { fields, checkedFieldsIds = {}, ...meta } = metaData;
+    const defectFormFields = getDefectFormFields(fields, checkedFieldsIds, integrationData);
+
+    props.onUpdate({ defectFormFields }, callback, meta);
+  };
+
   return (
     <IntegrationSettingsContainer
       data={data}
-      onUpdate={onUpdate}
+      onUpdate={onSubmit}
       goToPreviousPage={goToPreviousPage}
       editAuthConfig={getEditAuthConfig()}
       isGlobal={isGlobal}
-      formFieldsComponent={(rest) => <AzureIntegrationFormFields {...extensionProps} {...rest} />}
+      formFieldsComponent={BtsPropertiesForIssueForm}
+      formKey="BTS_FIELDS_FORM"
+      isEmptyConfiguration={
+        !data.integrationParameters.defectFormFields ||
+        !data.integrationParameters.defectFormFields.length
+      }
     />
   );
 };
