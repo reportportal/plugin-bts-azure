@@ -11,11 +11,13 @@ import com.epam.reportportal.extension.azure.rest.client.api.ClassificationNodes
 import com.epam.reportportal.extension.azure.rest.client.api.FieldsApi;
 import com.epam.reportportal.extension.azure.rest.client.api.WorkItemTypesApi;
 import com.epam.reportportal.extension.azure.rest.client.api.WorkItemTypesFieldApi;
+import com.epam.reportportal.extension.azure.rest.client.api.WorkItemsApi;
 import com.epam.reportportal.extension.azure.rest.client.auth.HttpBasicAuth;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemClassificationNode;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemField;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemType;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemTypeFieldWithReferences;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItem;
 import com.epam.reportportal.extension.bugtracking.BtsExtension;
 import com.epam.reportportal.extension.common.IntegrationTypeProperties;
 import com.epam.reportportal.extension.event.PluginEvent;
@@ -231,19 +233,40 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	@Override
 	// Never called method. Connection is tested via the command.
-	public boolean testConnection(Integration system) {
+	public boolean testConnection(Integration integration) {
 		return false;
 	}
 
 	@Override
-	// TODO: Implement in the future
-	public Optional<Ticket> getTicket(String id, Integration system) {
-		return Optional.empty();
+	public Optional<Ticket> getTicket(String id, Integration integration) {
+		Map<String, Object> params = integration.getParams().getParams();
+		String organizationUrl = params.get("url").toString();
+		String projectName = params.get("project").toString();
+		String personalAccessToken = params.get("oauthAccessKey").toString();
+
+		ApiClient defaultClient = getConfiguredApiClient(personalAccessToken);
+		String organizationName = organizationUrl.replace(defaultClient.getBasePath(), "");
+
+		WorkItemsApi workItemsApi = new WorkItemsApi(defaultClient);
+		try {
+			WorkItem workItem = workItemsApi
+					.workItemsGetWorkItem(organizationName, Integer.valueOf(id), projectName, API_VERSION,
+							null, null, null);
+			Ticket ticket = new Ticket();
+			ticket.setId(workItem.getId().toString());
+			ticket.setTicketUrl(workItem.getUrl());
+			ticket.setStatus(workItem.getFields().get("System.State").toString());
+			ticket.setSummary(workItem.getFields().get("System.Title").toString());
+			return Optional.of(ticket);
+		} catch (ApiException e) {
+			LOGGER.error("Unable to load ticket: " + e.getMessage(), e);
+			return Optional.empty();
+		}
 	}
 
 	@Override
 	// TODO: Implement in the future
-	public Ticket submitTicket(PostTicketRQ ticketRQ, Integration system) {
+	public Ticket submitTicket(PostTicketRQ ticketRQ, Integration integration) {
 		return null;
 	}
 
