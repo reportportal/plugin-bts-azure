@@ -25,6 +25,7 @@ import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItem
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemType;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemTypeFieldInstance;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemTypeFieldWithReferences;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItem;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -133,6 +134,14 @@ public class JSON {
                 Map classByDiscriminatorValue = new HashMap();
                 classByDiscriminatorValue.put("WorkItemTypeFieldWithReferences".toUpperCase(), WorkItemTypeFieldWithReferences.class);
                 return getClassByDiscriminator(classByDiscriminatorValue, "WorkItemTypeFieldWithReferences");
+            }
+          })
+          .registerTypeSelector(WorkItem.class, new TypeSelector() {
+            @Override
+            public Class getClassForElement(JsonElement readElement) {
+                Map classByDiscriminatorValue = new HashMap();
+                classByDiscriminatorValue.put("WorkItem".toUpperCase(), WorkItem.class);
+                return getClassByDiscriminator(classByDiscriminatorValue, "WorkItem");
             }
           });
         GsonBuilder builder = fireBuilder.createGsonBuilder();
