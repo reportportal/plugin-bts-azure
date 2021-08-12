@@ -24,7 +24,7 @@ export const AzureIntegrationFormFields = (props) => {
       InputDropdown,
       InputCheckbox,
     },
-    validators: { requiredField },
+    validators: { requiredField, btsUrl, btsProject, btsIntegrationName },
   } = extensionProps;
   React.useEffect(() => {
     initialize(initialData);
@@ -56,7 +56,8 @@ export const AzureIntegrationFormFields = (props) => {
         disabled={disabled}
         label="Integration Name"
         required
-        validate={requiredField}
+        maxLength="55"
+        validate={btsIntegrationName}
         lineAlign={lineAlign}
       >
         <FieldErrorHint>
@@ -68,7 +69,7 @@ export const AzureIntegrationFormFields = (props) => {
         disabled={disabled}
         label="Link to BTS"
         required
-        validate={requiredField}
+        validate={btsUrl}
         lineAlign={lineAlign}
       >
         <FieldErrorHint>
@@ -80,7 +81,8 @@ export const AzureIntegrationFormFields = (props) => {
         disabled={disabled}
         label="Project name in BTS"
         required
-        validate={requiredField}
+        maxLength="55"
+        validate={btsProject}
         lineAlign={lineAlign}
       >
         <FieldErrorHint>
