@@ -4,6 +4,7 @@ import com.epam.reportportal.extension.IntegrationGroupEnum;
 import com.epam.reportportal.extension.PluginCommand;
 import com.epam.reportportal.extension.ReportPortalExtensionPoint;
 import com.epam.reportportal.extension.azure.command.connection.TestConnectionCommand;
+import com.epam.reportportal.extension.azure.entity.model.IntegrationParameters;
 import com.epam.reportportal.extension.azure.rest.client.ApiClient;
 import com.epam.reportportal.extension.azure.rest.client.ApiException;
 import com.epam.reportportal.extension.azure.rest.client.Configuration;
@@ -239,18 +240,14 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	@Override
 	public Optional<Ticket> getTicket(String id, Integration integration) {
-		Map<String, Object> params = integration.getParams().getParams();
-		String organizationUrl = params.get("url").toString();
-		String projectName = params.get("project").toString();
-		String personalAccessToken = params.get("oauthAccessKey").toString();
-
-		ApiClient defaultClient = getConfiguredApiClient(personalAccessToken);
-		String organizationName = organizationUrl.replace(defaultClient.getBasePath(), "");
+		IntegrationParameters params = getParams(integration);
+		ApiClient defaultClient = getConfiguredApiClient(params.getPersonalAccessToken());
+		String organizationName = extractOrganizationNameFromUrl(defaultClient, params.getOrganizationUrl());
 
 		WorkItemsApi workItemsApi = new WorkItemsApi(defaultClient);
 		try {
 			WorkItem workItem = workItemsApi
-					.workItemsGetWorkItem(organizationName, Integer.valueOf(id), projectName, API_VERSION,
+					.workItemsGetWorkItem(organizationName, Integer.valueOf(id), params.getProjectName(), API_VERSION,
 							null, null, null);
 			Ticket ticket = new Ticket();
 			ticket.setId(workItem.getId().toString());
@@ -272,13 +269,10 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	@Override
 	public List<PostFormField> getTicketFields(String issueType, Integration integration) {
-		Map<String, Object> params = integration.getParams().getParams();
-		String organizationUrl = params.get("url").toString();
-		String projectName = params.get("project").toString();
-		String personalAccessToken = params.get("oauthAccessKey").toString();
-
-		ApiClient defaultClient = getConfiguredApiClient(personalAccessToken);
-		String organizationName = organizationUrl.replace(defaultClient.getBasePath(), "");
+		IntegrationParameters params = getParams(integration);
+		String projectName = params.getProjectName();
+		ApiClient defaultClient = getConfiguredApiClient(params.getPersonalAccessToken());
+		String organizationName = extractOrganizationNameFromUrl(defaultClient, params.getOrganizationUrl());
 
 		ClassificationNodesApi nodesApi = new ClassificationNodesApi(defaultClient);
 		Map<String, List<WorkItemClassificationNode>> classificationNodes = getClassificationNodes(nodesApi,
@@ -320,17 +314,13 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	@Override
 	public List<String> getIssueTypes(Integration integration) {
-		Map<String, Object> params = integration.getParams().getParams();
-		String organizationUrl = params.get("url").toString();
-		String projectName = params.get("project").toString();
-		String personalAccessToken = params.get("oauthAccessKey").toString();
-
-		ApiClient defaultClient = getConfiguredApiClient(personalAccessToken);
-		String organizationName = organizationUrl.replace(defaultClient.getBasePath(), "");
+		IntegrationParameters params = getParams(integration);
+		ApiClient defaultClient = getConfiguredApiClient(params.getPersonalAccessToken());
+		String organizationName = extractOrganizationNameFromUrl(defaultClient, params.getOrganizationUrl());
 
 		WorkItemTypesApi issueTypesApi = new WorkItemTypesApi(defaultClient);
 		try {
-			List<WorkItemType> issueTypes = issueTypesApi.workItemTypesList(organizationName, projectName, API_VERSION);
+			List<WorkItemType> issueTypes = issueTypesApi.workItemTypesList(organizationName, params.getProjectName(), API_VERSION);
 			return issueTypes.stream().map(WorkItemType::getName).collect(Collectors.toList());
 		} catch (ApiException e) {
 			LOGGER.error("Unable to load issue types: " + e.getMessage(), e);
@@ -339,11 +329,24 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		}
 	}
 
+	private IntegrationParameters getParams(Integration integration) {
+		IntegrationParameters result = new IntegrationParameters();
+		Map<String, Object> params = integration.getParams().getParams();
+		result.setOrganizationUrl(params.get("url").toString());
+		result.setProjectName(params.get("project").toString());
+		result.setPersonalAccessToken(params.get("oauthAccessKey").toString());
+		return result;
+	}
+
 	private ApiClient getConfiguredApiClient(String personalAccessToken) {
 		ApiClient defaultClient = Configuration.getDefaultApiClient();
 		HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("accessToken");
 		basicAuth.setPassword(personalAccessToken);
 		return defaultClient;
+	}
+
+	private String extractOrganizationNameFromUrl(ApiClient client, String organizationUrl) {
+		return organizationUrl.replace(client.getBasePath(), "");
 	}
 
     private List<WorkItemClassificationNode> extractNestedNodes(WorkItemClassificationNode node) {
