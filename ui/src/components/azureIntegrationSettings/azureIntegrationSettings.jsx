@@ -1,13 +1,15 @@
-import { BtsAuthFieldsInfo } from 'components/btsAuthFieldsInfo';
-import { hideModalAction } from 'components/modal';
 import { URL_ATTRIBUTE_KEY, PROJECT_ATTRIBUTE_KEY } from 'components/constants';
 
 export const AzureIntegrationSettings = (props) => {
   const { data, goToPreviousPage, onUpdate, isGlobal, ...extensionProps } = props;
   const {
     lib: { React, useDispatch },
-    actions: { showModalAction },
-    components: { IntegrationSettings: IntegrationSettingsContainer, BtsPropertiesForIssueForm },
+    actions: { showModalAction, hideModalAction },
+    components: {
+      IntegrationSettings: IntegrationSettingsContainer,
+      BtsAuthFieldsInfo,
+      BtsPropertiesForIssueForm,
+    },
   } = extensionProps;
 
   const dispatch = useDispatch();
