@@ -3,23 +3,23 @@ import { AzureIntegrationFormFields } from './components/azureIntegrationFormFie
 import { AzureIntegrationSettings } from './components/azureIntegrationSettings';
 
 window.RP.registerPlugin({
-  name: 'Azure',
+  name: 'Azure DevOps',
   extensions: [
     {
       name: 'integrationSettings',
-      title: 'Azure plugin settings',
+      title: 'Azure DevOps plugin settings',
       type: 'uiExtension:integrationSettings',
       component: AzureIntegrationSettings,
     },
     {
       name: 'integrationFormFields',
-      title: 'Azure plugin fields',
+      title: 'Azure DevOps plugin fields',
       type: 'uiExtension:integrationFormFields',
       component: AzureIntegrationFormFields,
     },
     {
-      name: 'Azure',
-      title: 'Azure',
+      name: 'Azure DevOps',
+      title: 'Azure DevOps',
       type: 'uiExtension:settingsTab',
       component: AzurePluginTab,
     },

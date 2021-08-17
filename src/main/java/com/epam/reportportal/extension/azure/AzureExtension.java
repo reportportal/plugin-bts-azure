@@ -93,7 +93,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	public static final String SCHEMA_SCRIPTS_DIR = "schema";
 
-	private static final String PLUGIN_ID = "Azure";
+	private static final String PLUGIN_ID = "Azure DevOps";
 
 	private static final String API_VERSION = "6.0";
 
