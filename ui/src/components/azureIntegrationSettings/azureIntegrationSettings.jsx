@@ -1,18 +1,15 @@
-import { BtsAuthFieldsInfo } from 'components/btsAuthFieldsInfo';
-import { hideModalAction } from 'components/modal';
-import {
-  URL_ATTRIBUTE_KEY,
-  PROJECT_ATTRIBUTE_KEY,
-  USERNAME_ATTRIBUTE_KEY,
-  CHECKBOX_ATTRIBUTE_KEY,
-} from 'components/constants';
+import { URL_ATTRIBUTE_KEY, PROJECT_ATTRIBUTE_KEY } from 'components/constants';
 
 export const AzureIntegrationSettings = (props) => {
   const { data, goToPreviousPage, onUpdate, isGlobal, ...extensionProps } = props;
   const {
     lib: { React, useDispatch },
-    actions: { showModalAction },
-    components: { IntegrationSettings: IntegrationSettingsContainer, BtsPropertiesForIssueForm },
+    actions: { showModalAction, hideModalAction },
+    components: {
+      IntegrationSettings: IntegrationSettingsContainer,
+      BtsAuthFieldsInfo,
+      BtsPropertiesForIssueForm,
+    },
   } = extensionProps;
 
   const dispatch = useDispatch();
@@ -26,16 +23,6 @@ export const AzureIntegrationSettings = (props) => {
       value: data.integrationParameters[PROJECT_ATTRIBUTE_KEY],
       message: 'Project Name',
     },
-
-    data.integrationParameters[USERNAME_ATTRIBUTE_KEY]
-      ? {
-          value: data.integrationParameters[USERNAME_ATTRIBUTE_KEY],
-          message: 'Authorized by',
-        }
-      : {
-          value: data.integrationParameters[CHECKBOX_ATTRIBUTE_KEY] ? 'Yes' : 'No',
-          message: 'Allow users to post issues using this Token',
-        },
   ];
 
   const getConfirmationFunc = (testConnection) => (integrationData, integrationMetaData) => {

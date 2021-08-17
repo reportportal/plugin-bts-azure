@@ -18,31 +18,10 @@ const config = {
         test: /\.svg$/,
         loader: 'svg-inline-loader',
       },
-      {
-        test: /\.scss$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
-        ],
-      },
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.scss'],
+    extensions: ['.js', '.jsx'],
     alias: {
       components: path.resolve(__dirname, 'src/components'),
       constants: path.resolve(__dirname, 'src/constants'),

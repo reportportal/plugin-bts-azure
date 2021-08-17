@@ -1,4 +1,4 @@
-#AzureDevOps bug tracking system integration for ReportPortal
+# Azure DevOps bug tracking system integration for ReportPortal
 
 ## UI
 Preconditions:
