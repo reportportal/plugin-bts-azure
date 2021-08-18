@@ -1,5 +1,7 @@
 package com.epam.reportportal.extension.azure;
 
+import static java.util.Optional.ofNullable;
+
 import com.epam.reportportal.extension.IntegrationGroupEnum;
 import com.epam.reportportal.extension.PluginCommand;
 import com.epam.reportportal.extension.ReportPortalExtensionPoint;
@@ -14,6 +16,7 @@ import com.epam.reportportal.extension.azure.rest.client.api.WorkItemTypesApi;
 import com.epam.reportportal.extension.azure.rest.client.api.WorkItemTypesFieldApi;
 import com.epam.reportportal.extension.azure.rest.client.api.WorkItemsApi;
 import com.epam.reportportal.extension.azure.rest.client.auth.HttpBasicAuth;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.JsonPatchOperation;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemClassificationNode;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemField;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemType;
@@ -39,8 +42,12 @@ import com.epam.reportportal.extension.azure.utils.MemoizingSupplier;
 import com.epam.ta.reportportal.dao.IntegrationRepository;
 import com.epam.ta.reportportal.dao.IntegrationTypeRepository;
 import com.epam.ta.reportportal.dao.LaunchRepository;
+import com.epam.ta.reportportal.dao.LogRepository;
 import com.epam.ta.reportportal.dao.ProjectRepository;
+import com.epam.ta.reportportal.dao.TestItemRepository;
 import com.epam.ta.reportportal.entity.integration.Integration;
+import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.externalsystem.AllowedValue;
@@ -52,10 +59,14 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.pf4j.Extension;
 import org.slf4j.Logger;
@@ -103,6 +114,14 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private static final String ITERATION = "iteration";
 
+	private static final String BACK_LINK_HEADER = "<h3><i>Back link to Report Portal:</i></h3>";
+
+	private static final String BACK_LINK_PATTERN = "<a href=\"%s\">Link to defect</a>";
+
+	private static final String COMMENTS_HEADER = "<h3><i>Test Item comments:</i></h3>";
+
+	private static final String LOGS_HEADER = "<h3><i>Test execution logs:</i></h3>";
+
 	private static final Integer DEPTH = 15;
 
 	private final String resourcesDir;
@@ -139,6 +158,12 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	@Autowired
 	private LaunchRepository launchRepository;
+
+	@Autowired
+	private TestItemRepository itemRepository;
+
+	@Autowired
+	private LogRepository logRepository;
 
 	public AzureExtension(Map<String, Object> initParams) {
 		resourcesDir = IntegrationTypeProperties.RESOURCES_DIRECTORY.getValue(initParams).map(String::valueOf).orElse("");
@@ -249,12 +274,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 			WorkItem workItem = workItemsApi
 					.workItemsGetWorkItem(organizationName, Integer.valueOf(id), params.getProjectName(), API_VERSION,
 							null, null, null);
-			Ticket ticket = new Ticket();
-			ticket.setId(workItem.getId().toString());
-			ticket.setTicketUrl(workItem.getUrl());
-			ticket.setStatus(workItem.getFields().get("System.State").toString());
-			ticket.setSummary(workItem.getFields().get("System.Title").toString());
-			return Optional.of(ticket);
+			return Optional.of(convertWorkItemToTicket(workItem));
 		} catch (ApiException e) {
 			LOGGER.error("Unable to load ticket: " + e.getMessage(), e);
 			return Optional.empty();
@@ -262,9 +282,45 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	}
 
 	@Override
-	// TODO: Implement in the future
+	// TODO: Add attachments from the test-item to the issue
 	public Ticket submitTicket(PostTicketRQ ticketRQ, Integration integration) {
-		return null;
+		IntegrationParameters params = getParams(integration);
+		ApiClient defaultClient = getConfiguredApiClient(params.getPersonalAccessToken());
+		String organizationName = extractOrganizationNameFromUrl(defaultClient, params.getOrganizationUrl());
+
+		List<JsonPatchOperation> patchOperationList = new ArrayList<>();
+
+		String issueType = null;
+		List<PostFormField> fields = ticketRQ.getFields();
+		for (PostFormField field : fields) {
+			String id = replaceSeparators(field.getId());
+			String operation = "add";
+			String path = "/fields/" + id;
+			String value = field.getValue().get(0);
+
+			if ("issuetype".equals(field.getId())) {
+				issueType = field.getValue().get(0);
+				continue;
+			}
+			if ("System.Description".equals(id)) {
+				path = "/fields/System.Description";
+				value = field.getValue().get(0) + getDescriptionFromTestItem(ticketRQ);
+			}
+			patchOperationList.add(new JsonPatchOperation(null, operation, path, value));
+		}
+
+		WorkItemsApi workItemsApi = new WorkItemsApi(defaultClient);
+		WorkItem workItem = null;
+		try {
+			workItem = workItemsApi
+					.workItemsCreate(organizationName, patchOperationList, params.getProjectName(), issueType,
+							API_VERSION, null, null, null, null);
+			return convertWorkItemToTicket(workItem);
+		} catch (ApiException e) {
+			LOGGER.error("Unable to post issue: " + e.getMessage(), e);
+			throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
+					String.format("Unable to post issue. Code: %s, Message: %s", e.getCode(), e.getMessage()), e);
+		}
 	}
 
 	@Override
@@ -347,6 +403,18 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private String extractOrganizationNameFromUrl(ApiClient client, String organizationUrl) {
 		return organizationUrl.replace(client.getBasePath(), "");
+	}
+
+	private Ticket convertWorkItemToTicket(WorkItem workItem) {
+		Ticket ticket = new Ticket();
+		String ticketId = workItem.getId().toString();
+		String ticketUrl = workItem.getUrl().substring(0, workItem.getUrl().lastIndexOf(ticketId))
+				.replace("apis/wit/", "") + "edit/" + ticketId;
+		ticket.setId(ticketId);
+		ticket.setTicketUrl(ticketUrl);
+		ticket.setStatus(workItem.getFields().get("System.State").toString());
+		ticket.setSummary(workItem.getFields().get("System.Title").toString());
+		return ticket;
 	}
 
     private List<WorkItemClassificationNode> extractNestedNodes(WorkItemClassificationNode node) {
@@ -446,6 +514,11 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		return id.replace(" ", "_").replace(".", "_");
 	}
 
+	// Replace ID separators back. The method is the opposite of the method above.
+	private String replaceSeparators(String id) {
+		return id.replace("_", ".");
+	}
+
 	private List<PostFormField> sortTicketFields(List<PostFormField> ticketFields, String issueType) {
 		List<PostFormField> sortedTicketFields = ticketFields.stream()
 				.sorted(Comparator.comparing(PostFormField::getIsRequired).reversed()
@@ -455,5 +528,61 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		sortedTicketFields.add(0, new PostFormField("issuetype", "Issue Type", "issuetype",
 				true, List.of(issueType), new ArrayList<AllowedValue>()));
 		return sortedTicketFields;
+	}
+
+	private String getDescriptionFromTestItem(PostTicketRQ ticketRQ) {
+		StringBuilder descriptionBuilder = new StringBuilder();
+
+		TestItem item = itemRepository.findById(ticketRQ.getTestItemId())
+				.orElseThrow(() -> new ReportPortalException(ErrorType.TEST_ITEM_NOT_FOUND, ticketRQ.getTestItemId()));
+
+		ticketRQ.getBackLinks().keySet().forEach(backLinkId -> updateDescriptionBuilder(descriptionBuilder, ticketRQ, backLinkId, item));
+		return descriptionBuilder.toString();
+	}
+
+	private void updateDescriptionBuilder(StringBuilder descriptionBuilder, PostTicketRQ ticketRQ, Long backLinkId, TestItem item) {
+		if (StringUtils.isNotBlank(ticketRQ.getBackLinks().get(backLinkId))) {
+			descriptionBuilder.append(BACK_LINK_HEADER)
+					.append(String.format(BACK_LINK_PATTERN, ticketRQ.getBackLinks().get(backLinkId)));
+		}
+
+		if (ticketRQ.getIsIncludeComments()) {
+			if (StringUtils.isNotBlank(ticketRQ.getBackLinks().get(backLinkId))) {
+				// Add a comment to the issue description, if there is one in the test-item
+				ofNullable(item.getItemResults()).flatMap(result -> ofNullable(result.getIssue())).ifPresent(issue -> {
+					if (StringUtils.isNotBlank(issue.getIssueDescription())) {
+						descriptionBuilder.append(COMMENTS_HEADER).append(issue.getIssueDescription());
+					}
+				});
+			}
+		}
+		// Add logs to the issue description, if they are in the test-item
+		addLogsInfoToDescription(descriptionBuilder, backLinkId, ticketRQ);
+	}
+
+	private void addLogsInfoToDescription(StringBuilder descriptionBuilder, Long backLinkId, PostTicketRQ ticketRQ) {
+		itemRepository.findById(backLinkId).ifPresent(item -> ofNullable(item.getLaunchId()).ifPresent(launchId -> {
+			List<Log> logs = logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(launchId,
+					Collections.singletonList(item.getItemId()),
+					ticketRQ.getNumberOfLogs()
+			);
+			if (CollectionUtils.isNotEmpty(logs) && ticketRQ.getIsIncludeLogs()) {
+				descriptionBuilder.append(LOGS_HEADER);
+				logs.forEach(log -> addLog(descriptionBuilder, log));
+			}
+		}));
+	}
+
+	private void addLog(StringBuilder descriptionBuilder, Log log) {
+			descriptionBuilder.append("<div><pre>").append(getFormattedMessage(log)).append("</pre></div>");
+	}
+
+	private String getFormattedMessage(Log log) {
+		StringBuilder messageBuilder = new StringBuilder();
+		ofNullable(log.getLogTime()).ifPresent(logTime -> messageBuilder.append("Time: ")
+				.append(logTime.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss"))).append(", "));
+		ofNullable(log.getLogLevel()).ifPresent(logLevel -> messageBuilder.append("Level: ").append(logLevel).append(", "));
+		messageBuilder.append("<br>").append("Log: ").append(log.getLogMessage());
+		return messageBuilder.toString();
 	}
 }
