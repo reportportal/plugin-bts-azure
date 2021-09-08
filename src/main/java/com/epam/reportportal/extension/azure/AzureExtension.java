@@ -1,5 +1,7 @@
 package com.epam.reportportal.extension.azure;
 
+import static com.epam.ta.reportportal.ws.model.ErrorType.UNABLE_INTERACT_WITH_INTEGRATION;
+import static com.epam.ta.reportportal.ws.model.ErrorType.UNABLE_TO_LOAD_BINARY_DATA;
 import static java.util.Optional.ofNullable;
 
 import com.epam.reportportal.extension.IntegrationGroupEnum;
@@ -10,12 +12,10 @@ import com.epam.reportportal.extension.azure.entity.model.IntegrationParameters;
 import com.epam.reportportal.extension.azure.rest.client.ApiClient;
 import com.epam.reportportal.extension.azure.rest.client.ApiException;
 import com.epam.reportportal.extension.azure.rest.client.Configuration;
-import com.epam.reportportal.extension.azure.rest.client.api.ClassificationNodesApi;
-import com.epam.reportportal.extension.azure.rest.client.api.FieldsApi;
-import com.epam.reportportal.extension.azure.rest.client.api.WorkItemTypesApi;
-import com.epam.reportportal.extension.azure.rest.client.api.WorkItemTypesFieldApi;
-import com.epam.reportportal.extension.azure.rest.client.api.WorkItemsApi;
+import com.epam.reportportal.extension.azure.rest.client.api.*;
 import com.epam.reportportal.extension.azure.rest.client.auth.HttpBasicAuth;
+import com.epam.reportportal.extension.azure.rest.client.model.AttachmentInfo;
+import com.epam.reportportal.extension.azure.rest.client.model.AttachmentReference;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.JsonPatchOperation;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemClassificationNode;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemField;
@@ -23,6 +23,8 @@ import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItem
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemTypeFieldWithReferences;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItem;
 import com.epam.reportportal.extension.bugtracking.BtsExtension;
+import com.epam.reportportal.extension.bugtracking.InternalTicket;
+import com.epam.reportportal.extension.bugtracking.InternalTicketAssembler;
 import com.epam.reportportal.extension.common.IntegrationTypeProperties;
 import com.epam.reportportal.extension.event.PluginEvent;
 import com.epam.reportportal.extension.event.StartLaunchEvent;
@@ -39,16 +41,14 @@ import com.epam.reportportal.extension.azure.event.plugin.PluginEventHandlerFact
 import com.epam.reportportal.extension.azure.info.impl.PluginInfoProviderImpl;
 import com.epam.reportportal.extension.azure.service.EntityService;
 import com.epam.reportportal.extension.azure.utils.MemoizingSupplier;
-import com.epam.ta.reportportal.dao.IntegrationRepository;
-import com.epam.ta.reportportal.dao.IntegrationTypeRepository;
-import com.epam.ta.reportportal.dao.LaunchRepository;
-import com.epam.ta.reportportal.dao.LogRepository;
-import com.epam.ta.reportportal.dao.ProjectRepository;
-import com.epam.ta.reportportal.dao.TestItemRepository;
+import com.epam.ta.reportportal.binary.impl.AttachmentDataStoreService;
+import com.epam.ta.reportportal.dao.*;
+import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.filesystem.DataEncoder;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.externalsystem.AllowedValue;
 import com.epam.ta.reportportal.ws.model.externalsystem.PostFormField;
@@ -59,12 +59,15 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import java.io.*;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import com.google.common.base.Suppliers;
+import com.google.common.collect.Lists;
+import com.google.common.io.ByteStreams;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
@@ -82,13 +85,9 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -114,13 +113,15 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private static final String ITERATION = "iteration";
 
-	private static final String BACK_LINK_HEADER = "<h3><i>Back link to Report Portal:</i></h3>";
+	private static final String BACK_LINK_HEADER = "<h3><i>Backlink to Report Portal:</i></h3>";
 
 	private static final String BACK_LINK_PATTERN = "<a href=\"%s\">Link to defect</a>";
 
 	private static final String COMMENTS_HEADER = "<h3><i>Test Item comments:</i></h3>";
 
 	private static final String LOGS_HEADER = "<h3><i>Test execution logs:</i></h3>";
+
+	private static final String IMAGE_CONTENT = "image";
 
 	private static final Integer DEPTH = 15;
 
@@ -137,6 +138,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	private final Supplier<EntityRepository> entityRepositorySupplier;
 
 	private final Supplier<EntityService> entityServiceSupplier;
+
+	private final List<AttachmentInfo> attachmentsURL = new ArrayList<>();
 
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -163,7 +166,22 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	private TestItemRepository itemRepository;
 
 	@Autowired
+	private AttachmentDataStoreService attachmentDataStoreService;
+
+	@Autowired
+	private DataEncoder dataEncoder;
+
+	@Autowired
 	private LogRepository logRepository;
+	private IntegrationParameters params;
+	private ApiClient defaultClient;
+	private String organizationName;
+
+	private Supplier<InternalTicketAssembler> ticketAssembler = Suppliers.memoize(() -> new InternalTicketAssembler(logRepository,
+			itemRepository,
+			attachmentDataStoreService,
+			dataEncoder
+	));
 
 	public AzureExtension(Map<String, Object> initParams) {
 		resourcesDir = IntegrationTypeProperties.RESOURCES_DIRECTORY.getValue(initParams).map(String::valueOf).orElse("");
@@ -265,9 +283,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	@Override
 	public Optional<Ticket> getTicket(String id, Integration integration) {
-		IntegrationParameters params = getParams(integration);
-		ApiClient defaultClient = getConfiguredApiClient(params.getPersonalAccessToken());
-		String organizationName = extractOrganizationNameFromUrl(defaultClient, params.getOrganizationUrl());
+		initFields(integration);
 
 		WorkItemsApi workItemsApi = new WorkItemsApi(defaultClient);
 		try {
@@ -284,11 +300,11 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	@Override
 	// TODO: Add attachments from the test-item to the issue
 	public Ticket submitTicket(PostTicketRQ ticketRQ, Integration integration) {
-		IntegrationParameters params = getParams(integration);
-		ApiClient defaultClient = getConfiguredApiClient(params.getPersonalAccessToken());
-		String organizationName = extractOrganizationNameFromUrl(defaultClient, params.getOrganizationUrl());
+		initFields(integration);
 
 		List<JsonPatchOperation> patchOperationList = new ArrayList<>();
+
+		uploadAttachmentToAzure(ticketRQ);
 
 		String issueType = null;
 		List<PostFormField> fields = ticketRQ.getFields();
@@ -311,24 +327,43 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 		WorkItemsApi workItemsApi = new WorkItemsApi(defaultClient);
 		WorkItem workItem = null;
+		List<JsonPatchOperation> patchOperationsForAttachment = new ArrayList<>();
+
 		try {
 			workItem = workItemsApi
 					.workItemsCreate(organizationName, patchOperationList, params.getProjectName(), issueType,
 							API_VERSION, null, null, null, null);
+
+			if (!attachmentsURL.isEmpty()) {
+				String operation = "add";
+				String path = "/relations/-";
+				for (AttachmentInfo attachmentURL : attachmentsURL) {
+					Map<String, Object> value = new HashMap<>();
+
+					value.put("rel", "AttachedFile");
+					value.put("url", attachmentURL.getUrl());
+					Map<String, String> attributes = new HashMap<>();
+					attributes.put("comment", "");
+					value.put("attributes", attributes);
+
+					patchOperationsForAttachment.add(new JsonPatchOperation(null, operation, path, value));
+
+				}
+				workItemsApi.workItemsUpdate(organizationName, patchOperationsForAttachment, workItem.getId(), params.getProjectName(),
+						API_VERSION, null, null, null, null);
+			}
 			return convertWorkItemToTicket(workItem);
 		} catch (ApiException e) {
 			LOGGER.error("Unable to post issue: " + e.getMessage(), e);
 			throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
-					String.format("Unable to post issue. Code: %s, Message: %s", e.getCode(), e.getMessage()), e);
+					String.format("Unable to post issue. Code: %s, Message: %s log - ", e.getCode(), e.getMessage()), e);
 		}
 	}
 
 	@Override
 	public List<PostFormField> getTicketFields(String issueType, Integration integration) {
-		IntegrationParameters params = getParams(integration);
+		initFields(integration);
 		String projectName = params.getProjectName();
-		ApiClient defaultClient = getConfiguredApiClient(params.getPersonalAccessToken());
-		String organizationName = extractOrganizationNameFromUrl(defaultClient, params.getOrganizationUrl());
 
 		ClassificationNodesApi nodesApi = new ClassificationNodesApi(defaultClient);
 		Map<String, List<WorkItemClassificationNode>> classificationNodes = getClassificationNodes(nodesApi,
@@ -370,9 +405,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	@Override
 	public List<String> getIssueTypes(Integration integration) {
-		IntegrationParameters params = getParams(integration);
-		ApiClient defaultClient = getConfiguredApiClient(params.getPersonalAccessToken());
-		String organizationName = extractOrganizationNameFromUrl(defaultClient, params.getOrganizationUrl());
+		initFields(integration);
 
 		WorkItemTypesApi issueTypesApi = new WorkItemTypesApi(defaultClient);
 		try {
@@ -383,6 +416,13 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 			throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
 					String.format("Unable to load issue types. Code: %s, Message: %s", e.getCode(), e.getMessage()), e);
 		}
+	}
+
+	private void initFields(Integration integration) {
+		params = getParams(integration);
+		defaultClient = getConfiguredApiClient(params.getPersonalAccessToken());
+		organizationName = extractOrganizationNameFromUrl(defaultClient, params.getOrganizationUrl());
+		attachmentsURL.clear();
 	}
 
 	private IntegrationParameters getParams(Integration integration) {
@@ -417,17 +457,17 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		return ticket;
 	}
 
-    private List<WorkItemClassificationNode> extractNestedNodes(WorkItemClassificationNode node) {
-        List<WorkItemClassificationNode> nodes = new ArrayList<>();
-        nodes.add(node);
+	private List<WorkItemClassificationNode> extractNestedNodes(WorkItemClassificationNode node) {
+		List<WorkItemClassificationNode> nodes = new ArrayList<>();
+		nodes.add(node);
 
-        if (node.isHasChildren()) {
-            for (WorkItemClassificationNode childrenNode : node.getChildren()) {
-                nodes.addAll(extractNestedNodes(childrenNode));
-            }
-        }
-        return nodes;
-    }
+		if (node.isHasChildren()) {
+			for (WorkItemClassificationNode childrenNode : node.getChildren()) {
+				nodes.addAll(extractNestedNodes(childrenNode));
+			}
+		}
+		return nodes;
+	}
 
 	private Map<String, List<WorkItemClassificationNode>> getClassificationNodes(
 			ClassificationNodesApi nodesApi, String organizationName, String projectName
@@ -566,15 +606,73 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 					Collections.singletonList(item.getItemId()),
 					ticketRQ.getNumberOfLogs()
 			);
-			if (CollectionUtils.isNotEmpty(logs) && ticketRQ.getIsIncludeLogs()) {
+			if (CollectionUtils.isNotEmpty(logs) && (ticketRQ.getIsIncludeLogs() || ticketRQ.getIsIncludeScreenshots())) {
 				descriptionBuilder.append(LOGS_HEADER);
-				logs.forEach(log -> addLog(descriptionBuilder, log));
+				logs.forEach(log -> updateWithLog(descriptionBuilder,
+						log,
+						ticketRQ.getIsIncludeLogs(),
+						ticketRQ.getIsIncludeScreenshots()
+				));
 			}
 		}));
 	}
 
-	private void addLog(StringBuilder descriptionBuilder, Log log) {
+	private void updateWithLog(StringBuilder descriptionBuilder, Log log, boolean includeLog, boolean includeScreenshot) {
+		if (includeLog) {
 			descriptionBuilder.append("<div><pre>").append(getFormattedMessage(log)).append("</pre></div>");
+		}
+		if (includeScreenshot) {
+			ofNullable(log.getAttachment()).ifPresent(attachment -> addAttachmentToDescription(descriptionBuilder, attachment));
+		}
+	}
+
+	private void addAttachmentToDescription(StringBuilder descriptionBuilder, Attachment attachment) {
+		if (StringUtils.isNotBlank(attachment.getContentType()) && StringUtils.isNotBlank(attachment.getFileId())) {
+			AttachmentInfo attachmentInfo = null;
+			for (AttachmentInfo info : attachmentsURL) {
+				if (info.getFileId().equals(attachment.getFileId())) {
+					attachmentInfo = info;
+					break;
+				}
+			}
+			String url = attachmentInfo.getUrl();
+
+			if (attachmentInfo.getContentType().contains(IMAGE_CONTENT)) {
+				descriptionBuilder.append("Attachment:<br>" + "<img src=\"" + url + "\" alt=\"" + attachmentInfo.getFileName() + "\">");
+			} else {
+				descriptionBuilder.append("Attachment - " + "<a href=\"" + url + "\">" + attachmentInfo.getFileName() + "</a>");
+			}
+		}
+	}
+
+	private void uploadAttachmentToAzure(PostTicketRQ ticketRQ) {
+		List<InternalTicket.LogEntry> logs = ofNullable(ticketAssembler.get().apply(ticketRQ).getLogs()).orElseGet(Lists::newArrayList);
+		List<InternalTicket.LogEntry> attachments = new ArrayList<>();
+		logs.stream()
+				.filter(InternalTicket.LogEntry::isHasAttachment)
+				.forEach(entry -> attachments.add(entry));
+		for (InternalTicket.LogEntry attachment : attachments) {
+			Optional<InputStream> fileOptional = attachmentDataStoreService.load(attachment.getFileId());
+			if (fileOptional.isPresent()) {
+				try (InputStream file = fileOptional.get()) {
+					byte[] bytes = ByteStreams.toByteArray(file);
+					AttachmentsApi attachmentsApi = new AttachmentsApi(defaultClient);
+					String fileName = attachment.getDecodedFileName();
+					AttachmentReference attachmentReference = attachmentsApi.attachmentsCreate(organizationName, bytes, params.getProjectName(), API_VERSION,
+							fileName, null, null);
+					attachmentsURL.add(new AttachmentInfo(attachment.getDecodedFileName(),
+							attachment.getFileId(), attachmentReference.getUrl(), attachment.getContentType()));
+				} catch (IOException | ApiException e) {
+					StringWriter sw = new StringWriter();
+					e.printStackTrace(new PrintWriter(sw));
+					String s = Arrays.toString(e.getStackTrace());
+					LOGGER.error("Unable to post ticket : " + e.getMessage() + "\n" + s, e);
+					throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION, "Unable to post ticket: " + e.getMessage(), e);
+				}
+			} else {
+				throw new ReportPortalException(UNABLE_TO_LOAD_BINARY_DATA);
+			}
+		}
 	}
 
 	private String getFormattedMessage(Log log) {
