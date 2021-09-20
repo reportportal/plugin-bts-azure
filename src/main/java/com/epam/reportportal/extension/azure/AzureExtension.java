@@ -139,8 +139,6 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private final Supplier<EntityService> entityServiceSupplier;
 
-	private final List<AttachmentInfo> attachmentsURL = new ArrayList<>();
-
 	@Autowired
 	private ApplicationContext applicationContext;
 
@@ -298,16 +296,41 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	}
 
 	@Override
-	// TODO: Add attachments from the test-item to the issue
 	public Ticket submitTicket(PostTicketRQ ticketRQ, Integration integration) {
 		initFields(integration);
+		List<AttachmentInfo> attachmentsURL = new ArrayList<>();
 
 		List<JsonPatchOperation> patchOperationList = new ArrayList<>();
 
-		uploadAttachmentToAzure(ticketRQ);
+		uploadAttachmentToAzure(ticketRQ, attachmentsURL);
 
 		String issueType = null;
 		List<PostFormField> fields = ticketRQ.getFields();
+		issueType = getPatchOperationsForFields(ticketRQ, patchOperationList, issueType, fields, attachmentsURL);
+
+		WorkItemsApi workItemsApi = new WorkItemsApi(defaultClient);
+		WorkItem workItem = null;
+		List<JsonPatchOperation> patchOperationsForAttachment = new ArrayList<>();
+
+		try {
+			workItem = workItemsApi
+					.workItemsCreate(organizationName, patchOperationList, params.getProjectName(), issueType,
+							API_VERSION, null, null, null, null);
+
+			if (!attachmentsURL.isEmpty()) {
+				getPatchOperationsForAttachments(patchOperationsForAttachment, attachmentsURL);
+				workItemsApi.workItemsUpdate(organizationName, patchOperationsForAttachment, workItem.getId(), params.getProjectName(),
+						API_VERSION, null, null, null, null);
+			}
+			return convertWorkItemToTicket(workItem);
+		} catch (ApiException e) {
+			LOGGER.error("Unable to post issue: " + e.getMessage(), e);
+			throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
+					String.format("Unable to post issue. Code: %s, Message: %s log - ", e.getCode(), e.getMessage()), e);
+		}
+	}
+
+	private String getPatchOperationsForFields(PostTicketRQ ticketRQ, List<JsonPatchOperation> patchOperationList, String issueType, List<PostFormField> fields, List<AttachmentInfo> attachmentsURL) {
 		for (PostFormField field : fields) {
 			String id = replaceSeparators(field.getId());
 			String operation = "add";
@@ -320,43 +343,26 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 			}
 			if ("System.Description".equals(id)) {
 				path = "/fields/System.Description";
-				value = field.getValue().get(0) + getDescriptionFromTestItem(ticketRQ);
+				value = field.getValue().get(0) + getDescriptionFromTestItem(ticketRQ, attachmentsURL);
 			}
 			patchOperationList.add(new JsonPatchOperation(null, operation, path, value));
 		}
+		return issueType;
+	}
 
-		WorkItemsApi workItemsApi = new WorkItemsApi(defaultClient);
-		WorkItem workItem = null;
-		List<JsonPatchOperation> patchOperationsForAttachment = new ArrayList<>();
+	private void getPatchOperationsForAttachments(List<JsonPatchOperation> patchOperationsForAttachment, List<AttachmentInfo> attachmentsURL) {
+		String operation = "add";
+		String path = "/relations/-";
+		for (AttachmentInfo attachmentURL : attachmentsURL) {
+			Map<String, Object> value = new HashMap<>();
 
-		try {
-			workItem = workItemsApi
-					.workItemsCreate(organizationName, patchOperationList, params.getProjectName(), issueType,
-							API_VERSION, null, null, null, null);
+			value.put("rel", "AttachedFile");
+			value.put("url", attachmentURL.getUrl());
+			Map<String, String> attributes = new HashMap<>();
+			attributes.put("comment", "");
+			value.put("attributes", attributes);
 
-			if (!attachmentsURL.isEmpty()) {
-				String operation = "add";
-				String path = "/relations/-";
-				for (AttachmentInfo attachmentURL : attachmentsURL) {
-					Map<String, Object> value = new HashMap<>();
-
-					value.put("rel", "AttachedFile");
-					value.put("url", attachmentURL.getUrl());
-					Map<String, String> attributes = new HashMap<>();
-					attributes.put("comment", "");
-					value.put("attributes", attributes);
-
-					patchOperationsForAttachment.add(new JsonPatchOperation(null, operation, path, value));
-
-				}
-				workItemsApi.workItemsUpdate(organizationName, patchOperationsForAttachment, workItem.getId(), params.getProjectName(),
-						API_VERSION, null, null, null, null);
-			}
-			return convertWorkItemToTicket(workItem);
-		} catch (ApiException e) {
-			LOGGER.error("Unable to post issue: " + e.getMessage(), e);
-			throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
-					String.format("Unable to post issue. Code: %s, Message: %s log - ", e.getCode(), e.getMessage()), e);
+			patchOperationsForAttachment.add(new JsonPatchOperation(null, operation, path, value));
 		}
 	}
 
@@ -422,7 +428,6 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		params = getParams(integration);
 		defaultClient = getConfiguredApiClient(params.getPersonalAccessToken());
 		organizationName = extractOrganizationNameFromUrl(defaultClient, params.getOrganizationUrl());
-		attachmentsURL.clear();
 	}
 
 	private IntegrationParameters getParams(Integration integration) {
@@ -570,17 +575,17 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		return sortedTicketFields;
 	}
 
-	private String getDescriptionFromTestItem(PostTicketRQ ticketRQ) {
+	private String getDescriptionFromTestItem(PostTicketRQ ticketRQ, List<AttachmentInfo> attachmentsURL) {
 		StringBuilder descriptionBuilder = new StringBuilder();
 
 		TestItem item = itemRepository.findById(ticketRQ.getTestItemId())
 				.orElseThrow(() -> new ReportPortalException(ErrorType.TEST_ITEM_NOT_FOUND, ticketRQ.getTestItemId()));
 
-		ticketRQ.getBackLinks().keySet().forEach(backLinkId -> updateDescriptionBuilder(descriptionBuilder, ticketRQ, backLinkId, item));
+		ticketRQ.getBackLinks().keySet().forEach(backLinkId -> updateDescriptionBuilder(descriptionBuilder, ticketRQ, backLinkId, item, attachmentsURL));
 		return descriptionBuilder.toString();
 	}
 
-	private void updateDescriptionBuilder(StringBuilder descriptionBuilder, PostTicketRQ ticketRQ, Long backLinkId, TestItem item) {
+	private void updateDescriptionBuilder(StringBuilder descriptionBuilder, PostTicketRQ ticketRQ, Long backLinkId, TestItem item, List<AttachmentInfo> attachmentsURL) {
 		if (StringUtils.isNotBlank(ticketRQ.getBackLinks().get(backLinkId))) {
 			descriptionBuilder.append(BACK_LINK_HEADER)
 					.append(String.format(BACK_LINK_PATTERN, ticketRQ.getBackLinks().get(backLinkId)));
@@ -597,10 +602,10 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 			}
 		}
 		// Add logs to the issue description, if they are in the test-item
-		addLogsInfoToDescription(descriptionBuilder, backLinkId, ticketRQ);
+		addLogsInfoToDescription(descriptionBuilder, backLinkId, ticketRQ, attachmentsURL);
 	}
 
-	private void addLogsInfoToDescription(StringBuilder descriptionBuilder, Long backLinkId, PostTicketRQ ticketRQ) {
+	private void addLogsInfoToDescription(StringBuilder descriptionBuilder, Long backLinkId, PostTicketRQ ticketRQ, List<AttachmentInfo> attachmentsURL) {
 		itemRepository.findById(backLinkId).ifPresent(item -> ofNullable(item.getLaunchId()).ifPresent(launchId -> {
 			List<Log> logs = logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(launchId,
 					Collections.singletonList(item.getItemId()),
@@ -611,22 +616,22 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 				logs.forEach(log -> updateWithLog(descriptionBuilder,
 						log,
 						ticketRQ.getIsIncludeLogs(),
-						ticketRQ.getIsIncludeScreenshots()
-				));
+						ticketRQ.getIsIncludeScreenshots(),
+						attachmentsURL));
 			}
 		}));
 	}
 
-	private void updateWithLog(StringBuilder descriptionBuilder, Log log, boolean includeLog, boolean includeScreenshot) {
+	private void updateWithLog(StringBuilder descriptionBuilder, Log log, boolean includeLog, boolean includeScreenshot, List<AttachmentInfo> attachmentsURL) {
 		if (includeLog) {
 			descriptionBuilder.append("<div><pre>").append(getFormattedMessage(log)).append("</pre></div>");
 		}
 		if (includeScreenshot) {
-			ofNullable(log.getAttachment()).ifPresent(attachment -> addAttachmentToDescription(descriptionBuilder, attachment));
+			ofNullable(log.getAttachment()).ifPresent(attachment -> addAttachmentToDescription(descriptionBuilder, attachment, attachmentsURL));
 		}
 	}
 
-	private void addAttachmentToDescription(StringBuilder descriptionBuilder, Attachment attachment) {
+	private void addAttachmentToDescription(StringBuilder descriptionBuilder, Attachment attachment, List<AttachmentInfo> attachmentsURL) {
 		if (StringUtils.isNotBlank(attachment.getContentType()) && StringUtils.isNotBlank(attachment.getFileId())) {
 			AttachmentInfo attachmentInfo = null;
 			for (AttachmentInfo info : attachmentsURL) {
@@ -645,7 +650,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		}
 	}
 
-	private void uploadAttachmentToAzure(PostTicketRQ ticketRQ) {
+	private void uploadAttachmentToAzure(PostTicketRQ ticketRQ, List<AttachmentInfo> attachmentsURL) {
 		List<InternalTicket.LogEntry> logs = ofNullable(ticketAssembler.get().apply(ticketRQ).getLogs()).orElseGet(Lists::newArrayList);
 		List<InternalTicket.LogEntry> attachments = new ArrayList<>();
 		logs.stream()
@@ -663,10 +668,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 					attachmentsURL.add(new AttachmentInfo(attachment.getDecodedFileName(),
 							attachment.getFileId(), attachmentReference.getUrl(), attachment.getContentType()));
 				} catch (IOException | ApiException e) {
-					StringWriter sw = new StringWriter();
-					e.printStackTrace(new PrintWriter(sw));
-					String s = Arrays.toString(e.getStackTrace());
-					LOGGER.error("Unable to post ticket : " + e.getMessage() + "\n" + s, e);
+					LOGGER.error("Unable to post ticket : " + e.getMessage(), e);
 					throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION, "Unable to post ticket: " + e.getMessage(), e);
 				}
 			} else {
