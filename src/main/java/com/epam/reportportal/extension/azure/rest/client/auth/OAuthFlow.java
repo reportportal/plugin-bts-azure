@@ -14,5 +14,5 @@
 package com.epam.reportportal.extension.azure.rest.client.auth;
 
 public enum OAuthFlow {
-    accessCode, implicit, password, application
+    ACCESS_CODE, IMPLICIT, PASSWORD, APPLICATION
 }

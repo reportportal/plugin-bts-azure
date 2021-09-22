@@ -103,6 +103,12 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	public static final String SCHEMA_SCRIPTS_DIR = "schema";
 
+	public static final String URL = "url";
+
+	public static final String PROJECT = "project";
+
+	public static final String OAUTH_ACCESS_KEY = "oauthAccessKey";
+
 	private static final String PLUGIN_ID = "Azure DevOps";
 
 	private static final String API_VERSION = "6.0";
@@ -122,6 +128,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	private static final String LOGS_HEADER = "<h3><i>Test execution logs:</i></h3>";
 
 	private static final String IMAGE_CONTENT = "image";
+
+	private final String AUTH_NAME = "accessToken";
 
 	private static final Integer DEPTH = 15;
 
@@ -357,7 +365,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 			Map<String, Object> value = new HashMap<>();
 
 			value.put("rel", "AttachedFile");
-			value.put("url", attachmentURL.getUrl());
+			value.put(URL, attachmentURL.getUrl());
 			Map<String, String> attributes = new HashMap<>();
 			attributes.put("comment", "");
 			value.put("attributes", attributes);
@@ -385,21 +393,16 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 					.workItemTypesFieldList(organizationName, projectName, issueType, API_VERSION, EXPAND);
 
 			for (WorkItemTypeFieldWithReferences field : issueTypeFields) {
-				WorkItemField detailedField = getFieldDetails(fieldsApi, organizationName, projectName, field);
-				// Skip fields that return 404 on request
-				if (detailedField == null) {
-					continue;
-				}
-				// Skip read-only fields and Work Item Type field cause we have the same custom field
-				if (detailedField.isReadOnly() || detailedField.getName().equals("Work Item Type")) {
-					continue;
-				}
+				Optional<WorkItemField> detailedFieldOptional = getFieldDetails(fieldsApi, organizationName, projectName, field);
 
-				List<AllowedValue> allowedValues = prepareAllowedValues(field, areaNodes, iterationNodes);
-				List<String> defaultValue = prepareDefaultValue(field);
+				detailedFieldOptional.filter(detailedField -> !detailedField.isReadOnly() && !detailedField.getName().equals("Work Item Type"))
+						.ifPresent(f -> {
+							List<AllowedValue> allowedValues = prepareAllowedValues(field, areaNodes, iterationNodes);
+							List<String> defaultValue = prepareDefaultValue(field);
 
-				ticketFields.add(new PostFormField(replaceIllegalCharacters(field.getReferenceName()), field.getName(),
-						detailedField.getType().toString(), field.isAlwaysRequired(), defaultValue, allowedValues));
+							ticketFields.add(new PostFormField(replaceIllegalCharacters(field.getReferenceName()), field.getName(),
+									f.getType().toString(), field.isAlwaysRequired(), defaultValue, allowedValues));
+						});
 			}
 			return sortTicketFields(ticketFields, issueType);
 		} catch (ApiException e) {
@@ -433,15 +436,15 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	private IntegrationParameters getParams(Integration integration) {
 		IntegrationParameters result = new IntegrationParameters();
 		Map<String, Object> params = integration.getParams().getParams();
-		result.setOrganizationUrl(params.get("url").toString());
-		result.setProjectName(params.get("project").toString());
-		result.setPersonalAccessToken(params.get("oauthAccessKey").toString());
+		result.setOrganizationUrl(params.get(URL).toString());
+		result.setProjectName(params.get(PROJECT).toString());
+		result.setPersonalAccessToken(params.get(OAUTH_ACCESS_KEY).toString());
 		return result;
 	}
 
 	private ApiClient getConfiguredApiClient(String personalAccessToken) {
 		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("accessToken");
+		HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication(AUTH_NAME);
 		basicAuth.setPassword(personalAccessToken);
 		return defaultClient;
 	}
@@ -501,15 +504,15 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		}
 	}
 
-	private WorkItemField getFieldDetails(
+	private Optional<WorkItemField> getFieldDetails(
 			FieldsApi fieldsApi, String organizationName, String projectName, WorkItemTypeFieldWithReferences field
 	) throws ApiException {
 		try {
-			return fieldsApi.fieldsGet(organizationName, field.getReferenceName(), projectName, API_VERSION);
+			return Optional.ofNullable(fieldsApi.fieldsGet(organizationName, field.getReferenceName(), projectName, API_VERSION));
 		} catch (ApiException e) {
 			// Some special fields return 404 on request, we will skip them
 			if (e.getCode() == 404) {
-				return null;
+				return Optional.ofNullable(null);
 			} else {
 				throw e;
 			}

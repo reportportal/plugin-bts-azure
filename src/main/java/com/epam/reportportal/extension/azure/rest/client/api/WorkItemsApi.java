@@ -77,14 +77,18 @@ public class WorkItemsApi {
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        if (fields != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("fields", fields));
-        if (asOf != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("asOf", asOf));
-        if (expand != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("$expand", expand));
-        if (apiVersion != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        if (fields != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("fields", fields));
+        }
+        if (asOf != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("asOf", asOf));
+        }
+        if (expand != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("$expand", expand));
+        }
+        if (apiVersion != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        }
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
@@ -94,7 +98,9 @@ public class WorkItemsApi {
             "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
 
         final String[] localVarContentTypes = {
             
@@ -250,16 +256,21 @@ public class WorkItemsApi {
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        if (validateOnly != null)
+        if (validateOnly != null) {
             localVarQueryParams.addAll(apiClient.parameterToPair("validateOnly", validateOnly));
-        if (bypassRules != null)
+        }
+        if (bypassRules != null) {
             localVarQueryParams.addAll(apiClient.parameterToPair("bypassRules", bypassRules));
-        if (suppressNotifications != null)
+        }
+        if (suppressNotifications != null) {
             localVarQueryParams.addAll(apiClient.parameterToPair("suppressNotifications", suppressNotifications));
-        if (expand != null)
+        }
+        if (expand != null) {
             localVarQueryParams.addAll(apiClient.parameterToPair("$expand", expand));
-        if (apiVersion != null)
+        }
+        if (apiVersion != null) {
             localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        }
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
@@ -269,7 +280,9 @@ public class WorkItemsApi {
                 "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
 
         final String[] localVarContentTypes = {
                 "application/json-patch+json"
@@ -436,16 +449,21 @@ public class WorkItemsApi {
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        if (validateOnly != null)
+        if (validateOnly != null) {
             localVarQueryParams.addAll(apiClient.parameterToPair("validateOnly", validateOnly));
-        if (bypassRules != null)
+        }
+        if (bypassRules != null) {
             localVarQueryParams.addAll(apiClient.parameterToPair("bypassRules", bypassRules));
-        if (suppressNotifications != null)
+        }
+        if (suppressNotifications != null) {
             localVarQueryParams.addAll(apiClient.parameterToPair("suppressNotifications", suppressNotifications));
-        if (expand != null)
+        }
+        if (expand != null) {
             localVarQueryParams.addAll(apiClient.parameterToPair("$expand", expand));
-        if (apiVersion != null)
+        }
+        if (apiVersion != null) {
             localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        }
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
@@ -455,7 +473,9 @@ public class WorkItemsApi {
                 "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
 
         final String[] localVarContentTypes = {
                 "application/json-patch+json"
