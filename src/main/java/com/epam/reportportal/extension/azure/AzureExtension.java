@@ -1,14 +1,15 @@
 package com.epam.reportportal.extension.azure;
 
-import static com.epam.ta.reportportal.ws.model.ErrorType.UNABLE_INTERACT_WITH_INTEGRATION;
-import static com.epam.ta.reportportal.ws.model.ErrorType.UNABLE_TO_LOAD_BINARY_DATA;
-import static java.util.Optional.ofNullable;
-
 import com.epam.reportportal.extension.IntegrationGroupEnum;
 import com.epam.reportportal.extension.PluginCommand;
 import com.epam.reportportal.extension.ReportPortalExtensionPoint;
+import com.epam.reportportal.extension.azure.command.binary.GetFileCommand;
 import com.epam.reportportal.extension.azure.command.connection.TestConnectionCommand;
 import com.epam.reportportal.extension.azure.entity.model.IntegrationParameters;
+import com.epam.reportportal.extension.azure.event.launch.AzureStartLaunchEventListener;
+import com.epam.reportportal.extension.azure.event.plugin.AzurePluginEventListener;
+import com.epam.reportportal.extension.azure.event.plugin.PluginEventHandlerFactory;
+import com.epam.reportportal.extension.azure.info.impl.PluginInfoProviderImpl;
 import com.epam.reportportal.extension.azure.rest.client.ApiClient;
 import com.epam.reportportal.extension.azure.rest.client.ApiException;
 import com.epam.reportportal.extension.azure.rest.client.Configuration;
@@ -16,31 +17,14 @@ import com.epam.reportportal.extension.azure.rest.client.api.*;
 import com.epam.reportportal.extension.azure.rest.client.auth.HttpBasicAuth;
 import com.epam.reportportal.extension.azure.rest.client.model.AttachmentInfo;
 import com.epam.reportportal.extension.azure.rest.client.model.AttachmentReference;
-import com.epam.reportportal.extension.azure.rest.client.model.workitem.JsonPatchOperation;
-import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemClassificationNode;
-import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemField;
-import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemType;
-import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemTypeFieldWithReferences;
-import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItem;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.*;
+import com.epam.reportportal.extension.azure.utils.MemoizingSupplier;
 import com.epam.reportportal.extension.bugtracking.BtsExtension;
 import com.epam.reportportal.extension.bugtracking.InternalTicket;
 import com.epam.reportportal.extension.bugtracking.InternalTicketAssembler;
 import com.epam.reportportal.extension.common.IntegrationTypeProperties;
 import com.epam.reportportal.extension.event.PluginEvent;
 import com.epam.reportportal.extension.event.StartLaunchEvent;
-import com.epam.reportportal.extension.azure.command.binary.GetFileCommand;
-import com.epam.reportportal.extension.azure.command.entity.CreateEntityCommand;
-import com.epam.reportportal.extension.azure.command.entity.DeleteEntityCommand;
-import com.epam.reportportal.extension.azure.command.entity.GetProjectEntities;
-import com.epam.reportportal.extension.azure.command.utils.RequestEntityConverter;
-import com.epam.reportportal.extension.azure.dao.EntityRepository;
-import com.epam.reportportal.extension.azure.dao.impl.EntityRepositoryImpl;
-import com.epam.reportportal.extension.azure.event.launch.AzureStartLaunchEventListener;
-import com.epam.reportportal.extension.azure.event.plugin.AzurePluginEventListener;
-import com.epam.reportportal.extension.azure.event.plugin.PluginEventHandlerFactory;
-import com.epam.reportportal.extension.azure.info.impl.PluginInfoProviderImpl;
-import com.epam.reportportal.extension.azure.service.EntityService;
-import com.epam.reportportal.extension.azure.utils.MemoizingSupplier;
 import com.epam.ta.reportportal.binary.impl.AttachmentDataStoreService;
 import com.epam.ta.reportportal.dao.*;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
@@ -54,23 +38,11 @@ import com.epam.ta.reportportal.ws.model.externalsystem.AllowedValue;
 import com.epam.ta.reportportal.ws.model.externalsystem.PostFormField;
 import com.epam.ta.reportportal.ws.model.externalsystem.PostTicketRQ;
 import com.epam.ta.reportportal.ws.model.externalsystem.Ticket;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import java.io.*;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.DSLContext;
 import org.pf4j.Extension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,11 +57,20 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.epam.ta.reportportal.ws.model.ErrorType.UNABLE_INTERACT_WITH_INTEGRATION;
+import static com.epam.ta.reportportal.ws.model.ErrorType.UNABLE_TO_LOAD_BINARY_DATA;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -129,7 +110,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private static final String IMAGE_CONTENT = "image";
 
-	private final String AUTH_NAME = "accessToken";
+	private static final String AUTH_NAME = "accessToken";
 
 	private static final Integer DEPTH = 15;
 
@@ -137,15 +118,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private final Supplier<Map<String, PluginCommand<?>>> pluginCommandMapping = new MemoizingSupplier<>(this::getCommands);
 
-	private final ObjectMapper objectMapper;
-	private final RequestEntityConverter requestEntityConverter;
-
 	private final Supplier<ApplicationListener<PluginEvent>> pluginLoadedListenerSupplier;
 	private final Supplier<ApplicationListener<StartLaunchEvent>> startLaunchEventListenerSupplier;
-
-	private final Supplier<EntityRepository> entityRepositorySupplier;
-
-	private final Supplier<EntityService> entityServiceSupplier;
 
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -154,16 +128,10 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	private DataSource dataSource;
 
 	@Autowired
-	private DSLContext dsl;
-
-	@Autowired
 	private IntegrationTypeRepository integrationTypeRepository;
 
 	@Autowired
 	private IntegrationRepository integrationRepository;
-
-	@Autowired
-	private ProjectRepository projectRepository;
 
 	@Autowired
 	private LaunchRepository launchRepository;
@@ -191,7 +159,6 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	public AzureExtension(Map<String, Object> initParams) {
 		resourcesDir = IntegrationTypeProperties.RESOURCES_DIRECTORY.getValue(initParams).map(String::valueOf).orElse("");
-		objectMapper = configureObjectMapper();
 
 		pluginLoadedListenerSupplier = new MemoizingSupplier<>(() -> new AzurePluginEventListener(PLUGIN_ID,
 				new PluginEventHandlerFactory(integrationTypeRepository,
@@ -200,21 +167,6 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 				)
 		));
 		startLaunchEventListenerSupplier = new MemoizingSupplier<>(() -> new AzureStartLaunchEventListener(launchRepository));
-
-		requestEntityConverter = new RequestEntityConverter(objectMapper);
-
-		entityRepositorySupplier = new MemoizingSupplier<>(() -> new EntityRepositoryImpl(dsl));
-
-		entityServiceSupplier = new MemoizingSupplier<>(() -> new EntityService(entityRepositorySupplier.get()));
-	}
-
-	protected ObjectMapper configureObjectMapper() {
-		ObjectMapper om = new ObjectMapper();
-		om.setAnnotationIntrospector(new JacksonAnnotationIntrospector());
-		om.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true);
-		om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		om.registerModule(new JavaTimeModule());
-		return om;
 	}
 
 	@Override
@@ -272,11 +224,6 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	private Map<String, PluginCommand<?>> getCommands() {
 		Map<String, PluginCommand<?>> pluginCommandMapping = new HashMap<>();
 		pluginCommandMapping.put("getFile", new GetFileCommand(resourcesDir, BINARY_DATA_PROPERTIES_FILE_ID));
-		pluginCommandMapping.put("createEntity",
-				new CreateEntityCommand(projectRepository, requestEntityConverter, entityServiceSupplier.get())
-		);
-		pluginCommandMapping.put("getProjectEntities", new GetProjectEntities(projectRepository, entityServiceSupplier.get()));
-		pluginCommandMapping.put("deleteEntity", new DeleteEntityCommand(projectRepository, entityServiceSupplier.get()));
 		pluginCommandMapping.put("testConnection", new TestConnectionCommand());
 		return pluginCommandMapping;
 	}
@@ -512,7 +459,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		} catch (ApiException e) {
 			// Some special fields return 404 on request, we will skip them
 			if (e.getCode() == 404) {
-				return Optional.ofNullable(null);
+				return Optional.empty();
 			} else {
 				throw e;
 			}
@@ -646,9 +593,11 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 			String url = attachmentInfo.getUrl();
 
 			if (attachmentInfo.getContentType().contains(IMAGE_CONTENT)) {
-				descriptionBuilder.append("Attachment:<br>" + "<img src=\"" + url + "\" alt=\"" + attachmentInfo.getFileName() + "\">");
+				descriptionBuilder.append("Attachment:<br>").append("<img src=\"").append(url).append("\" alt=\"")
+						.append(attachmentInfo.getFileName()).append("\">");
 			} else {
-				descriptionBuilder.append("Attachment - " + "<a href=\"" + url + "\">" + attachmentInfo.getFileName() + "</a>");
+				descriptionBuilder.append("Attachment - ").append("<a href=\"").append(url).append("\">")
+						.append(attachmentInfo.getFileName()).append("</a>");
 			}
 		}
 	}
