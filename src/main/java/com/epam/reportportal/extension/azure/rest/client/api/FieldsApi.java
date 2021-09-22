@@ -72,8 +72,9 @@ public class FieldsApi {
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        if (apiVersion != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        if (apiVersion != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        }
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
@@ -83,7 +84,9 @@ public class FieldsApi {
             "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
 
         final String[] localVarContentTypes = {
             
