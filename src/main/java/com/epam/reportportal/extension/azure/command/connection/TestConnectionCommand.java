@@ -15,6 +15,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.epam.reportportal.extension.azure.AzureExtension.*;
+
 public class TestConnectionCommand implements PluginCommand<Boolean> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestConnectionCommand.class);
@@ -25,10 +27,10 @@ public class TestConnectionCommand implements PluginCommand<Boolean> {
 
         ApiClient defaultClient = Configuration.getDefaultApiClient();
 
-        String organizationUrl = params.get("url").toString();
+        String organizationUrl = params.get(URL).toString();
         String organizationName = organizationUrl.replace(defaultClient.getBasePath(), "");
-        String projectName = params.get("project").toString();
-        String personalAccessToken = params.get("oauthAccessKey").toString();
+        String projectName = params.get(PROJECT).toString();
+        String personalAccessToken = params.get(OAUTH_ACCESS_KEY).toString();
 
         HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("accessToken");
         basicAuth.setPassword(personalAccessToken);

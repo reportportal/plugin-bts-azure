@@ -71,12 +71,15 @@ public class ProjectsApi {
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        if (includeCapabilities != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("includeCapabilities", includeCapabilities));
-        if (includeHistory != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("includeHistory", includeHistory));
-        if (apiVersion != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        if (includeCapabilities != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("includeCapabilities", includeCapabilities));
+        }
+        if (includeHistory != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("includeHistory", includeHistory));
+        }
+        if (apiVersion != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        }
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
@@ -86,7 +89,9 @@ public class ProjectsApi {
             "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
 
         final String[] localVarContentTypes = {
             

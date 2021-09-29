@@ -72,10 +72,12 @@ public class ClassificationNodesApi {
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        if (depth != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("$depth", depth));
-        if (apiVersion != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        if (depth != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("$depth", depth));
+        }
+        if (apiVersion != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        }
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
@@ -85,7 +87,9 @@ public class ClassificationNodesApi {
             "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
 
         final String[] localVarContentTypes = {
             

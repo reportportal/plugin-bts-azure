@@ -79,14 +79,18 @@ public class AttachmentsApi {
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        if (fileName != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("fileName", fileName));
-        if (uploadType != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("uploadType", uploadType));
-        if (areaPath != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("areaPath", areaPath));
-        if (apiVersion != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        if (fileName != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("fileName", fileName));
+        }
+        if (uploadType != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("uploadType", uploadType));
+        }
+        if (areaPath != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("areaPath", areaPath));
+        }
+        if (apiVersion != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        }
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
@@ -96,7 +100,9 @@ public class AttachmentsApi {
             "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
 
         final String[] localVarContentTypes = {
             "application/octet-stream"
@@ -250,12 +256,15 @@ public class AttachmentsApi {
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        if (fileName != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("fileName", fileName));
-        if (download != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("download", download));
-        if (apiVersion != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        if (fileName != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("fileName", fileName));
+        }
+        if (download != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("download", download));
+        }
+        if (apiVersion != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        }
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
@@ -265,7 +274,9 @@ public class AttachmentsApi {
             "application/octet-stream", "application/zip"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
 
         final String[] localVarContentTypes = {
             
@@ -417,14 +428,17 @@ public class AttachmentsApi {
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        if (fileName != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("fileName", fileName));
-        if (apiVersion != null)
-        localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        if (fileName != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("fileName", fileName));
+        }
+        if (apiVersion != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("api-version", apiVersion));
+        }
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        if (contentRangeHeader != null)
-        localVarHeaderParams.put("contentRangeHeader", apiClient.parameterToString(contentRangeHeader));
+        if (contentRangeHeader != null) {
+            localVarHeaderParams.put("contentRangeHeader", apiClient.parameterToString(contentRangeHeader));
+        }
 
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
@@ -432,7 +446,9 @@ public class AttachmentsApi {
             "application/json"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
 
         final String[] localVarContentTypes = {
             "application/octet-stream"
