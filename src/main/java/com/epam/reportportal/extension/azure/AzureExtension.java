@@ -290,15 +290,23 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 			String id = replaceSeparators(field.getId());
 			String operation = "add";
 			String path = "/fields/" + id;
-			String value = field.getValue().get(0);
+			String value;
+			if (field.getId().equals("System_AreaId") || field.getId().equals("System_IterationId")){
+				String searchedValue = field.getValue().get(0);
+				value = (field.getDefinedValues().stream()
+						.filter(allowedValue -> allowedValue.getValueName().equals(searchedValue))
+						.findFirst().get().getValueId());
+			} else {
+				value = field.getValue().get(0);
+			}
 
 			if ("issuetype".equals(field.getId())) {
-				issueType = field.getValue().get(0);
+				issueType = value;
 				continue;
 			}
 			if ("System.Description".equals(id)) {
 				path = "/fields/System.Description";
-				value = field.getValue().get(0) + getDescriptionFromTestItem(ticketRQ, attachmentsURL);
+				value = value + getDescriptionFromTestItem(ticketRQ, attachmentsURL);
 			}
 			patchOperationList.add(new JsonPatchOperation(null, operation, path, value));
 		}
@@ -345,10 +353,14 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 				detailedFieldOptional.filter(detailedField -> !detailedField.isReadOnly() && !detailedField.getName().equals("Work Item Type"))
 						.ifPresent(f -> {
 							List<AllowedValue> allowedValues = prepareAllowedValues(field, areaNodes, iterationNodes);
-							List<String> defaultValue = prepareDefaultValue(field);
+							List<String> defaultValue = new ArrayList<>();
+							if (allowedValues.size() > 0){
+								defaultValue.add(allowedValues.get(1).getValueName());
+							}
 
-							ticketFields.add(new PostFormField(replaceIllegalCharacters(field.getReferenceName()), field.getName(),
-									f.getType().toString(), field.isAlwaysRequired(), defaultValue, allowedValues));
+							PostFormField postFormField = new PostFormField(replaceIllegalCharacters(field.getReferenceName()), field.getName(),
+									f.getType().toString(), field.isAlwaysRequired(), defaultValue, allowedValues);
+							ticketFields.add(postFormField);
 						});
 			}
 			return sortTicketFields(ticketFields, issueType);
@@ -494,14 +506,6 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 			allowed.add(0, new AllowedValue("Empty_String", ""));
 		}
 		return allowed;
-	}
-
-	private List<String> prepareDefaultValue(WorkItemTypeFieldWithReferences field) {
-		List<String> defaultValue = new ArrayList<>();
-		if (field.getDefaultValue() != null) {
-			defaultValue.add(replaceIllegalCharacters(field.getDefaultValue().toString()));
-		}
-		return defaultValue;
 	}
 
 	// ID value should not contain spaces and dots
