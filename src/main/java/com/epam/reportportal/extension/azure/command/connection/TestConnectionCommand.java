@@ -8,29 +8,40 @@ import com.epam.reportportal.extension.azure.rest.client.Configuration;
 import com.epam.reportportal.extension.azure.rest.client.api.ProjectsApi;
 import com.epam.reportportal.extension.azure.rest.client.auth.HttpBasicAuth;
 import com.epam.reportportal.extension.azure.rest.client.model.TeamProject;
+import com.epam.reportportal.extension.bugtracking.BtsConstants;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import java.util.Map;
+import org.jasypt.util.text.BasicTextEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.epam.reportportal.extension.azure.AzureExtension.*;
+import java.util.Map;
+
+import static com.epam.reportportal.extension.azure.AzureExtension.PROJECT;
+import static com.epam.reportportal.extension.azure.AzureExtension.URL;
+import static com.epam.ta.reportportal.ws.model.ErrorType.UNABLE_INTERACT_WITH_INTEGRATION;
 
 public class TestConnectionCommand implements PluginCommand<Boolean> {
+
+    private final BasicTextEncryptor basicTextEncryptor;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestConnectionCommand.class);
     private static final String API_VERSION = "6.0";
 
+    public TestConnectionCommand(BasicTextEncryptor basicTextEncryptor) {
+        this.basicTextEncryptor = basicTextEncryptor;
+    }
+
     @Override
     public Boolean executeCommand(Integration integration, Map<String, Object> params) {
-
         ApiClient defaultClient = Configuration.getDefaultApiClient();
 
         String organizationUrl = params.get(URL).toString();
         String organizationName = organizationUrl.replace(defaultClient.getBasePath(), "");
         String projectName = params.get(PROJECT).toString();
-        String personalAccessToken = params.get(OAUTH_ACCESS_KEY).toString();
+        String personalAccessToken =  basicTextEncryptor.decrypt(BtsConstants.OAUTH_ACCESS_KEY.getParam(integration.getParams(), String.class)
+                .orElseThrow(() -> new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION, "OAUTH key cannot be NULL")));
 
         HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("accessToken");
         basicAuth.setPassword(personalAccessToken);

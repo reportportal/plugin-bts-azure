@@ -19,6 +19,7 @@ import com.epam.reportportal.extension.azure.rest.client.model.AttachmentInfo;
 import com.epam.reportportal.extension.azure.rest.client.model.AttachmentReference;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.*;
 import com.epam.reportportal.extension.azure.utils.MemoizingSupplier;
+import com.epam.reportportal.extension.bugtracking.BtsConstants;
 import com.epam.reportportal.extension.bugtracking.BtsExtension;
 import com.epam.reportportal.extension.bugtracking.InternalTicket;
 import com.epam.reportportal.extension.bugtracking.InternalTicketAssembler;
@@ -43,6 +44,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jasypt.util.text.BasicTextEncryptor;
 import org.pf4j.Extension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,6 +148,9 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	private DataEncoder dataEncoder;
 
 	@Autowired
+	private BasicTextEncryptor basicTextEncryptor;
+
+	@Autowired
 	private LogRepository logRepository;
 	private IntegrationParameters params;
 	private ApiClient defaultClient;
@@ -224,7 +229,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	private Map<String, PluginCommand<?>> getCommands() {
 		Map<String, PluginCommand<?>> pluginCommandMapping = new HashMap<>();
 		pluginCommandMapping.put("getFile", new GetFileCommand(resourcesDir, BINARY_DATA_PROPERTIES_FILE_ID));
-		pluginCommandMapping.put("testConnection", new TestConnectionCommand());
+		pluginCommandMapping.put("testConnection", new TestConnectionCommand(basicTextEncryptor));
 		return pluginCommandMapping;
 	}
 
@@ -376,7 +381,9 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private void initFields(Integration integration) {
 		params = getParams(integration);
-		defaultClient = getConfiguredApiClient(params.getPersonalAccessToken());
+		String personalAccessToken = basicTextEncryptor.decrypt(BtsConstants.OAUTH_ACCESS_KEY.getParam(integration.getParams(), String.class)
+				.orElseThrow(() -> new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION, "OAUTH key cannot be NULL")));
+		defaultClient = getConfiguredApiClient(personalAccessToken);
 		organizationName = extractOrganizationNameFromUrl(defaultClient, params.getOrganizationUrl());
 	}
 
