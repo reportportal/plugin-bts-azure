@@ -4,7 +4,7 @@ import {
   TOKEN_ATTRIBUTE_KEY,
 } from 'components/constants';
 
-const authTypeAttributesOptions = [{ value: true, label: 'ApiKey' }];
+const authTypeAttributesOptions = [{ value: 'OAUTH', label: 'ApiKey' }];
 
 export const AzureIntegrationFormFields = (props) => {
   const { initialize, disabled, lineAlign, initialData, ...extensionProps } = props;
@@ -75,7 +75,6 @@ export const AzureIntegrationFormFields = (props) => {
         disabled={disabled}
         label="Authorization type"
         lineAlign={lineAlign}
-        withoutProvider
       >
         <FieldErrorHint>
           <InputDropdown
