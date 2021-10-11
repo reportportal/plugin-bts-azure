@@ -152,8 +152,21 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	@Autowired
 	private LogRepository logRepository;
+
+	private WorkItemsApi workItemsApi;
+
+	private WorkItemTypesApi workItemTypesApi;
+
+	private FieldsApi fieldsApi;
+
+	private WorkItemTypesFieldApi workItemTypesFieldApi;
+
+	private ClassificationNodesApi classificationNodesApi;
+
 	private IntegrationParameters params;
+
 	private ApiClient defaultClient;
+
 	private String organizationName;
 
 	private Supplier<InternalTicketAssembler> ticketAssembler = Suppliers.memoize(() -> new InternalTicketAssembler(logRepository,
@@ -172,6 +185,41 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 				)
 		));
 		startLaunchEventListenerSupplier = new MemoizingSupplier<>(() -> new AzureStartLaunchEventListener(launchRepository));
+	}
+
+	public WorkItemTypesApi getWorkItemTypesApi() {
+		if (workItemTypesApi == null){
+			workItemTypesApi = new WorkItemTypesApi(defaultClient);
+		}
+		return workItemTypesApi;
+	}
+
+	public FieldsApi getFieldsApi() {
+		if (fieldsApi == null){
+			fieldsApi = new FieldsApi(defaultClient);
+		}
+		return fieldsApi;
+	}
+
+	public WorkItemTypesFieldApi getWorkItemTypesFieldApi() {
+		if (workItemTypesFieldApi == null){
+			workItemTypesFieldApi = new WorkItemTypesFieldApi(defaultClient);
+		}
+		return workItemTypesFieldApi;
+	}
+
+	public ClassificationNodesApi getClassificationNodesApi() {
+		if (classificationNodesApi == null){
+			classificationNodesApi = new ClassificationNodesApi(defaultClient);
+		}
+		return classificationNodesApi;
+	}
+
+	public WorkItemsApi getWorkItemsApi() {
+		if (workItemsApi == null){
+			workItemsApi = new WorkItemsApi(defaultClient);
+		}
+		return workItemsApi;
 	}
 
 	@Override
@@ -243,7 +291,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	public Optional<Ticket> getTicket(String id, Integration integration) {
 		initFields(integration);
 
-		WorkItemsApi workItemsApi = new WorkItemsApi(defaultClient);
+		WorkItemsApi workItemsApi = getWorkItemsApi();
 		try {
 			WorkItem workItem = workItemsApi
 					.workItemsGetWorkItem(organizationName, Integer.valueOf(id), params.getProjectName(), API_VERSION,
@@ -268,7 +316,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		List<PostFormField> fields = ticketRQ.getFields();
 		issueType = getPatchOperationsForFields(ticketRQ, patchOperationList, issueType, fields, attachmentsURL);
 
-		WorkItemsApi workItemsApi = new WorkItemsApi(defaultClient);
+		WorkItemsApi workItemsApi = getWorkItemsApi();
 		WorkItem workItem = null;
 		List<JsonPatchOperation> patchOperationsForAttachment = new ArrayList<>();
 
@@ -339,14 +387,14 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		initFields(integration);
 		String projectName = params.getProjectName();
 
-		ClassificationNodesApi nodesApi = new ClassificationNodesApi(defaultClient);
+		ClassificationNodesApi nodesApi = getClassificationNodesApi();
 		Map<String, List<WorkItemClassificationNode>> classificationNodes = getClassificationNodes(nodesApi,
 				organizationName, projectName);
 		List<WorkItemClassificationNode> areaNodes = classificationNodes.get(AREA);
 		List<WorkItemClassificationNode> iterationNodes = classificationNodes.get(ITERATION);
 
-		WorkItemTypesFieldApi issueTypeFieldsApi = new WorkItemTypesFieldApi(defaultClient);
-		FieldsApi fieldsApi = new FieldsApi(defaultClient);
+		WorkItemTypesFieldApi issueTypeFieldsApi = getWorkItemTypesFieldApi();
+		FieldsApi fieldsApi = getFieldsApi();
 		List<PostFormField> ticketFields = new ArrayList<>();
 		try {
 			List<WorkItemTypeFieldWithReferences> issueTypeFields = issueTypeFieldsApi
@@ -380,7 +428,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	public List<String> getIssueTypes(Integration integration) {
 		initFields(integration);
 
-		WorkItemTypesApi issueTypesApi = new WorkItemTypesApi(defaultClient);
+		WorkItemTypesApi issueTypesApi = getWorkItemTypesApi();
 		try {
 			List<WorkItemType> issueTypes = issueTypesApi.workItemTypesList(organizationName, params.getProjectName(), API_VERSION);
 			return issueTypes.stream().map(WorkItemType::getName).collect(Collectors.toList());
