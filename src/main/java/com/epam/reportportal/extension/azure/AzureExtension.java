@@ -188,38 +188,23 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	}
 
 	public WorkItemTypesApi getWorkItemTypesApi() {
-		if (workItemTypesApi == null){
-			workItemTypesApi = new WorkItemTypesApi(defaultClient);
-		}
-		return workItemTypesApi;
+		return Optional.ofNullable(workItemTypesApi).orElse(new WorkItemTypesApi(defaultClient));
 	}
 
 	public FieldsApi getFieldsApi() {
-		if (fieldsApi == null){
-			fieldsApi = new FieldsApi(defaultClient);
-		}
-		return fieldsApi;
+		return Optional.ofNullable(fieldsApi).orElse(new FieldsApi(defaultClient));
 	}
 
 	public WorkItemTypesFieldApi getWorkItemTypesFieldApi() {
-		if (workItemTypesFieldApi == null){
-			workItemTypesFieldApi = new WorkItemTypesFieldApi(defaultClient);
-		}
-		return workItemTypesFieldApi;
+		return Optional.ofNullable(workItemTypesFieldApi).orElse(new WorkItemTypesFieldApi(defaultClient));
 	}
 
 	public ClassificationNodesApi getClassificationNodesApi() {
-		if (classificationNodesApi == null){
-			classificationNodesApi = new ClassificationNodesApi(defaultClient);
-		}
-		return classificationNodesApi;
+		return Optional.ofNullable(classificationNodesApi).orElse(new ClassificationNodesApi(defaultClient));
 	}
 
 	public WorkItemsApi getWorkItemsApi() {
-		if (workItemsApi == null){
-			workItemsApi = new WorkItemsApi(defaultClient);
-		}
-		return workItemsApi;
+		return Optional.ofNullable(workItemsApi).orElse(new WorkItemsApi(defaultClient));
 	}
 
 	@Override
