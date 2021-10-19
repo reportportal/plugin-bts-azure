@@ -5,6 +5,9 @@ import {
 } from 'components/constants';
 
 const authTypeAttributesOptions = [{ value: 'OAUTH', label: 'ApiKey' }];
+const DEFAULT_FORM_CONFIG = {
+  authType: 'OAUTH',
+};
 
 export const AzureIntegrationFormFields = (props) => {
   const { initialize, disabled, lineAlign, initialData, ...extensionProps } = props;
@@ -103,5 +106,5 @@ export const AzureIntegrationFormFields = (props) => {
 };
 
 AzureIntegrationFormFields.defaultProps = {
-  initialData: {},
+  initialData: DEFAULT_FORM_CONFIG,
 };
