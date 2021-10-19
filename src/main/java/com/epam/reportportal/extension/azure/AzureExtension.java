@@ -334,6 +334,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 				value = (field.getDefinedValues().stream()
 						.filter(allowedValue -> allowedValue.getValueName().equals(searchedValue))
 						.findFirst().get().getValueId());
+			} else if (field.getValue().size() == 0 && !field.getIsRequired()) {
+					continue;
 			} else {
 				value = field.getValue().get(0);
 			}
@@ -393,7 +395,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 							List<AllowedValue> allowedValues = prepareAllowedValues(field, areaNodes, iterationNodes);
 							List<String> defaultValue = new ArrayList<>();
 							if (allowedValues.size() > 0){
-								defaultValue.add(allowedValues.get(1).getValueName());
+								defaultValue.add(allowedValues.get(0).getValueName());
 							}
 
 							PostFormField postFormField = new PostFormField(replaceIllegalCharacters(field.getReferenceName()), field.getName(),
@@ -539,11 +541,6 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 					allowed.add(new AllowedValue(replaceIllegalCharacters(value.toString()), value.toString()));
 				}
 				break;
-		}
-
-		// Add an empty line to each field with a non-empty list of allowed values
-		if (allowed.size() > 0) {
-			allowed.add(0, new AllowedValue("Empty_String", ""));
 		}
 		return allowed;
 	}
