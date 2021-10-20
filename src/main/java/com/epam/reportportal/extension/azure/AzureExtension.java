@@ -324,9 +324,10 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	}
 
 	private String getPatchOperationsForFields(PostTicketRQ ticketRQ, List<JsonPatchOperation> patchOperationList, String issueType, List<PostFormField> fields, List<AttachmentInfo> attachmentsURL) {
+		String valueDescription = "";
+		String operation = "add";
 		for (PostFormField field : fields) {
 			String id = replaceSeparators(field.getId());
-			String operation = "add";
 			String path = "/fields/" + id;
 			String value;
 			if (field.getId().equals("System_AreaId") || field.getId().equals("System_IterationId")){
@@ -345,11 +346,14 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 				continue;
 			}
 			if ("System.Description".equals(id)) {
-				path = "/fields/System.Description";
-				value = value + getDescriptionFromTestItem(ticketRQ, attachmentsURL);
+				valueDescription = value;
+				continue;
 			}
 			patchOperationList.add(new JsonPatchOperation(null, operation, path, value));
 		}
+		valueDescription = valueDescription + getDescriptionFromTestItem(ticketRQ, attachmentsURL);
+		String pathDescription = "/fields/System.Description";
+		patchOperationList.add(new JsonPatchOperation(null, operation, pathDescription, valueDescription));
 		return issueType;
 	}
 
