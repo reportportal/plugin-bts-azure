@@ -540,6 +540,10 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 					allowed.add(new AllowedValue(node.getId().toString(), node.getName()));
 				}
 				break;
+			case "State":
+				String defaultValue = field.getDefaultValue().toString();
+				allowed.add(new AllowedValue(replaceIllegalCharacters(defaultValue), defaultValue));
+				break;
 			default:
 				for (Object value : field.getAllowedValues()) {
 					allowed.add(new AllowedValue(replaceIllegalCharacters(value.toString()), value.toString()));
