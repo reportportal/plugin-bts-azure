@@ -63,7 +63,7 @@ export const AzureIntegrationFormFields = (props) => {
       <IntegrationFormField
         name={PROJECT_ATTRIBUTE_KEY}
         disabled={disabled}
-        label="Project name in BTS"
+        label="Project key in BTS"
         required
         maxLength="55"
         validate={btsProject}
