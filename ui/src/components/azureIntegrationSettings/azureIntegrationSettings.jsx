@@ -21,7 +21,7 @@ export const AzureIntegrationSettings = (props) => {
     },
     {
       value: data.integrationParameters[PROJECT_ATTRIBUTE_KEY],
-      message: 'Project Name',
+      message: 'Project key in BTS',
     },
   ];
 
