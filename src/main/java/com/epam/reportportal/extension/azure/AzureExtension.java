@@ -21,7 +21,6 @@ import com.epam.reportportal.extension.azure.rest.client.model.workitem.*;
 import com.epam.reportportal.extension.azure.utils.MemoizingSupplier;
 import com.epam.reportportal.extension.bugtracking.BtsConstants;
 import com.epam.reportportal.extension.bugtracking.BtsExtension;
-import com.epam.reportportal.extension.bugtracking.InternalTicket;
 import com.epam.reportportal.extension.bugtracking.InternalTicketAssembler;
 import com.epam.reportportal.extension.common.IntegrationTypeProperties;
 import com.epam.reportportal.extension.event.PluginEvent;
@@ -40,10 +39,13 @@ import com.epam.ta.reportportal.ws.model.externalsystem.PostFormField;
 import com.epam.ta.reportportal.ws.model.externalsystem.PostTicketRQ;
 import com.epam.ta.reportportal.ws.model.externalsystem.Ticket;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.pf4j.Extension;
 import org.slf4j.Logger;
@@ -122,6 +124,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private final Supplier<ApplicationListener<PluginEvent>> pluginLoadedListenerSupplier;
 	private final Supplier<ApplicationListener<StartLaunchEvent>> startLaunchEventListenerSupplier;
+	private final MimeTypes mimeRepository;
 
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -185,6 +188,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 				)
 		));
 		startLaunchEventListenerSupplier = new MemoizingSupplier<>(() -> new AzureStartLaunchEventListener(launchRepository));
+		mimeRepository = TikaConfig.getDefaultConfig().getMimeRepository();;
 	}
 
 	public WorkItemTypesApi getWorkItemTypesApi() {
@@ -295,7 +299,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 		List<JsonPatchOperation> patchOperationList = new ArrayList<>();
 
-		uploadAttachmentToAzure(ticketRQ, attachmentsURL);
+		ticketRQ.getBackLinks().keySet().forEach(backLinkId -> uploadAttachmentToAzure(ticketRQ, attachmentsURL, backLinkId));
 
 		String issueType = null;
 		List<PostFormField> fields = ticketRQ.getFields();
@@ -651,24 +655,29 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		}
 	}
 
-	private void uploadAttachmentToAzure(PostTicketRQ ticketRQ, List<AttachmentInfo> attachmentsURL) {
-		List<InternalTicket.LogEntry> logs = ofNullable(ticketAssembler.get().apply(ticketRQ).getLogs()).orElseGet(Lists::newArrayList);
-		List<InternalTicket.LogEntry> attachments = new ArrayList<>();
-		logs.stream()
-				.filter(InternalTicket.LogEntry::isHasAttachment)
-				.forEach(entry -> attachments.add(entry));
-		for (InternalTicket.LogEntry attachment : attachments) {
+	private void uploadAttachmentToAzure(PostTicketRQ ticketRQ, List<AttachmentInfo> attachmentsURL, Long backLinkId) {
+		List<Attachment> attachments = new ArrayList<>();
+		itemRepository.findById(backLinkId).ifPresent(item -> ofNullable(item.getLaunchId()).ifPresent(launchId -> {
+			List<Log> logs = logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(launchId,
+					Collections.singletonList(item.getItemId()),
+					ticketRQ.getNumberOfLogs()
+			);
+			logs.forEach(log -> ofNullable(log.getAttachment()).ifPresent(attachment -> attachments.add(attachment)));
+		}));
+
+		for (Attachment attachment : attachments) {
 			Optional<InputStream> fileOptional = attachmentDataStoreService.load(attachment.getFileId());
 			if (fileOptional.isPresent()) {
 				try (InputStream file = fileOptional.get()) {
+					MimeType mimeType = mimeRepository.forName(attachment.getContentType());
 					byte[] bytes = ByteStreams.toByteArray(file);
 					AttachmentsApi attachmentsApi = new AttachmentsApi(defaultClient);
-					String fileName = attachment.getDecodedFileName();
+					String fileName = attachment.getFileId() + mimeType.getExtension();
 					AttachmentReference attachmentReference = attachmentsApi.attachmentsCreate(organizationName, bytes, params.getProjectName(), API_VERSION,
 							fileName, null, null);
-					attachmentsURL.add(new AttachmentInfo(attachment.getDecodedFileName(),
+					attachmentsURL.add(new AttachmentInfo(fileName,
 							attachment.getFileId(), attachmentReference.getUrl(), attachment.getContentType()));
-				} catch (IOException | ApiException e) {
+				} catch (IOException | ApiException | MimeTypeException e) {
 					LOGGER.error("Unable to post ticket : " + e.getMessage(), e);
 					throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION, "Unable to post ticket: " + e.getMessage(), e);
 				}
