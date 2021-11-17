@@ -183,7 +183,7 @@ class AzureExtensionTest {
 		postTicketRQ.setIsIncludeScreenshots(true);
 		postTicketRQ.setTestItemId(12L);
 		Map<Long, String> backLinks = new HashMap<>();
-		backLinks.put(1L, "https://alpha.reportportal.io/");
+		backLinks.put(12L, "https://alpha.reportportal.io/");
 		postTicketRQ.setBackLinks(backLinks);
 		Ticket ticket = azureExtension.submitTicket(postTicketRQ, integration);
 
