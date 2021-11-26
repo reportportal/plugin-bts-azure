@@ -14,7 +14,7 @@ export const AzureIntegrationFormFields = (props) => {
   const {
     lib: { React },
     components: { IntegrationFormField, FieldErrorHint, Input, InputTextArea, InputDropdown },
-    validators: { requiredField, btsUrl, btsProject, btsIntegrationName },
+    validators: { requiredField, btsUrl, btsProjectKey, btsIntegrationName },
   } = extensionProps;
   React.useEffect(() => {
     initialize(initialData);
@@ -66,7 +66,7 @@ export const AzureIntegrationFormFields = (props) => {
         label="Project key in BTS"
         required
         maxLength="55"
-        validate={btsProject}
+        validate={btsProjectKey}
         lineAlign={lineAlign}
       >
         <FieldErrorHint>
