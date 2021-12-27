@@ -1,5 +1,6 @@
 package com.epam.reportportal.extension.azure;
 
+import com.epam.reportportal.extension.CommonPluginCommand;
 import com.epam.reportportal.extension.IntegrationGroupEnum;
 import com.epam.reportportal.extension.PluginCommand;
 import com.epam.reportportal.extension.ReportPortalExtensionPoint;
@@ -181,14 +182,14 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	public AzureExtension(Map<String, Object> initParams) {
 		resourcesDir = IntegrationTypeProperties.RESOURCES_DIRECTORY.getValue(initParams).map(String::valueOf).orElse("");
 
-		pluginLoadedListenerSupplier = new MemoizingSupplier<>(() -> new AzurePluginEventListener(PLUGIN_ID,
-				new PluginEventHandlerFactory(integrationTypeRepository,
-						integrationRepository,
-						new PluginInfoProviderImpl(resourcesDir, BINARY_DATA_PROPERTIES_FILE_ID)
-				)
-		));
+		pluginLoadedListenerSupplier = new MemoizingSupplier<>(() -> new AzurePluginEventListener(PLUGIN_ID, new PluginEventHandlerFactory(
+				integrationTypeRepository,
+				integrationRepository,
+				new PluginInfoProviderImpl(resourcesDir, BINARY_DATA_PROPERTIES_FILE_ID)
+		)));
 		startLaunchEventListenerSupplier = new MemoizingSupplier<>(() -> new AzureStartLaunchEventListener(launchRepository));
-		mimeRepository = TikaConfig.getDefaultConfig().getMimeRepository();;
+		mimeRepository = TikaConfig.getDefaultConfig().getMimeRepository();
+		;
 	}
 
 	public WorkItemTypesApi getWorkItemTypesApi() {
@@ -219,7 +220,12 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	}
 
 	@Override
-	public PluginCommand<?> getCommandToExecute(String commandName) {
+	public CommonPluginCommand<?> getCommonCommand(String commandName) {
+		throw new UnsupportedOperationException("Not supported yet");
+	}
+
+	@Override
+	public PluginCommand<?> getIntegrationCommand(String commandName) {
 		return pluginCommandMapping.get().get(commandName);
 	}
 
@@ -282,9 +288,14 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 		WorkItemsApi workItemsApi = getWorkItemsApi();
 		try {
-			WorkItem workItem = workItemsApi
-					.workItemsGetWorkItem(organizationName, Integer.valueOf(id), params.getProjectName(), API_VERSION,
-							null, null, null);
+			WorkItem workItem = workItemsApi.workItemsGetWorkItem(organizationName,
+					Integer.valueOf(id),
+					params.getProjectName(),
+					API_VERSION,
+					null,
+					null,
+					null
+			);
 			return Optional.of(convertWorkItemToTicket(workItem));
 		} catch (ApiException e) {
 			LOGGER.error("Unable to load ticket: " + e.getMessage(), e);
@@ -310,37 +321,58 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		List<JsonPatchOperation> patchOperationsForAttachment = new ArrayList<>();
 
 		try {
-			workItem = workItemsApi
-					.workItemsCreate(organizationName, patchOperationList, params.getProjectName(), issueType,
-							API_VERSION, null, null, null, null);
+			workItem = workItemsApi.workItemsCreate(organizationName,
+					patchOperationList,
+					params.getProjectName(),
+					issueType,
+					API_VERSION,
+					null,
+					null,
+					null,
+					null
+			);
 
 			if (!attachmentsURL.isEmpty()) {
 				getPatchOperationsForAttachments(patchOperationsForAttachment, attachmentsURL);
-				workItemsApi.workItemsUpdate(organizationName, patchOperationsForAttachment, workItem.getId(), params.getProjectName(),
-						API_VERSION, null, null, null, null);
+				workItemsApi.workItemsUpdate(organizationName,
+						patchOperationsForAttachment,
+						workItem.getId(),
+						params.getProjectName(),
+						API_VERSION,
+						null,
+						null,
+						null,
+						null
+				);
 			}
 			return convertWorkItemToTicket(workItem);
 		} catch (ApiException e) {
 			LOGGER.error("Unable to post issue: " + e.getMessage(), e);
 			throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
-					String.format("Unable to post issue. Code: %s, Message: %s log - ", e.getCode(), e.getMessage()), e);
+					String.format("Unable to post issue. Code: %s, Message: %s log - ", e.getCode(), e.getMessage()),
+					e
+			);
 		}
 	}
 
-	private String getPatchOperationsForFields(PostTicketRQ ticketRQ, List<JsonPatchOperation> patchOperationList, String issueType, List<PostFormField> fields, List<AttachmentInfo> attachmentsURL) {
+	private String getPatchOperationsForFields(PostTicketRQ ticketRQ, List<JsonPatchOperation> patchOperationList, String issueType,
+			List<PostFormField> fields, List<AttachmentInfo> attachmentsURL) {
 		String valueDescription = "";
 		String operation = "add";
 		for (PostFormField field : fields) {
 			String id = replaceSeparators(field.getId());
 			String path = "/fields/" + id;
 			String value;
-			if (field.getId().equals("System_AreaId") || field.getId().equals("System_IterationId")){
+			if (field.getId().equals("System_AreaId") || field.getId().equals("System_IterationId")) {
 				String searchedValue = field.getValue().get(0);
-				value = (field.getDefinedValues().stream()
+				value = (field.getDefinedValues()
+						.stream()
 						.filter(allowedValue -> allowedValue.getValueName().equals(searchedValue))
-						.findFirst().get().getValueId());
+						.findFirst()
+						.get()
+						.getValueId());
 			} else if (field.getValue().size() == 0 && !field.getIsRequired()) {
-					continue;
+				continue;
 			} else {
 				value = field.getValue().get(0);
 			}
@@ -361,7 +393,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		return issueType;
 	}
 
-	private void getPatchOperationsForAttachments(List<JsonPatchOperation> patchOperationsForAttachment, List<AttachmentInfo> attachmentsURL) {
+	private void getPatchOperationsForAttachments(List<JsonPatchOperation> patchOperationsForAttachment,
+			List<AttachmentInfo> attachmentsURL) {
 		String operation = "add";
 		String path = "/relations/-";
 		for (AttachmentInfo attachmentURL : attachmentsURL) {
@@ -383,8 +416,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		String projectName = params.getProjectName();
 
 		ClassificationNodesApi nodesApi = getClassificationNodesApi();
-		Map<String, List<WorkItemClassificationNode>> classificationNodes = getClassificationNodes(nodesApi,
-				organizationName, projectName);
+		Map<String, List<WorkItemClassificationNode>> classificationNodes = getClassificationNodes(nodesApi, organizationName, projectName);
 		List<WorkItemClassificationNode> areaNodes = classificationNodes.get(AREA);
 		List<WorkItemClassificationNode> iterationNodes = classificationNodes.get(ITERATION);
 
@@ -392,30 +424,42 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		FieldsApi fieldsApi = getFieldsApi();
 		List<PostFormField> ticketFields = new ArrayList<>();
 		try {
-			List<WorkItemTypeFieldWithReferences> issueTypeFields = issueTypeFieldsApi
-					.workItemTypesFieldList(organizationName, projectName, issueType, API_VERSION, EXPAND);
+			List<WorkItemTypeFieldWithReferences> issueTypeFields = issueTypeFieldsApi.workItemTypesFieldList(
+					organizationName,
+					projectName,
+					issueType,
+					API_VERSION,
+					EXPAND
+			);
 
 			for (WorkItemTypeFieldWithReferences field : issueTypeFields) {
 				Optional<WorkItemField> detailedFieldOptional = getFieldDetails(fieldsApi, organizationName, projectName, field);
 
-				detailedFieldOptional.filter(detailedField -> !detailedField.isReadOnly() && !detailedField.getName().equals("Work Item Type"))
-						.ifPresent(f -> {
-							List<AllowedValue> allowedValues = prepareAllowedValues(field, areaNodes, iterationNodes);
-							List<String> defaultValue = new ArrayList<>();
-							if (allowedValues.size() > 0){
-								defaultValue.add(allowedValues.get(0).getValueName());
-							}
+				detailedFieldOptional.filter(detailedField -> !detailedField.isReadOnly() && !detailedField.getName()
+						.equals("Work Item Type")).ifPresent(f -> {
+					List<AllowedValue> allowedValues = prepareAllowedValues(field, areaNodes, iterationNodes);
+					List<String> defaultValue = new ArrayList<>();
+					if (allowedValues.size() > 0) {
+						defaultValue.add(allowedValues.get(0).getValueName());
+					}
 
-							PostFormField postFormField = new PostFormField(replaceIllegalCharacters(field.getReferenceName()), field.getName(),
-									f.getType().toString(), field.isAlwaysRequired(), defaultValue, allowedValues);
-							ticketFields.add(postFormField);
-						});
+					PostFormField postFormField = new PostFormField(replaceIllegalCharacters(field.getReferenceName()),
+							field.getName(),
+							f.getType().toString(),
+							field.isAlwaysRequired(),
+							defaultValue,
+							allowedValues
+					);
+					ticketFields.add(postFormField);
+				});
 			}
 			return sortTicketFields(ticketFields, issueType);
 		} catch (ApiException e) {
 			LOGGER.error("Unable to load ticket fields: " + e.getMessage(), e);
 			throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
-					String.format("Unable to load ticket fields. Code: %s, Message: %s", e.getCode(), e.getMessage()), e);
+					String.format("Unable to load ticket fields. Code: %s, Message: %s", e.getCode(), e.getMessage()),
+					e
+			);
 		}
 	}
 
@@ -430,14 +474,18 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		} catch (ApiException e) {
 			LOGGER.error("Unable to load issue types: " + e.getMessage(), e);
 			throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
-					String.format("Unable to load issue types. Code: %s, Message: %s", e.getCode(), e.getMessage()), e);
+					String.format("Unable to load issue types. Code: %s, Message: %s", e.getCode(), e.getMessage()),
+					e
+			);
 		}
 	}
 
 	private void initFields(Integration integration) {
 		params = getParams(integration);
-		String personalAccessToken = basicTextEncryptor.decrypt(BtsConstants.OAUTH_ACCESS_KEY.getParam(integration.getParams(), String.class)
-				.orElseThrow(() -> new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION, "OAUTH key cannot be NULL")));
+		String personalAccessToken = basicTextEncryptor.decrypt(BtsConstants.OAUTH_ACCESS_KEY.getParam(
+				integration.getParams(),
+				String.class
+		).orElseThrow(() -> new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION, "OAUTH key cannot be NULL")));
 		defaultClient = getConfiguredApiClient(personalAccessToken);
 		organizationName = extractOrganizationNameFromUrl(defaultClient, params.getOrganizationUrl());
 	}
@@ -465,8 +513,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	private Ticket convertWorkItemToTicket(WorkItem workItem) {
 		Ticket ticket = new Ticket();
 		String ticketId = workItem.getId().toString();
-		String ticketUrl = workItem.getUrl().substring(0, workItem.getUrl().lastIndexOf(ticketId))
-				.replace("apis/wit/", "") + "edit/" + ticketId;
+		String ticketUrl =
+				workItem.getUrl().substring(0, workItem.getUrl().lastIndexOf(ticketId)).replace("apis/wit/", "") + "edit/" + ticketId;
 		ticket.setId(ticketId);
 		ticket.setTicketUrl(ticketUrl);
 		ticket.setStatus(workItem.getFields().get("System.State").toString());
@@ -486,15 +534,18 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		return nodes;
 	}
 
-	private Map<String, List<WorkItemClassificationNode>> getClassificationNodes(
-			ClassificationNodesApi nodesApi, String organizationName, String projectName
-	) {
+	private Map<String, List<WorkItemClassificationNode>> getClassificationNodes(ClassificationNodesApi nodesApi, String organizationName,
+			String projectName) {
 		List<WorkItemClassificationNode> areaNodes = new ArrayList<>();
 		List<WorkItemClassificationNode> iterationNodes = new ArrayList<>();
 		Map<String, List<WorkItemClassificationNode>> nodesGroupedByType = new HashMap<>();
 		try {
-			List<WorkItemClassificationNode> nodes = nodesApi
-					.classificationNodesGetRootNodes(organizationName, projectName, API_VERSION, DEPTH);
+			List<WorkItemClassificationNode> nodes = nodesApi.classificationNodesGetRootNodes(
+					organizationName,
+					projectName,
+					API_VERSION,
+					DEPTH
+			);
 			for (WorkItemClassificationNode node : nodes) {
 				if (node.getStructureType().equals(AREA)) {
 					areaNodes = extractNestedNodes(node);
@@ -508,14 +559,14 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		} catch (ApiException e) {
 			LOGGER.error("Unable to load classification nodes: " + e.getMessage(), e);
 			throw new ReportPortalException(ErrorType.UNABLE_INTERACT_WITH_INTEGRATION,
-					String.format("Unable to load classification nodes. Code: %s, Message: %s", e.getCode(),
-							e.getMessage()), e);
+					String.format("Unable to load classification nodes. Code: %s, Message: %s", e.getCode(), e.getMessage()),
+					e
+			);
 		}
 	}
 
-	private Optional<WorkItemField> getFieldDetails(
-			FieldsApi fieldsApi, String organizationName, String projectName, WorkItemTypeFieldWithReferences field
-	) throws ApiException {
+	private Optional<WorkItemField> getFieldDetails(FieldsApi fieldsApi, String organizationName, String projectName,
+			WorkItemTypeFieldWithReferences field) throws ApiException {
 		try {
 			return Optional.ofNullable(fieldsApi.fieldsGet(organizationName, field.getReferenceName(), projectName, API_VERSION));
 		} catch (ApiException e) {
@@ -528,10 +579,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		}
 	}
 
-	private List<AllowedValue> prepareAllowedValues(
-			WorkItemTypeFieldWithReferences field, List<WorkItemClassificationNode> areaNodes,
-			List<WorkItemClassificationNode> iterationNodes
-	) {
+	private List<AllowedValue> prepareAllowedValues(WorkItemTypeFieldWithReferences field, List<WorkItemClassificationNode> areaNodes,
+			List<WorkItemClassificationNode> iterationNodes) {
 		List<AllowedValue> allowed = new ArrayList<>();
 		switch (field.getName()) {
 			case "Iteration ID":
@@ -569,12 +618,14 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private List<PostFormField> sortTicketFields(List<PostFormField> ticketFields, String issueType) {
 		List<PostFormField> sortedTicketFields = ticketFields.stream()
-				.sorted(Comparator.comparing(PostFormField::getIsRequired).reversed()
-						.thenComparing(PostFormField::getFieldName)).collect(Collectors.toList());
+				.sorted(Comparator.comparing(PostFormField::getIsRequired).reversed().thenComparing(PostFormField::getFieldName))
+				.collect(Collectors.toList());
 
 		// Add to the top a custom field representing the work item type
-		sortedTicketFields.add(0, new PostFormField("issuetype", "Issue Type", "issuetype",
-				true, List.of(issueType), new ArrayList<AllowedValue>()));
+		sortedTicketFields.add(
+				0,
+				new PostFormField("issuetype", "Issue Type", "issuetype", true, List.of(issueType), new ArrayList<AllowedValue>())
+		);
 		return sortedTicketFields;
 	}
 
@@ -584,14 +635,16 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		TestItem item = itemRepository.findById(ticketRQ.getTestItemId())
 				.orElseThrow(() -> new ReportPortalException(ErrorType.TEST_ITEM_NOT_FOUND, ticketRQ.getTestItemId()));
 
-		ticketRQ.getBackLinks().keySet().forEach(backLinkId -> updateDescriptionBuilder(descriptionBuilder, ticketRQ, backLinkId, item, attachmentsURL));
+		ticketRQ.getBackLinks()
+				.keySet()
+				.forEach(backLinkId -> updateDescriptionBuilder(descriptionBuilder, ticketRQ, backLinkId, item, attachmentsURL));
 		return descriptionBuilder.toString();
 	}
 
-	private void updateDescriptionBuilder(StringBuilder descriptionBuilder, PostTicketRQ ticketRQ, Long backLinkId, TestItem item, List<AttachmentInfo> attachmentsURL) {
+	private void updateDescriptionBuilder(StringBuilder descriptionBuilder, PostTicketRQ ticketRQ, Long backLinkId, TestItem item,
+			List<AttachmentInfo> attachmentsURL) {
 		if (StringUtils.isNotBlank(ticketRQ.getBackLinks().get(backLinkId))) {
-			descriptionBuilder.append(BACK_LINK_HEADER)
-					.append(String.format(BACK_LINK_PATTERN, ticketRQ.getBackLinks().get(backLinkId)));
+			descriptionBuilder.append(BACK_LINK_HEADER).append(String.format(BACK_LINK_PATTERN, ticketRQ.getBackLinks().get(backLinkId)));
 		}
 
 		if (ticketRQ.getIsIncludeComments()) {
@@ -608,7 +661,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		addLogsInfoToDescription(descriptionBuilder, backLinkId, ticketRQ, attachmentsURL);
 	}
 
-	private void addLogsInfoToDescription(StringBuilder descriptionBuilder, Long backLinkId, PostTicketRQ ticketRQ, List<AttachmentInfo> attachmentsURL) {
+	private void addLogsInfoToDescription(StringBuilder descriptionBuilder, Long backLinkId, PostTicketRQ ticketRQ,
+			List<AttachmentInfo> attachmentsURL) {
 		itemRepository.findById(backLinkId).ifPresent(item -> ofNullable(item.getLaunchId()).ifPresent(launchId -> {
 			List<Log> logs = logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(launchId,
 					Collections.singletonList(item.getItemId()),
@@ -620,17 +674,23 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 						log,
 						ticketRQ.getIsIncludeLogs(),
 						ticketRQ.getIsIncludeScreenshots(),
-						attachmentsURL));
+						attachmentsURL
+				));
 			}
 		}));
 	}
 
-	private void updateWithLog(StringBuilder descriptionBuilder, Log log, boolean includeLog, boolean includeScreenshot, List<AttachmentInfo> attachmentsURL) {
+	private void updateWithLog(StringBuilder descriptionBuilder, Log log, boolean includeLog, boolean includeScreenshot,
+			List<AttachmentInfo> attachmentsURL) {
 		if (includeLog) {
 			descriptionBuilder.append("<div><pre>").append(getFormattedMessage(log)).append("</pre></div>");
 		}
 		if (includeScreenshot) {
-			ofNullable(log.getAttachment()).ifPresent(attachment -> addAttachmentToDescription(descriptionBuilder, attachment, attachmentsURL));
+			ofNullable(log.getAttachment()).ifPresent(attachment -> addAttachmentToDescription(
+					descriptionBuilder,
+					attachment,
+					attachmentsURL
+			));
 		}
 	}
 
@@ -646,11 +706,19 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 			String url = attachmentInfo.getUrl();
 
 			if (attachmentInfo.getContentType().contains(IMAGE_CONTENT)) {
-				descriptionBuilder.append("Attachment:<br>").append("<img src=\"").append(url).append("\" alt=\"")
-						.append(attachmentInfo.getFileName()).append("\">");
+				descriptionBuilder.append("Attachment:<br>")
+						.append("<img src=\"")
+						.append(url)
+						.append("\" alt=\"")
+						.append(attachmentInfo.getFileName())
+						.append("\">");
 			} else {
-				descriptionBuilder.append("Attachment - ").append("<a href=\"").append(url).append("\">")
-						.append(attachmentInfo.getFileName()).append("</a>");
+				descriptionBuilder.append("Attachment - ")
+						.append("<a href=\"")
+						.append(url)
+						.append("\">")
+						.append(attachmentInfo.getFileName())
+						.append("</a>");
 			}
 		}
 	}
@@ -673,10 +741,19 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 					byte[] bytes = ByteStreams.toByteArray(file);
 					AttachmentsApi attachmentsApi = new AttachmentsApi(defaultClient);
 					String fileName = attachment.getFileId() + mimeType.getExtension();
-					AttachmentReference attachmentReference = attachmentsApi.attachmentsCreate(organizationName, bytes, params.getProjectName(), API_VERSION,
-							fileName, null, null);
+					AttachmentReference attachmentReference = attachmentsApi.attachmentsCreate(organizationName,
+							bytes,
+							params.getProjectName(),
+							API_VERSION,
+							fileName,
+							null,
+							null
+					);
 					attachmentsURL.add(new AttachmentInfo(fileName,
-							attachment.getFileId(), attachmentReference.getUrl(), attachment.getContentType()));
+							attachment.getFileId(),
+							attachmentReference.getUrl(),
+							attachment.getContentType()
+					));
 				} catch (IOException | ApiException | MimeTypeException e) {
 					LOGGER.error("Unable to post ticket : " + e.getMessage(), e);
 					throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION, "Unable to post ticket: " + e.getMessage(), e);
@@ -690,7 +767,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	private String getFormattedMessage(Log log) {
 		StringBuilder messageBuilder = new StringBuilder();
 		ofNullable(log.getLogTime()).ifPresent(logTime -> messageBuilder.append("Time: ")
-				.append(logTime.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss"))).append(", "));
+				.append(logTime.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss")))
+				.append(", "));
 		ofNullable(log.getLogLevel()).ifPresent(logLevel -> messageBuilder.append("Level: ").append(logLevel).append(", "));
 		messageBuilder.append("<br>").append("Log: ").append(log.getLogMessage());
 		return messageBuilder.toString();

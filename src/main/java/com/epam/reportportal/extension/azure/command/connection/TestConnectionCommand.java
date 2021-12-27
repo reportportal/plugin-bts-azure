@@ -59,4 +59,9 @@ public class TestConnectionCommand implements PluginCommand<Boolean> {
                             e.getMessage()), e);
         }
     }
+
+    @Override
+    public String getName() {
+        return "testConnection";
+    }
 }

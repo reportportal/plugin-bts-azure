@@ -39,6 +39,11 @@ public class GetFileCommand implements PluginCommand<Boolean> {
 	}
 
 	@Override
+	public String getName() {
+		return "getFile";
+	}
+
+	@Override
 	public Boolean executeCommand(Integration integration, Map<String, Object> params) {
 		Properties binaryDataProperties = loadProperties();
 		String fileName = retrieveFileName(params.get(FILE_KEY), binaryDataProperties);

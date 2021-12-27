@@ -119,7 +119,7 @@ class AzureExtensionTest {
 
 	@Test
 	void getCommandToExecute() {
-		PluginCommand<?> testConnection = azureExtension.getCommandToExecute("testConnection");
+		PluginCommand<?> testConnection = azureExtension.getIntegrationCommand("testConnection");
 		TestConnectionCommand testConnectionCommand = new TestConnectionCommand(basicTextEncryptor);
 		assertEquals(testConnectionCommand.getClass(), testConnection.getClass());
 	}

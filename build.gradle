@@ -33,8 +33,8 @@ dependencies {
         implementation 'com.epam.reportportal:plugin-api'
         annotationProcessor 'com.epam.reportportal:plugin-api'
     } else {
-        implementation 'com.github.reportportal:plugin-api:48e08b04'
-        annotationProcessor 'com.github.reportportal:plugin-api:48e08b04'
+        implementation 'com.github.reportportal:plugin-api:886ac55'
+        annotationProcessor 'com.github.reportportal:plugin-api:886ac55'
     }
 
     compile 'com.squareup.okhttp:okhttp:2.7.5'
