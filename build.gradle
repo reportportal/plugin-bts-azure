@@ -1,11 +1,7 @@
-import com.github.spotbugs.SpotBugsTask
-
 plugins {
     id "io.spring.dependency-management" version "1.0.9.RELEASE"
     id 'java'
-    id 'jacoco'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
-    id "com.github.spotbugs" version "3.0.0"
     id "com.moowork.node" version "1.3.1"
     id 'nu.studer.jooq' version '3.0.3'
 }
@@ -13,6 +9,8 @@ plugins {
 apply from: 'project-properties.gradle'
 apply from: 'jooq.gradle'
 apply from: 'ui.gradle'
+apply from: "$scriptsUrl/build-quality.gradle"
+apply from: "$scriptsUrl/jacoco.gradle"
 
 repositories {
     mavenCentral()
@@ -55,28 +53,6 @@ dependencies {
     testCompile 'org.mockito:mockito-core:3.12.4'
 }
 
-spotbugs {
-    sourceSets = [sourceSets.main]
-    reportLevel = "high"
-}
-tasks.withType(SpotBugsTask) {
-    reports {
-        xml.enabled false
-        html.enabled true
-    }
-}
-
-test {
-    useJUnitPlatform()
-    jacocoTestReport {
-        reports {
-            xml.enabled true
-        }
-    }
-}
-
-build.dependsOn jacocoTestReport
-
 artifacts {
     archives shadowJar
 }
@@ -87,6 +63,18 @@ sourceSets {
                 {
                     exclude '**'
                 }
+    }
+}
+
+test {
+    useJUnitPlatform()
+    maxParallelForks = 1
+    testLogging {
+        events = ['failed']
+        exceptionFormat = 'short'
+    }
+    reports {
+        junitXml.enabled = true
     }
 }
 
@@ -143,3 +131,4 @@ task assemblePlugins(type: Copy) {
 }
 
 compileJava.dependsOn npm_run_build
+build.dependsOn jacocoTestReport

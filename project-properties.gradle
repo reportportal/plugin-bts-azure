@@ -1,9 +1,23 @@
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
+def commonScriptsUrl = 'https://raw.githubusercontent.com/reportportal/gradle-scripts/'
+
 project.ext {
     releaseMode = project.hasProperty("releaseMode")
     pluginsDir = "$buildDir/plugins"
+    scriptsUrl = commonScriptsUrl + (releaseMode ? getProperty('scripts.version') : 'develop')
+    excludeTests = [
+            '**/entity/**'
+    ]
+    limits = [
+            'instruction': 10,
+            'branch'     : 3,
+            'line'       : 10,
+            'complexity' : 8,
+            'method'     : 10,
+            'class'      : 10
+    ]
 }
 
 wrapper {
