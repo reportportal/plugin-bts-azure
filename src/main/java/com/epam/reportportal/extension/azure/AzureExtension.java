@@ -105,7 +105,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private static final String ITERATION = "iteration";
 
-	private static final String BACK_LINK_HEADER = "<h3><i>Backlink to Report Portal:</i></h3>";
+	private static final String BACK_LINK_HEADER = "<h3><i>Back link to Report Portal:</i></h3>";
 
 	private static final String BACK_LINK_PATTERN = "<a href=\"%s\">Link to defect</a>";
 
