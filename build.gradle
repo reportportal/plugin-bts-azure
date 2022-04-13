@@ -12,17 +12,34 @@ apply from: 'ui.gradle'
 apply from: "$scriptsUrl/build-quality.gradle"
 apply from: "$scriptsUrl/jacoco.gradle"
 
+def scriptsUrl = 'https://raw.githubusercontent.com/reportportal/gradle-scripts/' +
+        (releaseMode ? getProperty('scripts.version') : 'develop')
+
+apply from: scriptsUrl + '/release-fat.gradle'
+apply from: scriptsUrl + '/signing.gradle'
+apply from: scriptsUrl + '/build-quality.gradle'
+
 repositories {
     mavenCentral()
     mavenLocal()
-    if (!releaseMode) {
+    if (releaseMode) {
+        dependencyRepos.forEach { path ->
+            maven {
+                setUrl("https://maven.pkg.github.com/reportportal/${path}")
+                credentials {
+                    username = findProperty("githubUserName")
+                    password = findProperty("githubToken")
+                }
+            }
+        }
+    } else {
         maven { url 'https://jitpack.io' }
     }
 }
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.0.0' : 'com.github.reportportal:commons-bom:4b7ed8a')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.7.0' : 'com.github.reportportal:commons-bom:4b7ed8a')
     }
 }
 
