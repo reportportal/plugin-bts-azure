@@ -744,6 +744,16 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	}
 
+	private String getFormattedMessage(Log log) {
+		StringBuilder messageBuilder = new StringBuilder();
+		ofNullable(log.getLogTime()).ifPresent(logTime -> messageBuilder.append("Time: ")
+				.append(logTime.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss")))
+				.append(", "));
+		ofNullable(log.getLogLevel()).ifPresent(logLevel -> messageBuilder.append("Level: ").append(logLevel).append(", "));
+		messageBuilder.append("<br>").append("Log: ").append(log.getLogMessage());
+		return messageBuilder.toString();
+	}
+
 	private List<Log> findLogsUnderItem(TestItem item, int logCount) {
 		return ofNullable(item.getLaunchId()).map(launchId -> logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(launchId,
 				Collections.singletonList(item.getItemId()),
@@ -771,15 +781,5 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 			LOGGER.error("Unable to post ticket : " + e.getMessage(), e);
 			throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION, "Unable to post ticket: " + e.getMessage(), e);
 		}
-	}
-
-	private String getFormattedMessage(Log log) {
-		StringBuilder messageBuilder = new StringBuilder();
-		ofNullable(log.getLogTime()).ifPresent(logTime -> messageBuilder.append("Time: ")
-				.append(logTime.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss")))
-				.append(", "));
-		ofNullable(log.getLogLevel()).ifPresent(logLevel -> messageBuilder.append("Level: ").append(logLevel).append(", "));
-		messageBuilder.append("<br>").append("Log: ").append(log.getLogMessage());
-		return messageBuilder.toString();
 	}
 }
