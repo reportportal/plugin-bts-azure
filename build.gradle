@@ -15,7 +15,6 @@ def scriptsUrl = 'https://raw.githubusercontent.com/reportportal/gradle-scripts/
 
 apply from: scriptsUrl + '/release-fat.gradle'
 apply from: scriptsUrl + '/signing.gradle'
-apply from: scriptsUrl + '/build-quality.gradle'
 
 repositories {
     mavenCentral()
