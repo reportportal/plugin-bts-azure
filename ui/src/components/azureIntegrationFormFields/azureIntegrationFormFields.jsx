@@ -10,10 +10,10 @@ const DEFAULT_FORM_CONFIG = {
 };
 
 export const AzureIntegrationFormFields = (props) => {
-  const { initialize, disabled, lineAlign, initialData, ...extensionProps } = props;
+  const { initialize, disabled, initialData, ...extensionProps } = props;
   const {
     lib: { React },
-    components: { IntegrationFormField, FieldErrorHint, Input, InputTextArea, InputDropdown },
+    components: { FieldErrorHint, FieldElement, FieldText, Dropdown, FieldTextFlex },
     validators: { requiredField, btsUrl, btsProjectKey, btsIntegrationName },
   } = extensionProps;
   React.useEffect(() => {
@@ -35,72 +35,67 @@ export const AzureIntegrationFormFields = (props) => {
 
   return (
     <>
-      <IntegrationFormField
+      <FieldElement
         name="integrationName"
-        disabled={disabled}
         label="Integration Name"
-        required
-        maxLength="55"
         validate={btsIntegrationName}
-        lineAlign={lineAlign}
+        disabled={disabled}
       >
-        <FieldErrorHint>
-          <Input mobileDisabled />
+        <FieldErrorHint provideHint={false}>
+          <FieldText
+            maxLength={55}
+            defaultWidth={false}
+            isRequired
+            placeholder="Integration Name"
+          />
         </FieldErrorHint>
-      </IntegrationFormField>
-      <IntegrationFormField
+      </FieldElement>
+      <FieldElement
         name={URL_ATTRIBUTE_KEY}
-        disabled={disabled}
         label="Link to BTS"
-        required
         validate={btsUrl}
-        lineAlign={lineAlign}
+        disabled={disabled}
       >
-        <FieldErrorHint>
-          <Input mobileDisabled />
+        <FieldErrorHint provideHint={false}>
+          <FieldText defaultWidth={false} isRequired placeholder="Link to BTS" />
         </FieldErrorHint>
-      </IntegrationFormField>
-      <IntegrationFormField
+      </FieldElement>
+      <FieldElement
         name={PROJECT_ATTRIBUTE_KEY}
-        disabled={disabled}
         label="Project key in BTS"
-        required
-        maxLength="55"
         validate={btsProjectKey}
-        lineAlign={lineAlign}
-      >
-        <FieldErrorHint>
-          <Input mobileDisabled />
-        </FieldErrorHint>
-      </IntegrationFormField>
-      <IntegrationFormField
-        name="authType"
         disabled={disabled}
-        label="Authorization type"
-        lineAlign={lineAlign}
       >
-        <FieldErrorHint>
-          <InputDropdown
-            mobileDisabled
+        <FieldErrorHint provideHint={false}>
+          <FieldText
+            maxLength={55}
+            defaultWidth={false}
+            isRequired
+            placeholder="Project key in BTS"
+          />
+        </FieldErrorHint>
+      </FieldElement>
+      <FieldElement name="authType" disabled={disabled} label="Authorization type">
+        <FieldErrorHint provideHint={false}>
+          <Dropdown
             disabled={disabled}
             value={authTypeState}
             onChange={onChangeAuthTypeAttributesMode}
             options={authTypeAttributesOptions}
+            defaultWidth={false}
           />
         </FieldErrorHint>
-      </IntegrationFormField>
-      <IntegrationFormField
+      </FieldElement>
+      <FieldElement
         name={TOKEN_ATTRIBUTE_KEY}
         disabled={disabled}
         label="Token"
-        required
         validate={requiredField}
-        lineAlign={lineAlign}
       >
-        <FieldErrorHint>
-          <InputTextArea type="text" mobileDisabled />
+        <FieldErrorHint provideHint={false}>
+          <FieldTextFlex placeholder="Token" isRequired />
         </FieldErrorHint>
-      </IntegrationFormField>
+      </FieldElement>
     </>
   );
 };
