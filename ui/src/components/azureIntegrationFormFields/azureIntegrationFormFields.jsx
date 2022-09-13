@@ -40,14 +40,10 @@ export const AzureIntegrationFormFields = (props) => {
         label="Integration Name"
         validate={btsIntegrationName}
         disabled={disabled}
+        isRequired
       >
         <FieldErrorHint provideHint={false}>
-          <FieldText
-            maxLength={55}
-            defaultWidth={false}
-            isRequired
-            placeholder="Integration Name"
-          />
+          <FieldText maxLength={55} defaultWidth={false} />
         </FieldErrorHint>
       </FieldElement>
       <FieldElement
@@ -55,9 +51,10 @@ export const AzureIntegrationFormFields = (props) => {
         label="Link to BTS"
         validate={btsUrl}
         disabled={disabled}
+        isRequired
       >
         <FieldErrorHint provideHint={false}>
-          <FieldText defaultWidth={false} isRequired placeholder="Link to BTS" />
+          <FieldText defaultWidth={false} />
         </FieldErrorHint>
       </FieldElement>
       <FieldElement
@@ -65,14 +62,10 @@ export const AzureIntegrationFormFields = (props) => {
         label="Project key in BTS"
         validate={btsProjectKey}
         disabled={disabled}
+        isRequired
       >
         <FieldErrorHint provideHint={false}>
-          <FieldText
-            maxLength={55}
-            defaultWidth={false}
-            isRequired
-            placeholder="Project key in BTS"
-          />
+          <FieldText maxLength={55} defaultWidth={false} />
         </FieldErrorHint>
       </FieldElement>
       <FieldElement name="authType" disabled={disabled} label="Authorization type">
@@ -91,9 +84,10 @@ export const AzureIntegrationFormFields = (props) => {
         disabled={disabled}
         label="Token"
         validate={requiredField}
+        isRequired
       >
         <FieldErrorHint provideHint={false}>
-          <FieldTextFlex placeholder="Token" isRequired />
+          <FieldTextFlex />
         </FieldErrorHint>
       </FieldElement>
     </>
