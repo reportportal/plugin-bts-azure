@@ -85,6 +85,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(AzureExtension.class);
 
+	private static final String DOCUMENTATION_LINK_FIELD = "documentationLink";
+	private static final String DOCUMENTATION_LINK = "https://reportportal.io/docs/plugins/AzureDevOpsBTS";
 	public static final String BINARY_DATA_PROPERTIES_FILE_ID = "azure-binary-data.properties";
 
 	public static final String SCHEMA_SCRIPTS_DIR = "schema";
@@ -215,6 +217,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	@Override
 	public Map<String, ?> getPluginParams() {
 		Map<String, Object> params = new HashMap<>();
+		params.put(DOCUMENTATION_LINK_FIELD, DOCUMENTATION_LINK);
 		params.put(ALLOWED_COMMANDS, new ArrayList<>(pluginCommandMapping.get().keySet()));
 		return params;
 	}
