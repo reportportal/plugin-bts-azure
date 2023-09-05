@@ -10,6 +10,12 @@ export const AzureIntegrationSettings = (props) => {
       BtsAuthFieldsInfo,
       BtsPropertiesForIssueForm,
     },
+    utils: {
+      getDefectFormFields,
+    },
+    constants: {
+      BTS_FIELDS_FORM,
+    },
   } = extensionProps;
 
   const dispatch = useDispatch();
@@ -43,8 +49,9 @@ export const AzureIntegrationSettings = (props) => {
 
     dispatch(
       showModalAction({
-        id: 'addIntegrationModal',
+        id: 'createProjectIntegrationModal',
         data: {
+          modalTitle: 'Edit authorization',
           onConfirm: getConfirmationFunc(testConnection),
           instanceType: integrationType.name,
           customProps: {
@@ -59,11 +66,6 @@ export const AzureIntegrationSettings = (props) => {
     );
   };
 
-  const getDefectFormFields = (fields, checkedFieldsIds, values) =>
-    fields
-      .filter((item) => item.required || checkedFieldsIds[item.id])
-      .map((item) => ({ ...item, value: values[item.id] }));
-
   const getEditAuthConfig = () => ({
     content: <BtsAuthFieldsInfo fieldsConfig={authFieldsConfig} />,
     onClick: editAuthorizationClickHandler,
@@ -73,7 +75,7 @@ export const AzureIntegrationSettings = (props) => {
     const { fields, checkedFieldsIds = {}, ...meta } = metaData;
     const defectFormFields = getDefectFormFields(fields, checkedFieldsIds, integrationData);
 
-    props.onUpdate({ defectFormFields }, callback, meta);
+    onUpdate({ defectFormFields }, callback, meta);
   };
 
   return (
@@ -84,7 +86,7 @@ export const AzureIntegrationSettings = (props) => {
       editAuthConfig={getEditAuthConfig()}
       isGlobal={isGlobal}
       formFieldsComponent={BtsPropertiesForIssueForm}
-      formKey="BTS_FIELDS_FORM"
+      formKey={BTS_FIELDS_FORM}
       isEmptyConfiguration={
         !data.integrationParameters.defectFormFields ||
         !data.integrationParameters.defectFormFields.length
