@@ -1,5 +1,5 @@
 node {
-    version = '14.19.3'
+    version = '14.21.3'
     npmVersion = '6.14.17'
     download = true
     workDir = file("${project.buildDir}/ui")
