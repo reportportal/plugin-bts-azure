@@ -112,7 +112,7 @@ class AzureExtensionTest {
 	@Test
 	void getPluginParams() {
 		Map<String, Object> expectMap = new HashMap<>();
-		expectMap.put("allowedCommands", Arrays.asList("testConnection", "getFile"));
+		expectMap.put("allowedCommands", Arrays.asList("testConnection"));
 		expectMap.put("documentationLink", "https://reportportal.io/docs/plugins/AzureDevOpsBTS");
 		Map<String, ?> pluginParams = azureExtension.getPluginParams();
 		assertEquals(expectMap, pluginParams);

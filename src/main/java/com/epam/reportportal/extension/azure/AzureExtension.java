@@ -4,7 +4,6 @@ import com.epam.reportportal.extension.CommonPluginCommand;
 import com.epam.reportportal.extension.IntegrationGroupEnum;
 import com.epam.reportportal.extension.PluginCommand;
 import com.epam.reportportal.extension.ReportPortalExtensionPoint;
-import com.epam.reportportal.extension.azure.command.binary.GetFileCommand;
 import com.epam.reportportal.extension.azure.command.connection.TestConnectionCommand;
 import com.epam.reportportal.extension.azure.entity.model.IntegrationParameters;
 import com.epam.reportportal.extension.azure.event.launch.AzureStartLaunchEventListener;
@@ -275,7 +274,6 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private Map<String, PluginCommand<?>> getCommands() {
 		Map<String, PluginCommand<?>> pluginCommandMapping = new HashMap<>();
-		pluginCommandMapping.put("getFile", new GetFileCommand(resourcesDir, BINARY_DATA_PROPERTIES_FILE_ID));
 		pluginCommandMapping.put("testConnection", new TestConnectionCommand(basicTextEncryptor));
 		return pluginCommandMapping;
 	}
