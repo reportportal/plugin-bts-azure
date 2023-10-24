@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   URL_ATTRIBUTE_KEY,
   PROJECT_ATTRIBUTE_KEY,
@@ -9,18 +10,17 @@ const DEFAULT_FORM_CONFIG = {
   authType: 'OAUTH',
 };
 
-export const AzureIntegrationFormFields = (props) => {
+export const IntegrationFormFields = (props) => {
   const { initialize, disabled, initialData, ...extensionProps } = props;
   const {
-    lib: { React },
     components: { FieldErrorHint, FieldElement, FieldText, Dropdown, FieldTextFlex },
     validators: { requiredField, btsUrl, btsProjectKey, btsIntegrationName },
   } = extensionProps;
-  React.useEffect(() => {
+  useEffect(() => {
     initialize(initialData);
   }, []);
 
-  const [authTypeState, setAuthTypeState] = React.useState(!initialData[TOKEN_ATTRIBUTE_KEY]);
+  const [authTypeState, setAuthTypeState] = useState(!initialData[TOKEN_ATTRIBUTE_KEY]);
 
   const onChangeAuthTypeAttributesMode = (value) => {
     if (value === authTypeState) {
@@ -93,7 +93,6 @@ export const AzureIntegrationFormFields = (props) => {
     </>
   );
 };
-
-AzureIntegrationFormFields.defaultProps = {
+IntegrationFormFields.defaultProps = {
   initialData: DEFAULT_FORM_CONFIG,
 };
