@@ -1,21 +1,18 @@
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import { URL_ATTRIBUTE_KEY, PROJECT_ATTRIBUTE_KEY } from 'components/constants';
 
-export const AzureIntegrationSettings = (props) => {
+export const IntegrationSettings = (props) => {
   const { data, goToPreviousPage, onUpdate, isGlobal, ...extensionProps } = props;
   const {
-    lib: { React, useDispatch },
     actions: { showModalAction, hideModalAction },
     components: {
       IntegrationSettings: IntegrationSettingsContainer,
       BtsAuthFieldsInfo,
       BtsPropertiesForIssueForm,
     },
-    utils: {
-      getDefectFormFields,
-    },
-    constants: {
-      BTS_FIELDS_FORM,
-    },
+    utils: { getDefectFormFields },
+    constants: { BTS_FIELDS_FORM },
   } = extensionProps;
 
   const dispatch = useDispatch();

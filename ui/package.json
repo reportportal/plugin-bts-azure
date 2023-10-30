@@ -1,5 +1,5 @@
 {
-  "name": "azure-plugin",
+  "name": "plugin-bts-azure",
   "private": true,
   "version": "1.0.0",
   "description": "",
@@ -7,52 +7,61 @@
   "scripts": {
     "build": "webpack --mode=production",
     "dev": "webpack --mode=development --watch",
-    "start": "static build -p 9090 -H '{\"Access-Control-Allow-Origin\": \"*\",\"Access-Control-Allow-Methods\": \"*\",\"Access-Control-Allow-Headers\": \"*\", \"Cache-Control\": \"no-cache, no-store, must-revalidate\"}'",
-    "eslint": "eslint \"./**/*.jsx\" \"./**/*.js\"",
-    "lint": "npm run eslint",
-    "format": "npm run eslint -- --fix",
+    "start": "node devServer.js",
+    "lint": "eslint \"src/**/*.{js,jsx}\"",
+    "format": "npm run lint -- --fix",
     "precommit": "lint-staged",
     "postcommit": "git update-index --again"
   },
   "keywords": [],
-  "author": "",
+  "author": "ReportPortal.io",
   "license": "Apache-2.0",
+  "dependencies": {
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-redux": "7.2.8"
+  },
   "devDependencies": {
-    "@babel/core": "^7.8.4",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-proposal-decorators": "^7.8.3",
-    "@babel/plugin-transform-runtime": "^7.8.3",
-    "@babel/preset-env": "^7.8.4",
-    "@babel/preset-react": "^7.8.3",
-    "@babel/runtime": "^7.8.4",
-    "babel-eslint": "10.0.3",
-    "babel-loader": "^8.0.6",
-    "husky": "3.0.8",
-    "lint-staged": "9.4.2",
-    "eslint": "6.5.1",
-    "eslint-config-airbnb": "18.0.1",
-    "eslint-config-prettier": "6.4.0",
-    "eslint-import-resolver-webpack": "0.11.1",
-    "eslint-loader": "3.0.2",
-    "eslint-plugin-babel": "5.3.0",
-    "eslint-plugin-import": "2.18.2",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-prettier": "3.1.1",
-    "eslint-plugin-react": "7.16.0",
-    "eslint-plugin-react-hooks": "^4.2.0",
+    "@babel/core": "^7.23.2",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-decorators": "^7.23.2",
+    "@babel/plugin-transform-runtime": "^7.23.2",
+    "@babel/preset-env": "^7.23.2",
+    "@babel/preset-react": "^7.22.15",
+    "@babel/runtime": "^7.23.2",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.3.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.1.7",
+    "eslint": "7.32.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-import-resolver-webpack": "0.13.8",
+    "eslint-webpack-plugin": "^4.0.1",
+    "eslint-plugin-babel": "5.3.1",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "node-static": "^0.7.11",
-    "prettier": "1.19.1",
+    "prettier": "^2.5.1",
     "svg-inline-loader": "^0.8.2",
-    "webpack": "5.39.1",
-    "webpack-cli": "4.7.2"
+    "webpack": "^5.89.0",
+    "webpack-cli": "^4.10.0"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
   },
   "lint-staged": {
     "*.{js,jsx}": [
-      "eslint --fix",
+      "npm run format",
       "git add"
     ]
   },
   "browserslist": [
-    "ie 11"
+    "defaults"
   ]
 }
