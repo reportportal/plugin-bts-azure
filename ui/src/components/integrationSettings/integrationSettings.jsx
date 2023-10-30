@@ -46,9 +46,9 @@ export const IntegrationSettings = (props) => {
 
     dispatch(
       showModalAction({
-        id: 'createProjectIntegrationModal',
+        id: 'addIntegrationModal',
         data: {
-          modalTitle: 'Edit authorization',
+          isGlobal,
           onConfirm: getConfirmationFunc(testConnection),
           instanceType: integrationType.name,
           customProps: {
