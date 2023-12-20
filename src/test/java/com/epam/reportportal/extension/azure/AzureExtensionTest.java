@@ -166,18 +166,40 @@ class AzureExtensionTest {
 		ArrayList<PostFormField> data = new ArrayList<>();
 		ArrayList<AllowedValue> defValues = new ArrayList<>();
 		defValues.add(new AllowedValue("14", "ADOPlugin"));
-		data.add(new PostFormField("issuetype", "Issue Type", "issuetype", true,
-				List.of("Issue"), new ArrayList<>()));
-		data.add(new PostFormField("System_AreaId", "Area ID", "integer", true,
-				List.of("ADOPlugin"), defValues));
-		data.add(new PostFormField("System_IterationId", "Iteration  ID", "integer", true,
-				List.of("ADOPlugin"), List.of(new AllowedValue("11", "ADOPlugin"))));
-		data.add(new PostFormField("System_State", "State", "string", true,
-				List.of("Doing"), List.of(new AllowedValue("Doing", "Doing"))));
-		data.add(new PostFormField("System_Title", "Title", "string", true,
-				List.of("Test_Item"), new ArrayList<>()));
-		data.add(new PostFormField("System_Description", "Description", "html", false,
-				List.of("Some description"), new ArrayList<>()));
+		data.add(PostFormField.builder()
+				.id("issuetype").fieldName("Issue Type")
+				.fieldType("issuetype")
+				.isRequired(true).value(List.of("Issue")).definedValues(new ArrayList<>())
+				.build());
+		data.add(PostFormField.builder()
+				.id("System_AreaId").fieldName("Area ID")
+				.fieldType("integer")
+				.isRequired(true).value(List.of("ADOPlugin")).definedValues(defValues)
+				.build());
+		data.add(PostFormField.builder()
+				.id("System_IterationId").fieldName("Iteration  ID")
+				.fieldType("integer")
+				.isRequired(true).value(List.of("ADOPlugin"))
+				.definedValues(List.of(new AllowedValue("11", "ADOPlugin")))
+				.build());
+		data.add(PostFormField.builder()
+				.id("System_State").fieldName("State")
+				.fieldType("string")
+				.isRequired(true).value(List.of("Doing"))
+				.definedValues(List.of(new AllowedValue("Doing", "Doing")))
+				.build());
+		data.add(PostFormField.builder()
+				.id("System_Title").fieldName("Title")
+				.fieldType("string")
+				.isRequired(true).value(List.of("Test_Item"))
+				.definedValues(new ArrayList<>())
+				.build());
+		data.add(PostFormField.builder()
+				.id("System_Description").fieldName("Description")
+				.fieldType("html")
+				.isRequired(false).value(List.of("Some description"))
+				.definedValues(new ArrayList<>())
+				.build());
 		postTicketRQ.setFields(data);
 		postTicketRQ.setIsIncludeLogs(true);
 		postTicketRQ.setIsIncludeComments(true);
