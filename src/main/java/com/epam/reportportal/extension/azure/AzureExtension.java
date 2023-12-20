@@ -372,7 +372,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 						.findFirst()
 						.get()
 						.getValueId());
-			} else if (field.getValue().size() == 0 && !field.getIsRequired()) {
+			} else if (field.getValue().size() == 0 && !field.isRequired()) {
 				continue;
 			} else {
 				value = field.getValue().get(0);
@@ -444,13 +444,12 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 						defaultValue.add(allowedValues.get(0).getValueName());
 					}
 
-					PostFormField postFormField = new PostFormField(replaceIllegalCharacters(field.getReferenceName()),
-							field.getName(),
-							f.getType().toString(),
-							field.isAlwaysRequired(),
-							defaultValue,
-							allowedValues
-					);
+          PostFormField postFormField = PostFormField.builder()
+              .id(replaceIllegalCharacters(field.getReferenceName())).fieldName(field.getName())
+              .fieldType(f.getType().toString())
+              .isRequired(field.isAlwaysRequired()).value(defaultValue).definedValues(allowedValues)
+              .build();
+
 					ticketFields.add(postFormField);
 				});
 			}
@@ -619,14 +618,15 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private List<PostFormField> sortTicketFields(List<PostFormField> ticketFields, String issueType) {
 		List<PostFormField> sortedTicketFields = ticketFields.stream()
-				.sorted(Comparator.comparing(PostFormField::getIsRequired).reversed().thenComparing(PostFormField::getFieldName))
+				.sorted(Comparator.comparing(PostFormField::isRequired).reversed().thenComparing(PostFormField::getFieldName))
 				.collect(Collectors.toList());
 
 		// Add to the top a custom field representing the work item type
-		sortedTicketFields.add(
-				0,
-				new PostFormField("issuetype", "Issue Type", "issuetype", true, List.of(issueType), new ArrayList<AllowedValue>())
-		);
+    sortedTicketFields.add(
+        0,
+        PostFormField.builder().id("issuetype").fieldName("Issue Type").fieldType("issuetype")
+            .isRequired(true).value(List.of(issueType)).definedValues(new ArrayList<>()).build()
+    );
 		return sortedTicketFields;
 	}
 
