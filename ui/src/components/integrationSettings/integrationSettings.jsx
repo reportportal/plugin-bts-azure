@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { URL_ATTRIBUTE_KEY, PROJECT_ATTRIBUTE_KEY } from 'components/constants';
 
+// eslint-disable-next-line react/function-component-definition
 export const IntegrationSettings = (props) => {
   const { data, goToPreviousPage, onUpdate, isGlobal, ...extensionProps } = props;
   const {
