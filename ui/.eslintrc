@@ -60,7 +60,8 @@
     "react/sort-comp": 0,
     "import/no-useless-path-segments": 0,
     "no-invalid-this": 0,
-    "prefer-object-spread": 0
+    "prefer-object-spread": 0,
+    "react/function-component-definition" : 0
   },
   "parserOptions": {
     "ecmaFeatures": {

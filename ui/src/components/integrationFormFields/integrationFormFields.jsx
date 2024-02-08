@@ -10,7 +10,6 @@ const DEFAULT_FORM_CONFIG = {
   authType: 'OAUTH',
 };
 
-// eslint-disable-next-line react/function-component-definition
 export const IntegrationFormFields = (props) => {
   const { initialize, disabled, initialData, ...extensionProps } = props;
   const {
@@ -19,7 +18,7 @@ export const IntegrationFormFields = (props) => {
   } = extensionProps;
   useEffect(() => {
     initialize(initialData);
-  }, [initialData, initialize]);
+  }, []);
 
   const [authTypeState, setAuthTypeState] = useState(!initialData[TOKEN_ATTRIBUTE_KEY]);
 
