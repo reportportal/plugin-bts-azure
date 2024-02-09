@@ -3,7 +3,7 @@
 ## UI
 
 Preconditions:
-- Install Node.js (version 14 is recommended).
+- Install Node.js (version 20 is recommended).
 
 Install the dependencies: `npm install`
 
