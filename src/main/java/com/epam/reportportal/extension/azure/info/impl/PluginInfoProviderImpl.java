@@ -25,8 +25,7 @@ public class PluginInfoProviderImpl implements PluginInfoProvider {
 	private static final String METADATA_KEY = "metadata";
 
 	private static final String PLUGIN_DESCRIPTION =
-			"Integration with Azure DevOps, can be required for projects that collect defects in a separate tracking tool. "
-					+ "Integration provides an exchange of information between ReportPortal and Azure DevOps, such as posting "
+			"The integration provides an exchange of information between ReportPortal and the Azure DevOps, such as posting "
 					+ "issues and linking issues, getting updates on their statuses.";
 	public static final Map<String, Object> PLUGIN_METADATA = new HashMap<>();
 	static {

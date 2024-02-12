@@ -1,0 +1,17 @@
+{
+  "scope": "Azure_DevOps",
+  "extensions": [
+    {
+      "name": "integrationFormFields",
+      "title": "Azure DevOps integration form fields",
+      "type": "uiExtension:integrationFormFields",
+      "moduleName": "./integrationFormFields"
+    },
+    {
+      "name": "integrationSettings",
+      "title": "Azure DevOps integration settings",
+      "type": "uiExtension:integrationSettings",
+      "moduleName": "./integrationSettings"
+    }
+  ]
+}

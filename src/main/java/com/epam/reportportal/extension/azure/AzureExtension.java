@@ -4,7 +4,6 @@ import com.epam.reportportal.extension.CommonPluginCommand;
 import com.epam.reportportal.extension.IntegrationGroupEnum;
 import com.epam.reportportal.extension.PluginCommand;
 import com.epam.reportportal.extension.ReportPortalExtensionPoint;
-import com.epam.reportportal.extension.azure.command.binary.GetFileCommand;
 import com.epam.reportportal.extension.azure.command.connection.TestConnectionCommand;
 import com.epam.reportportal.extension.azure.entity.model.IntegrationParameters;
 import com.epam.reportportal.extension.azure.event.launch.AzureStartLaunchEventListener;
@@ -42,6 +41,7 @@ import com.epam.ta.reportportal.ws.model.externalsystem.Ticket;
 import com.google.common.base.Suppliers;
 import com.google.common.io.ByteStreams;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.mime.MimeType;
@@ -85,6 +85,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(AzureExtension.class);
 
+	private static final String DOCUMENTATION_LINK_FIELD = "documentationLink";
+	private static final String DOCUMENTATION_LINK = "https://reportportal.io/docs/plugins/AzureDevOpsBTS";
 	public static final String BINARY_DATA_PROPERTIES_FILE_ID = "azure-binary-data.properties";
 
 	public static final String SCHEMA_SCRIPTS_DIR = "schema";
@@ -215,6 +217,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	@Override
 	public Map<String, ?> getPluginParams() {
 		Map<String, Object> params = new HashMap<>();
+		params.put(DOCUMENTATION_LINK_FIELD, DOCUMENTATION_LINK);
 		params.put(ALLOWED_COMMANDS, new ArrayList<>(pluginCommandMapping.get().keySet()));
 		return params;
 	}
@@ -271,7 +274,6 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private Map<String, PluginCommand<?>> getCommands() {
 		Map<String, PluginCommand<?>> pluginCommandMapping = new HashMap<>();
-		pluginCommandMapping.put("getFile", new GetFileCommand(resourcesDir, BINARY_DATA_PROPERTIES_FILE_ID));
 		pluginCommandMapping.put("testConnection", new TestConnectionCommand(basicTextEncryptor));
 		return pluginCommandMapping;
 	}
@@ -306,11 +308,10 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 	@Override
 	public Ticket submitTicket(PostTicketRQ ticketRQ, Integration integration) {
 		initFields(integration);
-		List<AttachmentInfo> attachmentsURL = new ArrayList<>();
 
 		List<JsonPatchOperation> patchOperationList = new ArrayList<>();
 
-		ticketRQ.getBackLinks().keySet().forEach(backLinkId -> uploadAttachmentToAzure(ticketRQ, attachmentsURL, backLinkId));
+		List<AttachmentInfo> attachmentsURL = uploadAttachmentToAzure(ticketRQ);
 
 		String issueType = null;
 		List<PostFormField> fields = ticketRQ.getFields();
@@ -663,21 +664,20 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
 	private void addLogsInfoToDescription(StringBuilder descriptionBuilder, Long backLinkId, PostTicketRQ ticketRQ,
 			List<AttachmentInfo> attachmentsURL) {
-		itemRepository.findById(backLinkId).ifPresent(item -> ofNullable(item.getLaunchId()).ifPresent(launchId -> {
-			List<Log> logs = logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(launchId,
-					Collections.singletonList(item.getItemId()),
-					ticketRQ.getNumberOfLogs()
-			);
-			if (CollectionUtils.isNotEmpty(logs) && (ticketRQ.getIsIncludeLogs() || ticketRQ.getIsIncludeScreenshots())) {
-				descriptionBuilder.append(LOGS_HEADER);
-				logs.forEach(log -> updateWithLog(descriptionBuilder,
-						log,
-						ticketRQ.getIsIncludeLogs(),
-						ticketRQ.getIsIncludeScreenshots(),
-						attachmentsURL
-				));
-			}
-		}));
+		if (ticketRQ.getIsIncludeLogs() || ticketRQ.getIsIncludeScreenshots()) {
+			itemRepository.findById(backLinkId)
+					.map(item -> findLogsUnderItem(item, ticketRQ.getNumberOfLogs()))
+					.filter(CollectionUtils::isNotEmpty)
+					.ifPresent(logs -> {
+						descriptionBuilder.append(LOGS_HEADER);
+						logs.forEach(log -> updateWithLog(descriptionBuilder,
+								log,
+								ticketRQ.getIsIncludeLogs(),
+								ticketRQ.getIsIncludeScreenshots(),
+								attachmentsURL
+						));
+					});
+		}
 	}
 
 	private void updateWithLog(StringBuilder descriptionBuilder, Log log, boolean includeLog, boolean includeScreenshot,
@@ -723,45 +723,26 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		}
 	}
 
-	private void uploadAttachmentToAzure(PostTicketRQ ticketRQ, List<AttachmentInfo> attachmentsURL, Long backLinkId) {
-		List<Attachment> attachments = new ArrayList<>();
-		itemRepository.findById(backLinkId).ifPresent(item -> ofNullable(item.getLaunchId()).ifPresent(launchId -> {
-			List<Log> logs = logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(launchId,
-					Collections.singletonList(item.getItemId()),
-					ticketRQ.getNumberOfLogs()
-			);
-			logs.forEach(log -> ofNullable(log.getAttachment()).ifPresent(attachment -> attachments.add(attachment)));
-		}));
-
-		for (Attachment attachment : attachments) {
-			Optional<InputStream> fileOptional = attachmentDataStoreService.load(attachment.getFileId());
-			if (fileOptional.isPresent()) {
-				try (InputStream file = fileOptional.get()) {
-					MimeType mimeType = mimeRepository.forName(attachment.getContentType());
-					byte[] bytes = ByteStreams.toByteArray(file);
-					AttachmentsApi attachmentsApi = new AttachmentsApi(defaultClient);
-					String fileName = attachment.getFileId() + mimeType.getExtension();
-					AttachmentReference attachmentReference = attachmentsApi.attachmentsCreate(organizationName,
-							bytes,
-							params.getProjectName(),
-							API_VERSION,
-							fileName,
-							null,
-							null
-					);
-					attachmentsURL.add(new AttachmentInfo(fileName,
-							attachment.getFileId(),
-							attachmentReference.getUrl(),
-							attachment.getContentType()
-					));
-				} catch (IOException | ApiException | MimeTypeException e) {
-					LOGGER.error("Unable to post ticket : " + e.getMessage(), e);
-					throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION, "Unable to post ticket: " + e.getMessage(), e);
-				}
-			} else {
-				throw new ReportPortalException(UNABLE_TO_LOAD_BINARY_DATA);
-			}
+	private List<AttachmentInfo> uploadAttachmentToAzure(PostTicketRQ ticketRQ) {
+		if (!ticketRQ.getIsIncludeScreenshots()) {
+			return Collections.emptyList();
 		}
+
+		if (MapUtils.isEmpty(ticketRQ.getBackLinks())) {
+			return Collections.emptyList();
+		}
+
+		return ticketRQ.getBackLinks()
+				.keySet()
+				.stream()
+				.map(itemRepository::findById)
+				.map(item -> item.map(it -> findLogsUnderItem(it, ticketRQ.getNumberOfLogs())).orElseGet(Collections::emptyList))
+				.flatMap(List::stream)
+				.map(Log::getAttachment)
+				.filter(Objects::nonNull)
+				.map(this::uploadAttachment)
+				.collect(Collectors.toList());
+
 	}
 
 	private String getFormattedMessage(Log log) {
@@ -772,5 +753,34 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 		ofNullable(log.getLogLevel()).ifPresent(logLevel -> messageBuilder.append("Level: ").append(logLevel).append(", "));
 		messageBuilder.append("<br>").append("Log: ").append(log.getLogMessage());
 		return messageBuilder.toString();
+	}
+
+	private List<Log> findLogsUnderItem(TestItem item, int logCount) {
+		return ofNullable(item.getLaunchId()).map(launchId -> logRepository.findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(launchId,
+				Collections.singletonList(item.getItemId()),
+				logCount
+		)).orElseGet(Collections::emptyList);
+	}
+
+	private AttachmentInfo uploadAttachment(Attachment attachment) {
+		try (InputStream file = attachmentDataStoreService.load(attachment.getFileId())
+				.orElseThrow(() -> new ReportPortalException(UNABLE_TO_LOAD_BINARY_DATA))) {
+			MimeType mimeType = mimeRepository.forName(attachment.getContentType());
+			byte[] bytes = ByteStreams.toByteArray(file);
+			AttachmentsApi attachmentsApi = new AttachmentsApi(defaultClient);
+			String fileName = attachment.getFileId() + mimeType.getExtension();
+			AttachmentReference attachmentReference = attachmentsApi.attachmentsCreate(organizationName,
+					bytes,
+					params.getProjectName(),
+					API_VERSION,
+					fileName,
+					null,
+					null
+			);
+			return new AttachmentInfo(fileName, attachment.getFileId(), attachmentReference.getUrl(), attachment.getContentType());
+		} catch (IOException | ApiException | MimeTypeException e) {
+			LOGGER.error("Unable to post ticket : " + e.getMessage(), e);
+			throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION, "Unable to post ticket: " + e.getMessage(), e);
+		}
 	}
 }
