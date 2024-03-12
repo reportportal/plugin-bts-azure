@@ -14,14 +14,14 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
 /**
  * Reference to a work item icon.
  */
-@ApiModel(description = "Reference to a work item icon.")
+@Schema(description = "Reference to a work item icon.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemIcon {
   @SerializedName("id")
@@ -39,7 +39,7 @@ public class WorkItemIcon {
    * The identifier of the icon.
    * @return id
   **/
-  @ApiModelProperty(value = "The identifier of the icon.")
+  @Schema(description = "The identifier of the icon.")
   public String getId() {
     return id;
   }
@@ -57,7 +57,7 @@ public class WorkItemIcon {
    * The REST URL of the resource.
    * @return url
   **/
-  @ApiModelProperty(value = "The REST URL of the resource.")
+  @Schema(description = "The REST URL of the resource.")
   public String getUrl() {
     return url;
   }

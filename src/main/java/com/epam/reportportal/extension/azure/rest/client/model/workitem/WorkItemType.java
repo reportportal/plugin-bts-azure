@@ -14,8 +14,8 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.Objects;
 /**
  * Describes a work item type.
  */
-@ApiModel(description = "Describes a work item type.")
+@Schema(description = "Describes a work item type.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemType extends WorkItemTrackingResource {
   @SerializedName("color")
@@ -70,7 +70,7 @@ public class WorkItemType extends WorkItemTrackingResource {
    * The color.
    * @return color
   **/
-  @ApiModelProperty(value = "The color.")
+  @Schema(description = "The color.")
   public String getColor() {
     return color;
   }
@@ -88,7 +88,7 @@ public class WorkItemType extends WorkItemTrackingResource {
    * The description of the work item type.
    * @return description
   **/
-  @ApiModelProperty(value = "The description of the work item type.")
+  @Schema(description = "The description of the work item type.")
   public String getDescription() {
     return description;
   }
@@ -114,7 +114,7 @@ public class WorkItemType extends WorkItemTrackingResource {
    * The fields that exist on the work item type.
    * @return fieldInstances
   **/
-  @ApiModelProperty(value = "The fields that exist on the work item type.")
+  @Schema(description = "The fields that exist on the work item type.")
   public List<WorkItemTypeFieldInstance> getFieldInstances() {
     return fieldInstances;
   }
@@ -140,7 +140,7 @@ public class WorkItemType extends WorkItemTrackingResource {
    * The fields that exist on the work item type.
    * @return fields
   **/
-  @ApiModelProperty(value = "The fields that exist on the work item type.")
+  @Schema(description = "The fields that exist on the work item type.")
   public List<WorkItemTypeFieldInstance> getFields() {
     return fields;
   }
@@ -158,7 +158,7 @@ public class WorkItemType extends WorkItemTrackingResource {
    * The icon of the work item type.
    * @return icon
   **/
-  @ApiModelProperty(value = "The icon of the work item type.")
+  @Schema(description = "The icon of the work item type.")
   public WorkItemIcon getIcon() {
     return icon;
   }
@@ -176,7 +176,7 @@ public class WorkItemType extends WorkItemTrackingResource {
    * True if work item type is disabled
    * @return isDisabled
   **/
-  @ApiModelProperty(value = "True if work item type is disabled")
+  @Schema(description = "True if work item type is disabled")
   public Boolean isIsDisabled() {
     return isDisabled;
   }
@@ -194,7 +194,7 @@ public class WorkItemType extends WorkItemTrackingResource {
    * Gets the name of the work item type.
    * @return name
   **/
-  @ApiModelProperty(value = "Gets the name of the work item type.")
+  @Schema(description = "Gets the name of the work item type.")
   public String getName() {
     return name;
   }
@@ -212,7 +212,7 @@ public class WorkItemType extends WorkItemTrackingResource {
    * The reference name of the work item type.
    * @return referenceName
   **/
-  @ApiModelProperty(value = "The reference name of the work item type.")
+  @Schema(description = "The reference name of the work item type.")
   public String getReferenceName() {
     return referenceName;
   }
@@ -238,7 +238,7 @@ public class WorkItemType extends WorkItemTrackingResource {
    * Gets state information for the work item type.
    * @return states
   **/
-  @ApiModelProperty(value = "Gets state information for the work item type.")
+  @Schema(description = "Gets state information for the work item type.")
   public List<WorkItemStateColor> getStates() {
     return states;
   }
@@ -264,7 +264,7 @@ public class WorkItemType extends WorkItemTrackingResource {
    * Gets the various state transition mappings in the work item type.
    * @return transitions
   **/
-  @ApiModelProperty(value = "Gets the various state transition mappings in the work item type.")
+  @Schema(description = "Gets the various state transition mappings in the work item type.")
   public Map<String, List<WorkItemStateTransition>> getTransitions() {
     return transitions;
   }
@@ -282,7 +282,7 @@ public class WorkItemType extends WorkItemTrackingResource {
    * The XML form.
    * @return xmlForm
   **/
-  @ApiModelProperty(value = "The XML form.")
+  @Schema(description = "The XML form.")
   public String getXmlForm() {
     return xmlForm;
   }

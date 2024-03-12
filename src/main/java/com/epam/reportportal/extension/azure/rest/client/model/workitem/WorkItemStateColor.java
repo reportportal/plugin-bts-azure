@@ -14,14 +14,14 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
 /**
  * Work item type state name, color and state category
  */
-@ApiModel(description = "Work item type state name, color and state category")
+@Schema(description = "Work item type state name, color and state category")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemStateColor {
   @SerializedName("category")
@@ -42,7 +42,7 @@ public class WorkItemStateColor {
    * Category of state
    * @return category
   **/
-  @ApiModelProperty(value = "Category of state")
+  @Schema(description = "Category of state")
   public String getCategory() {
     return category;
   }
@@ -60,7 +60,7 @@ public class WorkItemStateColor {
    * Color value
    * @return color
   **/
-  @ApiModelProperty(value = "Color value")
+  @Schema(description = "Color value")
   public String getColor() {
     return color;
   }
@@ -78,7 +78,7 @@ public class WorkItemStateColor {
    * Work item type state name
    * @return name
   **/
-  @ApiModelProperty(value = "Work item type state name")
+  @Schema(description = "Work item type state name")
   public String getName() {
     return name;
   }

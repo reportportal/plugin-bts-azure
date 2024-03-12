@@ -14,14 +14,14 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
 /**
  * Reference to a field in a work item
  */
-@ApiModel(description = "Reference to a field in a work item")
+@Schema(description = "Reference to a field in a work item")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemFieldReference {
   @SerializedName("name")
@@ -42,7 +42,7 @@ public class WorkItemFieldReference {
    * The friendly name of the field.
    * @return name
   **/
-  @ApiModelProperty(value = "The friendly name of the field.")
+  @Schema(description = "The friendly name of the field.")
   public String getName() {
     return name;
   }
@@ -60,7 +60,7 @@ public class WorkItemFieldReference {
    * The reference name of the field.
    * @return referenceName
   **/
-  @ApiModelProperty(value = "The reference name of the field.")
+  @Schema(description = "The reference name of the field.")
   public String getReferenceName() {
     return referenceName;
   }
@@ -78,7 +78,7 @@ public class WorkItemFieldReference {
    * The REST URL of the resource.
    * @return url
   **/
-  @ApiModelProperty(value = "The REST URL of the resource.")
+  @Schema(description = "The REST URL of the resource.")
   public String getUrl() {
     return url;
   }

@@ -14,14 +14,13 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
 /**
  * Base class for work item tracking resource references.
  */
-@ApiModel(description = "Base class for work item tracking resource references.")
+@Schema(description = "Base class for work item tracking resource references.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemTrackingResourceReference {
   @SerializedName("url")
@@ -32,11 +31,12 @@ public class WorkItemTrackingResourceReference {
     return this;
   }
 
-   /**
+  /**
    * Get url
+   *
    * @return url
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
   public String getUrl() {
     return url;
   }
@@ -44,7 +44,6 @@ public class WorkItemTrackingResourceReference {
   public void setUrl(String url) {
     this.url = url;
   }
-
 
   @Override
   public boolean equals(Object o) {
@@ -54,7 +53,8 @@ public class WorkItemTrackingResourceReference {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    WorkItemTrackingResourceReference workItemTrackingResourceReference = (WorkItemTrackingResourceReference) o;
+    WorkItemTrackingResourceReference workItemTrackingResourceReference =
+        (WorkItemTrackingResourceReference) o;
     return Objects.equals(this.url, workItemTrackingResourceReference.url);
   }
 
@@ -63,12 +63,11 @@ public class WorkItemTrackingResourceReference {
     return Objects.hash(url);
   }
 
-
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class WorkItemTrackingResourceReference {\n");
-    
+
     sb.append("    url: ").append(toIndentedString(url)).append("\n");
     sb.append("}");
     return sb.toString();

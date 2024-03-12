@@ -14,8 +14,8 @@
 package com.epam.reportportal.extension.azure.rest.client.model;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 import java.util.UUID;
 import org.threeten.bp.OffsetDateTime;
@@ -23,7 +23,7 @@ import org.threeten.bp.OffsetDateTime;
 /**
  * Represents a shallow reference to a TeamProject.
  */
-@ApiModel(description = "Represents a shallow reference to a TeamProject.")
+@Schema(description = "Represents a shallow reference to a TeamProject.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
 public class TeamProjectReference {
   @SerializedName("abbreviation")
@@ -65,7 +65,7 @@ public class TeamProjectReference {
    * Project abbreviation.
    * @return abbreviation
   **/
-  @ApiModelProperty(value = "Project abbreviation.")
+  @Schema(description = "Project abbreviation.")
   public String getAbbreviation() {
     return abbreviation;
   }
@@ -83,7 +83,7 @@ public class TeamProjectReference {
    * Url to default team identity image.
    * @return defaultTeamImageUrl
   **/
-  @ApiModelProperty(value = "Url to default team identity image.")
+  @Schema(description = "Url to default team identity image.")
   public String getDefaultTeamImageUrl() {
     return defaultTeamImageUrl;
   }
@@ -101,7 +101,7 @@ public class TeamProjectReference {
    * The project&#39;s description (if any).
    * @return description
   **/
-  @ApiModelProperty(value = "The project's description (if any).")
+  @Schema(description = "The project's description (if any).")
   public String getDescription() {
     return description;
   }
@@ -119,7 +119,7 @@ public class TeamProjectReference {
    * Project identifier.
    * @return id
   **/
-  @ApiModelProperty(value = "Project identifier.")
+  @Schema(description = "Project identifier.")
   public UUID getId() {
     return id;
   }
@@ -137,7 +137,7 @@ public class TeamProjectReference {
    * Project last update time.
    * @return lastUpdateTime
   **/
-  @ApiModelProperty(value = "Project last update time.")
+  @Schema(description = "Project last update time.")
   public OffsetDateTime getLastUpdateTime() {
     return lastUpdateTime;
   }
@@ -155,7 +155,7 @@ public class TeamProjectReference {
    * Project name.
    * @return name
   **/
-  @ApiModelProperty(value = "Project name.")
+  @Schema(description = "Project name.")
   public String getName() {
     return name;
   }
@@ -173,7 +173,7 @@ public class TeamProjectReference {
    * Project revision.
    * @return revision
   **/
-  @ApiModelProperty(value = "Project revision.")
+  @Schema(description = "Project revision.")
   public Long getRevision() {
     return revision;
   }
@@ -191,7 +191,7 @@ public class TeamProjectReference {
    * Project state.
    * @return state
   **/
-  @ApiModelProperty(value = "Project state.")
+  @Schema(description = "Project state.")
   public Object getState() {
     return state;
   }
@@ -209,7 +209,7 @@ public class TeamProjectReference {
    * Url to the full version of the object.
    * @return url
   **/
-  @ApiModelProperty(value = "Url to the full version of the object.")
+  @Schema(description = "Url to the full version of the object.")
   public String getUrl() {
     return url;
   }
@@ -227,7 +227,7 @@ public class TeamProjectReference {
    * Project visibility.
    * @return visibility
   **/
-  @ApiModelProperty(value = "Project visibility.")
+  @Schema(description = "Project visibility.")
   public Object getVisibility() {
     return visibility;
   }

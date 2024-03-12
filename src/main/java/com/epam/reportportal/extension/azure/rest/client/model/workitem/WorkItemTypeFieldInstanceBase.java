@@ -14,8 +14,7 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +22,7 @@ import java.util.Objects;
 /**
  * Base field instance for workItemType fields.
  */
-@ApiModel(description = "Base field instance for workItemType fields.")
+@Schema(description = "Base field instance for workItemType fields.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemTypeFieldInstanceBase extends WorkItemFieldReference {
   @SerializedName("alwaysRequired")
@@ -40,11 +39,12 @@ public class WorkItemTypeFieldInstanceBase extends WorkItemFieldReference {
     return this;
   }
 
-   /**
+  /**
    * Indicates whether field value is always required.
+   *
    * @return alwaysRequired
-  **/
-  @ApiModelProperty(value = "Indicates whether field value is always required.")
+   **/
+  @Schema(description = "Indicates whether field value is always required.")
   public Boolean isAlwaysRequired() {
     return alwaysRequired;
   }
@@ -53,12 +53,14 @@ public class WorkItemTypeFieldInstanceBase extends WorkItemFieldReference {
     this.alwaysRequired = alwaysRequired;
   }
 
-  public WorkItemTypeFieldInstanceBase dependentFields(List<WorkItemFieldReference> dependentFields) {
+  public WorkItemTypeFieldInstanceBase dependentFields(
+      List<WorkItemFieldReference> dependentFields) {
     this.dependentFields = dependentFields;
     return this;
   }
 
-  public WorkItemTypeFieldInstanceBase addDependentFieldsItem(WorkItemFieldReference dependentFieldsItem) {
+  public WorkItemTypeFieldInstanceBase addDependentFieldsItem(
+      WorkItemFieldReference dependentFieldsItem) {
     if (this.dependentFields == null) {
       this.dependentFields = new ArrayList<WorkItemFieldReference>();
     }
@@ -66,11 +68,12 @@ public class WorkItemTypeFieldInstanceBase extends WorkItemFieldReference {
     return this;
   }
 
-   /**
+  /**
    * The list of dependent fields.
+   *
    * @return dependentFields
-  **/
-  @ApiModelProperty(value = "The list of dependent fields.")
+   **/
+  @Schema(description = "The list of dependent fields.")
   public List<WorkItemFieldReference> getDependentFields() {
     return dependentFields;
   }
@@ -84,11 +87,12 @@ public class WorkItemTypeFieldInstanceBase extends WorkItemFieldReference {
     return this;
   }
 
-   /**
+  /**
    * Gets the help text for the field.
+   *
    * @return helpText
-  **/
-  @ApiModelProperty(value = "Gets the help text for the field.")
+   **/
+  @Schema(description = "Gets the help text for the field.")
   public String getHelpText() {
     return helpText;
   }
@@ -96,7 +100,6 @@ public class WorkItemTypeFieldInstanceBase extends WorkItemFieldReference {
   public void setHelpText(String helpText) {
     this.helpText = helpText;
   }
-
 
   @Override
   public boolean equals(Object o) {
@@ -107,17 +110,15 @@ public class WorkItemTypeFieldInstanceBase extends WorkItemFieldReference {
       return false;
     }
     WorkItemTypeFieldInstanceBase workItemTypeFieldInstanceBase = (WorkItemTypeFieldInstanceBase) o;
-    return Objects.equals(this.alwaysRequired, workItemTypeFieldInstanceBase.alwaysRequired) &&
-        Objects.equals(this.dependentFields, workItemTypeFieldInstanceBase.dependentFields) &&
-        Objects.equals(this.helpText, workItemTypeFieldInstanceBase.helpText) &&
-        super.equals(o);
+    return Objects.equals(this.alwaysRequired, workItemTypeFieldInstanceBase.alwaysRequired)
+        && Objects.equals(this.dependentFields, workItemTypeFieldInstanceBase.dependentFields)
+        && Objects.equals(this.helpText, workItemTypeFieldInstanceBase.helpText) && super.equals(o);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(alwaysRequired, dependentFields, helpText, super.hashCode());
   }
-
 
   @Override
   public String toString() {

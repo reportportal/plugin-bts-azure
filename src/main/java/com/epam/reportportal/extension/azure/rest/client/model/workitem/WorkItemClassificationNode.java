@@ -14,8 +14,7 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.UUID;
 /**
  * Defines a classification node for work item tracking.
  */
-@ApiModel(description = "Defines a classification node for work item tracking.")
+@Schema(description = "Defines a classification node for work item tracking.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemClassificationNode extends WorkItemTrackingResource {
   @SerializedName("attributes")
@@ -70,7 +69,7 @@ public class WorkItemClassificationNode extends WorkItemTrackingResource {
    * Dictionary that has node attributes like start/finish date for iteration nodes.
    * @return attributes
   **/
-  @ApiModelProperty(value = "Dictionary that has node attributes like start/finish date for iteration nodes.")
+  @Schema(description = "Dictionary that has node attributes like start/finish date for iteration nodes.")
   public Map<String, Object> getAttributes() {
     return attributes;
   }
@@ -96,7 +95,7 @@ public class WorkItemClassificationNode extends WorkItemTrackingResource {
    * List of child nodes fetched.
    * @return children
   **/
-  @ApiModelProperty(value = "List of child nodes fetched.")
+  @Schema(description = "List of child nodes fetched.")
   public List<WorkItemClassificationNode> getChildren() {
     return children;
   }
@@ -114,7 +113,7 @@ public class WorkItemClassificationNode extends WorkItemTrackingResource {
    * Flag that indicates if the classification node has any child nodes.
    * @return hasChildren
   **/
-  @ApiModelProperty(value = "Flag that indicates if the classification node has any child nodes.")
+  @Schema(description = "Flag that indicates if the classification node has any child nodes.")
   public Boolean isHasChildren() {
     return hasChildren;
   }
@@ -132,7 +131,7 @@ public class WorkItemClassificationNode extends WorkItemTrackingResource {
    * Integer ID of the classification node.
    * @return id
   **/
-  @ApiModelProperty(value = "Integer ID of the classification node.")
+  @Schema(description = "Integer ID of the classification node.")
   public Integer getId() {
     return id;
   }
@@ -150,7 +149,7 @@ public class WorkItemClassificationNode extends WorkItemTrackingResource {
    * GUID ID of the classification node.
    * @return identifier
   **/
-  @ApiModelProperty(value = "GUID ID of the classification node.")
+  @Schema(description = "GUID ID of the classification node.")
   public UUID getIdentifier() {
     return identifier;
   }
@@ -168,7 +167,7 @@ public class WorkItemClassificationNode extends WorkItemTrackingResource {
    * Name of the classification node.
    * @return name
   **/
-  @ApiModelProperty(value = "Name of the classification node.")
+  @Schema(description = "Name of the classification node.")
   public String getName() {
     return name;
   }
@@ -186,7 +185,7 @@ public class WorkItemClassificationNode extends WorkItemTrackingResource {
    * Path of the classification node.
    * @return path
   **/
-  @ApiModelProperty(value = "Path of the classification node.")
+  @Schema(description = "Path of the classification node.")
   public String getPath() {
     return path;
   }
@@ -204,7 +203,7 @@ public class WorkItemClassificationNode extends WorkItemTrackingResource {
    * Node structure type.
    * @return structureType
   **/
-  @ApiModelProperty(value = "Node structure type.")
+  @Schema(description = "Node structure type.")
   public String getStructureType() {
     return structureType;
   }
