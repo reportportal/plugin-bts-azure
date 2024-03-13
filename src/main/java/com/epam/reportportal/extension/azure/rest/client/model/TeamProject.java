@@ -14,8 +14,8 @@
 package com.epam.reportportal.extension.azure.rest.client.model;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * Represents a Team Project object.
  */
-@ApiModel(description = "Represents a Team Project object.")
+@Schema(description = "Represents a Team Project object.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
 public class TeamProject extends TeamProjectReference {
   @SerializedName("_links")
@@ -44,7 +44,7 @@ public class TeamProject extends TeamProjectReference {
    * The links to other objects related to this object.
    * @return links
   **/
-  @ApiModelProperty(value = "The links to other objects related to this object.")
+  @Schema(description = "The links to other objects related to this object.")
   public ReferenceLinks getLinks() {
     return links;
   }
@@ -70,7 +70,7 @@ public class TeamProject extends TeamProjectReference {
    * Set of capabilities this project has (such as process template &amp; version control).
    * @return capabilities
   **/
-  @ApiModelProperty(value = "Set of capabilities this project has (such as process template & version control).")
+  @Schema(description = "Set of capabilities this project has (such as process template & version control).")
   public Map<String, Map<String, String>> getCapabilities() {
     return capabilities;
   }
@@ -88,7 +88,7 @@ public class TeamProject extends TeamProjectReference {
    * The shallow ref to the default team.
    * @return defaultTeam
   **/
-  @ApiModelProperty(value = "The shallow ref to the default team.")
+  @Schema(description = "The shallow ref to the default team.")
   public WebApiTeamRef getDefaultTeam() {
     return defaultTeam;
   }

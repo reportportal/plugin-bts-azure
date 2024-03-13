@@ -13,13 +13,13 @@
 
 package com.epam.reportportal.extension.azure.rest.client.model;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
 /**
  * 
  */
-@ApiModel(description = "")
+@Schema(description = "")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
 public class Identity extends IdentityBase {
 

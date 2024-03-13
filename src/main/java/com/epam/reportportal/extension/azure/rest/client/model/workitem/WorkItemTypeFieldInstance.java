@@ -14,8 +14,8 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * Field instance of a work item type.
  */
-@ApiModel(description = "Field instance of a work item type.")
+@Schema(description = "Field instance of a work item type.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemTypeFieldInstance extends WorkItemTypeFieldInstanceBase {
   @SerializedName("allowedValues")
@@ -49,7 +49,7 @@ public class WorkItemTypeFieldInstance extends WorkItemTypeFieldInstanceBase {
    * The list of field allowed values.
    * @return allowedValues
   **/
-  @ApiModelProperty(value = "The list of field allowed values.")
+  @Schema(description = "The list of field allowed values.")
   public List<String> getAllowedValues() {
     return allowedValues;
   }
@@ -67,7 +67,7 @@ public class WorkItemTypeFieldInstance extends WorkItemTypeFieldInstanceBase {
    * Represents the default value of the field.
    * @return defaultValue
   **/
-  @ApiModelProperty(value = "Represents the default value of the field.")
+  @Schema(description = "Represents the default value of the field.")
   public String getDefaultValue() {
     return defaultValue;
   }

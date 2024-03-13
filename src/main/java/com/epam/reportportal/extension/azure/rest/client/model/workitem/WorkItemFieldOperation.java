@@ -14,14 +14,14 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
 /**
  * Describes a work item field operation.
  */
-@ApiModel(description = "Describes a work item field operation.")
+@Schema(description = "Describes a work item field operation.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemFieldOperation {
   @SerializedName("name")
@@ -39,7 +39,7 @@ public class WorkItemFieldOperation {
    * Friendly name of the operation.
    * @return name
   **/
-  @ApiModelProperty(value = "Friendly name of the operation.")
+  @Schema(description = "Friendly name of the operation.")
   public String getName() {
     return name;
   }
@@ -57,7 +57,7 @@ public class WorkItemFieldOperation {
    * Reference name of the operation.
    * @return referenceName
   **/
-  @ApiModelProperty(value = "Reference name of the operation.")
+  @Schema(description = "Reference name of the operation.")
   public String getReferenceName() {
     return referenceName;
   }

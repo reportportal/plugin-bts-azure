@@ -14,8 +14,7 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +22,7 @@ import java.util.Objects;
 /**
  * Field Instance of a workItemype with detailed references.
  */
-@ApiModel(description = "Field Instance of a workItemype with detailed references.")
+@Schema(description = "Field Instance of a workItemype with detailed references.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemTypeFieldWithReferences extends WorkItemTypeFieldInstanceBase {
   @SerializedName("allowedValues")
@@ -45,11 +44,12 @@ public class WorkItemTypeFieldWithReferences extends WorkItemTypeFieldInstanceBa
     return this;
   }
 
-   /**
+  /**
    * The list of field allowed values.
+   *
    * @return allowedValues
-  **/
-  @ApiModelProperty(value = "The list of field allowed values.")
+   **/
+  @Schema(description = "The list of field allowed values.")
   public List<Object> getAllowedValues() {
     return allowedValues;
   }
@@ -63,11 +63,12 @@ public class WorkItemTypeFieldWithReferences extends WorkItemTypeFieldInstanceBa
     return this;
   }
 
-   /**
+  /**
    * Represents the default value of the field.
+   *
    * @return defaultValue
-  **/
-  @ApiModelProperty(value = "Represents the default value of the field.")
+   **/
+  @Schema(description = "Represents the default value of the field.")
   public Object getDefaultValue() {
     return defaultValue;
   }
@@ -75,7 +76,6 @@ public class WorkItemTypeFieldWithReferences extends WorkItemTypeFieldInstanceBa
   public void setDefaultValue(Object defaultValue) {
     this.defaultValue = defaultValue;
   }
-
 
   @Override
   public boolean equals(Object o) {
@@ -85,17 +85,17 @@ public class WorkItemTypeFieldWithReferences extends WorkItemTypeFieldInstanceBa
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    WorkItemTypeFieldWithReferences workItemTypeFieldWithReferences = (WorkItemTypeFieldWithReferences) o;
-    return Objects.equals(this.allowedValues, workItemTypeFieldWithReferences.allowedValues) &&
-        Objects.equals(this.defaultValue, workItemTypeFieldWithReferences.defaultValue) &&
-        super.equals(o);
+    WorkItemTypeFieldWithReferences workItemTypeFieldWithReferences =
+        (WorkItemTypeFieldWithReferences) o;
+    return Objects.equals(this.allowedValues, workItemTypeFieldWithReferences.allowedValues)
+        && Objects.equals(this.defaultValue, workItemTypeFieldWithReferences.defaultValue)
+        && super.equals(o);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(allowedValues, defaultValue, super.hashCode());
   }
-
 
   @Override
   public String toString() {
