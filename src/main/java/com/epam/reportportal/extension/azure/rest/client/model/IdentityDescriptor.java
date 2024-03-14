@@ -14,14 +14,14 @@
 package com.epam.reportportal.extension.azure.rest.client.model;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
 /**
  * An Identity descriptor is a wrapper for the identity type (Windows SID, Passport) along with a unique identifier such as the SID or PUID.
  */
-@ApiModel(description = "An Identity descriptor is a wrapper for the identity type (Windows SID, Passport) along with a unique identifier such as the SID or PUID.")
+@Schema(description = "An Identity descriptor is a wrapper for the identity type (Windows SID, Passport) along with a unique identifier such as the SID or PUID.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
 public class IdentityDescriptor {
   @SerializedName("identifier")
@@ -39,7 +39,7 @@ public class IdentityDescriptor {
    * The unique identifier for this identity, not exceeding 256 chars, which will be persisted.
    * @return identifier
   **/
-  @ApiModelProperty(value = "The unique identifier for this identity, not exceeding 256 chars, which will be persisted.")
+  @Schema(description = "The unique identifier for this identity, not exceeding 256 chars, which will be persisted.")
   public String getIdentifier() {
     return identifier;
   }
@@ -57,7 +57,7 @@ public class IdentityDescriptor {
    * Type of descriptor (for example, Windows, Passport, etc.).
    * @return identityType
   **/
-  @ApiModelProperty(value = "Type of descriptor (for example, Windows, Passport, etc.).")
+  @Schema(description = "Type of descriptor (for example, Windows, Passport, etc.).")
   public String getIdentityType() {
     return identityType;
   }

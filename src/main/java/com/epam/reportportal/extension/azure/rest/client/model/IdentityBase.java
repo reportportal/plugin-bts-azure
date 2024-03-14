@@ -14,8 +14,8 @@
 package com.epam.reportportal.extension.azure.rest.client.model;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +24,7 @@ import java.util.UUID;
 /**
  * Base Identity class to allow \&quot;trimmed\&quot; identity class in the GetConnectionData API Makes sure that on-the-wire representations of the derived classes are compatible with each other (e.g. Server responds with PublicIdentity object while client deserializes it as Identity object) Derived classes should not have additional [DataMember] properties
  */
-@ApiModel(description = "Base Identity class to allow \"trimmed\" identity class in the GetConnectionData API Makes sure that on-the-wire representations of the derived classes are compatible with each other (e.g. Server responds with PublicIdentity object while client deserializes it as Identity object) Derived classes should not have additional [DataMember] properties")
+@Schema(description = "Base Identity class to allow \"trimmed\" identity class in the GetConnectionData API Makes sure that on-the-wire representations of the derived classes are compatible with each other (e.g. Server responds with PublicIdentity object while client deserializes it as Identity object) Derived classes should not have additional [DataMember] properties")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
 public class IdentityBase {
   @SerializedName("customDisplayName")
@@ -84,7 +84,7 @@ public class IdentityBase {
    * The custom display name for the identity (if any). Setting this property to an empty string will clear the existing custom display name. Setting this property to null will not affect the existing persisted value (since null values do not get sent over the wire or to the database)
    * @return customDisplayName
   **/
-  @ApiModelProperty(value = "The custom display name for the identity (if any). Setting this property to an empty string will clear the existing custom display name. Setting this property to null will not affect the existing persisted value (since null values do not get sent over the wire or to the database)")
+  @Schema(description = "The custom display name for the identity (if any). Setting this property to an empty string will clear the existing custom display name. Setting this property to null will not affect the existing persisted value (since null values do not get sent over the wire or to the database)")
   public String getCustomDisplayName() {
     return customDisplayName;
   }
@@ -102,7 +102,7 @@ public class IdentityBase {
    * Get descriptor
    * @return descriptor
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public IdentityDescriptor getDescriptor() {
     return descriptor;
   }
@@ -120,7 +120,7 @@ public class IdentityBase {
    * Identity Identifier. Also called Storage Key, or VSID
    * @return id
   **/
-  @ApiModelProperty(value = "Identity Identifier. Also called Storage Key, or VSID")
+  @Schema(description = "Identity Identifier. Also called Storage Key, or VSID")
   public UUID getId() {
     return id;
   }
@@ -138,7 +138,7 @@ public class IdentityBase {
    * True if the identity has a membership in any Azure Devops group in the organization.
    * @return isActive
   **/
-  @ApiModelProperty(value = "True if the identity has a membership in any Azure Devops group in the organization.")
+  @Schema(description = "True if the identity has a membership in any Azure Devops group in the organization.")
   public Boolean isIsActive() {
     return isActive;
   }
@@ -156,7 +156,7 @@ public class IdentityBase {
    * True if the identity is a group.
    * @return isContainer
   **/
-  @ApiModelProperty(value = "True if the identity is a group.")
+  @Schema(description = "True if the identity is a group.")
   public Boolean isIsContainer() {
     return isContainer;
   }
@@ -174,7 +174,7 @@ public class IdentityBase {
    * Get masterId
    * @return masterId
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public UUID getMasterId() {
     return masterId;
   }
@@ -200,7 +200,7 @@ public class IdentityBase {
    * Id of the members of the identity (groups only).
    * @return memberIds
   **/
-  @ApiModelProperty(value = "Id of the members of the identity (groups only).")
+  @Schema(description = "Id of the members of the identity (groups only).")
   public List<UUID> getMemberIds() {
     return memberIds;
   }
@@ -226,7 +226,7 @@ public class IdentityBase {
    * Get memberOf
    * @return memberOf
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public List<IdentityDescriptor> getMemberOf() {
     return memberOf;
   }
@@ -252,7 +252,7 @@ public class IdentityBase {
    * Get members
    * @return members
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public List<IdentityDescriptor> getMembers() {
     return members;
   }
@@ -270,7 +270,7 @@ public class IdentityBase {
    * Get metaTypeId
    * @return metaTypeId
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public Integer getMetaTypeId() {
     return metaTypeId;
   }
@@ -288,7 +288,7 @@ public class IdentityBase {
    * Get properties
    * @return properties
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public PropertiesCollection getProperties() {
     return properties;
   }
@@ -306,7 +306,7 @@ public class IdentityBase {
    * The display name for the identity as specified by the source identity provider.
    * @return providerDisplayName
   **/
-  @ApiModelProperty(value = "The display name for the identity as specified by the source identity provider.")
+  @Schema(description = "The display name for the identity as specified by the source identity provider.")
   public String getProviderDisplayName() {
     return providerDisplayName;
   }
@@ -324,7 +324,7 @@ public class IdentityBase {
    * Get resourceVersion
    * @return resourceVersion
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public Integer getResourceVersion() {
     return resourceVersion;
   }
@@ -342,7 +342,7 @@ public class IdentityBase {
    * Get socialDescriptor
    * @return socialDescriptor
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public String getSocialDescriptor() {
     return socialDescriptor;
   }
@@ -360,7 +360,7 @@ public class IdentityBase {
    * Subject descriptor of a Graph entity.
    * @return subjectDescriptor
   **/
-  @ApiModelProperty(value = "Subject descriptor of a Graph entity.")
+  @Schema(description = "Subject descriptor of a Graph entity.")
   public String getSubjectDescriptor() {
     return subjectDescriptor;
   }
@@ -378,7 +378,7 @@ public class IdentityBase {
    * Get uniqueUserId
    * @return uniqueUserId
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public Integer getUniqueUserId() {
     return uniqueUserId;
   }

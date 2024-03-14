@@ -14,14 +14,14 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
 /**
  * Represents the reference to a specific version of a comment on a Work Item.
  */
-@ApiModel(description = "Represents the reference to a specific version of a comment on a Work Item.")
+@Schema(description = "Represents the reference to a specific version of a comment on a Work Item.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemCommentVersionRef extends WorkItemTrackingResourceReference {
   @SerializedName("commentId")
@@ -48,7 +48,7 @@ public class WorkItemCommentVersionRef extends WorkItemTrackingResourceReference
    * The id assigned to the comment.
    * @return commentId
   **/
-  @ApiModelProperty(value = "The id assigned to the comment.")
+  @Schema(description = "The id assigned to the comment.")
   public Integer getCommentId() {
     return commentId;
   }
@@ -66,7 +66,7 @@ public class WorkItemCommentVersionRef extends WorkItemTrackingResourceReference
    * [Internal] The work item revision where this comment was originally added.
    * @return createdInRevision
   **/
-  @ApiModelProperty(value = "[Internal] The work item revision where this comment was originally added.")
+  @Schema(description = "[Internal] The work item revision where this comment was originally added.")
   public Integer getCreatedInRevision() {
     return createdInRevision;
   }
@@ -84,7 +84,7 @@ public class WorkItemCommentVersionRef extends WorkItemTrackingResourceReference
    * [Internal] Specifies whether comment was deleted.
    * @return isDeleted
   **/
-  @ApiModelProperty(value = "[Internal] Specifies whether comment was deleted.")
+  @Schema(description = "[Internal] Specifies whether comment was deleted.")
   public Boolean isIsDeleted() {
     return isDeleted;
   }
@@ -102,7 +102,7 @@ public class WorkItemCommentVersionRef extends WorkItemTrackingResourceReference
    * [Internal] The text of the comment.
    * @return text
   **/
-  @ApiModelProperty(value = "[Internal] The text of the comment.")
+  @Schema(description = "[Internal] The text of the comment.")
   public String getText() {
     return text;
   }
@@ -120,7 +120,7 @@ public class WorkItemCommentVersionRef extends WorkItemTrackingResourceReference
    * The version number.
    * @return version
   **/
-  @ApiModelProperty(value = "The version number.")
+  @Schema(description = "The version number.")
   public Integer getVersion() {
     return version;
   }

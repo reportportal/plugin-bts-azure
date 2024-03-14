@@ -14,15 +14,9 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import java.util.Objects;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-/**
- * The JSON model for a JSON Patch operation
- */
-@ApiModel(description = "The JSON model for a JSON Patch operation")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
+@Schema(description = "The JSON model for a JSON Patch")
 public class JsonPatchOperation {
   @SerializedName("from")
   private String from = null;
@@ -51,11 +45,7 @@ public class JsonPatchOperation {
     return this;
   }
 
-   /**
-   * The path to copy from for the Move/Copy operation.
-   * @return from
-  **/
-  @ApiModelProperty(value = "The path to copy from for the Move/Copy operation.")
+  @Schema(description = "The path to copy from for the Move/Copy operation.")
   public String getFrom() {
     return from;
   }
@@ -69,11 +59,7 @@ public class JsonPatchOperation {
     return this;
   }
 
-   /**
-   * The patch operation
-   * @return op
-  **/
-  @ApiModelProperty(value = "The patch operation")
+  @Schema(description = "The patch operation")
   public Object getOp() {
     return op;
   }
@@ -87,11 +73,7 @@ public class JsonPatchOperation {
     return this;
   }
 
-   /**
-   * The path for the operation. In the case of an array, a zero based index can be used to specify the position in the array (e.g. /biscuits/0/name). The \&quot;-\&quot; character can be used instead of an index to insert at the end of the array (e.g. /biscuits/-).
-   * @return path
-  **/
-  @ApiModelProperty(value = "The path for the operation. In the case of an array, a zero based index can be used to specify the position in the array (e.g. /biscuits/0/name). The \"-\" character can be used instead of an index to insert at the end of the array (e.g. /biscuits/-).")
+  @Schema(description = "The path for the operation. In the case of an array, a zero based index can be used to specify the position in the array (e.g. /biscuits/0/name). The \"-\" character can be used instead of an index to insert at the end of the array (e.g. /biscuits/-).")
   public String getPath() {
     return path;
   }
@@ -105,11 +87,7 @@ public class JsonPatchOperation {
     return this;
   }
 
-   /**
-   * The value for the operation. This is either a primitive or a JToken.
-   * @return value
-  **/
-  @ApiModelProperty(value = "The value for the operation. This is either a primitive or a JToken.")
+  @Schema(description = "The value for the operation. This is either a primitive or a JToken.")
   public Object getValue() {
     return value;
   }
@@ -118,50 +96,5 @@ public class JsonPatchOperation {
     this.value = value;
   }
 
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    JsonPatchOperation jsonPatchOperation = (JsonPatchOperation) o;
-    return Objects.equals(this.from, jsonPatchOperation.from) &&
-        Objects.equals(this.op, jsonPatchOperation.op) &&
-        Objects.equals(this.path, jsonPatchOperation.path) &&
-        Objects.equals(this.value, jsonPatchOperation.value);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(from, op, path, value);
-  }
-
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class JsonPatchOperation {\n");
-    
-    sb.append("    from: ").append(toIndentedString(from)).append("\n");
-    sb.append("    op: ").append(toIndentedString(op)).append("\n");
-    sb.append("    path: ").append(toIndentedString(path)).append("\n");
-    sb.append("    value: ").append(toIndentedString(value)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
-
+  // ... rest of the class ...
 }

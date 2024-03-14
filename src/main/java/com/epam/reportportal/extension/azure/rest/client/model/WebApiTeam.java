@@ -14,15 +14,15 @@
 package com.epam.reportportal.extension.azure.rest.client.model;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 import java.util.UUID;
 
 /**
  * 
  */
-@ApiModel(description = "")
+@Schema(description = "")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
 public class WebApiTeam extends WebApiTeamRef {
   @SerializedName("description")
@@ -49,7 +49,7 @@ public class WebApiTeam extends WebApiTeamRef {
    * Team description
    * @return description
   **/
-  @ApiModelProperty(value = "Team description")
+  @Schema(description = "Team description")
   public String getDescription() {
     return description;
   }
@@ -67,7 +67,7 @@ public class WebApiTeam extends WebApiTeamRef {
    * Team identity.
    * @return identity
   **/
-  @ApiModelProperty(value = "Team identity.")
+  @Schema(description = "Team identity.")
   public Identity getIdentity() {
     return identity;
   }
@@ -85,7 +85,7 @@ public class WebApiTeam extends WebApiTeamRef {
    * Identity REST API Url to this team
    * @return identityUrl
   **/
-  @ApiModelProperty(value = "Identity REST API Url to this team")
+  @Schema(description = "Identity REST API Url to this team")
   public String getIdentityUrl() {
     return identityUrl;
   }
@@ -103,7 +103,7 @@ public class WebApiTeam extends WebApiTeamRef {
    * Get projectId
    * @return projectId
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public UUID getProjectId() {
     return projectId;
   }
@@ -121,7 +121,7 @@ public class WebApiTeam extends WebApiTeamRef {
    * Get projectName
    * @return projectName
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public String getProjectName() {
     return projectName;
   }

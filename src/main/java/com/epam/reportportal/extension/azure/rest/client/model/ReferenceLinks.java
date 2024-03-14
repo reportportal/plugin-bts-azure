@@ -14,8 +14,8 @@
 package com.epam.reportportal.extension.azure.rest.client.model;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * The class to represent a collection of REST reference links.
  */
-@ApiModel(description = "The class to represent a collection of REST reference links.")
+@Schema(description = "The class to represent a collection of REST reference links.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
 public class ReferenceLinks {
   @SerializedName("links")
@@ -46,7 +46,7 @@ public class ReferenceLinks {
    * The readonly view of the links.  Because Reference links are readonly, we only want to expose them as read only.
    * @return links
   **/
-  @ApiModelProperty(value = "The readonly view of the links.  Because Reference links are readonly, we only want to expose them as read only.")
+  @Schema(description = "The readonly view of the links.  Because Reference links are readonly, we only want to expose them as read only.")
   public Map<String, Object> getLinks() {
     return links;
   }

@@ -13,13 +13,13 @@
 
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
 /**
  * 
  */
-@ApiModel(description = "")
+@Schema(description = "")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemRelation extends Link {
 

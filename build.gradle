@@ -26,7 +26,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.epam.reportportal:commons-bom:5.11.2')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.github.reportportal:commons-bom:04b1a7d')
     }
 }
 
@@ -35,8 +35,8 @@ dependencies {
         implementation 'com.epam.reportportal:plugin-api'
         annotationProcessor 'com.epam.reportportal:plugin-api'
     } else {
-        implementation 'com.epam.reportportal:plugin-api'
-        annotationProcessor 'com.epam.reportportal:plugin-api'
+        implementation 'com.github.reportportal:plugin-api:cc3c5c8e'
+        annotationProcessor 'com.github.reportportal:plugin-api:cc3c5c8e'
     }
 
     compile 'com.squareup.okhttp:okhttp:2.7.5'
@@ -44,6 +44,7 @@ dependencies {
     compile 'io.gsonfire:gson-fire:1.8.0'
     compile 'org.threeten:threetenbp:1.3.5'
 
+    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
     implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
     implementation group: 'org.glassfish', name: 'javax.el', version: '3.0.0'
     implementation group: 'javax.el', name: 'javax.el-api', version: '3.0.0'
