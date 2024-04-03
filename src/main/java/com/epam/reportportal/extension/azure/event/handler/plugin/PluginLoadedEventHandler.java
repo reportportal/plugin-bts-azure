@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.integration.IntegrationParams;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,7 @@ public class PluginLoadedEventHandler implements EventHandler<PluginEvent> {
 			Integration integration = new Integration();
 			integration.setName(name);
 			integration.setType(integrationType);
-			integration.setCreationDate(LocalDateTime.now());
+			integration.setCreationDate(Instant.now());
 			integration.setEnabled(true);
 			integration.setCreator("SYSTEM");
 			integration.setParams(new IntegrationParams(new HashMap<>()));

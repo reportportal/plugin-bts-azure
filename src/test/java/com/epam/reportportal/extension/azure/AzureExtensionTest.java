@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.ws.model.externalsystem.AllowedValue;
 import com.epam.ta.reportportal.ws.model.externalsystem.PostFormField;
 import com.epam.ta.reportportal.ws.model.externalsystem.PostTicketRQ;
 import com.epam.ta.reportportal.ws.model.externalsystem.Ticket;
+import java.time.Instant;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -99,7 +100,7 @@ class AzureExtensionTest {
 		params.put("oauthAccessKey", "token");
 		IntegrationParams integrationParams = new IntegrationParams(params);
 		integration = new Integration(1L, new Project(1L, "ProjectName"), new IntegrationType(),
-				integrationParams, LocalDateTime.now());
+				integrationParams, Instant.now());
 		workItem = new WorkItem();
 		workItem.setId(23);
 		workItem.setUrl("https://dev.azure.com/some/some/_workitems/edit/23");
