@@ -1,7 +1,7 @@
 package com.epam.reportportal.extension.azure.command.utils;
 
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Validation;

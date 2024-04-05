@@ -3,9 +3,9 @@ package com.epam.reportportal.extension.azure.info.impl;
 import static java.util.Optional.ofNullable;
 
 import com.epam.reportportal.extension.azure.info.PluginInfoProvider;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
