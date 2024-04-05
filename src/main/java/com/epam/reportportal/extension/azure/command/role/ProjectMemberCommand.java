@@ -4,12 +4,12 @@ import static com.epam.reportportal.extension.azure.command.utils.CommandParamUt
 import static com.epam.reportportal.extension.azure.command.utils.CommandParamUtils.retrieveLong;
 import static java.util.Optional.ofNullable;
 
+import com.epam.reportportal.rules.commons.validation.BusinessRule;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
-import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.dao.ProjectRepository;
 import com.epam.ta.reportportal.entity.project.Project;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;

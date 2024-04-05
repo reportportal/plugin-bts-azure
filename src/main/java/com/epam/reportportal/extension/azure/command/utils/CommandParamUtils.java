@@ -2,9 +2,9 @@ package com.epam.reportportal.extension.azure.command.utils;
 
 import static java.util.Optional.ofNullable;
 
-import com.epam.ta.reportportal.commons.validation.Suppliers;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
+import com.epam.reportportal.rules.commons.validation.Suppliers;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
