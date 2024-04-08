@@ -1,7 +1,7 @@
 package com.epam.reportportal.extension.azure;
 
-import static com.epam.ta.reportportal.ws.reporting.ErrorType.UNABLE_INTERACT_WITH_INTEGRATION;
-import static com.epam.ta.reportportal.ws.reporting.ErrorType.UNABLE_TO_LOAD_BINARY_DATA;
+import static com.epam.reportportal.rules.exception.ErrorType.UNABLE_INTERACT_WITH_INTEGRATION;
+import static com.epam.reportportal.rules.exception.ErrorType.UNABLE_TO_LOAD_BINARY_DATA;
 import static java.util.Optional.ofNullable;
 
 import com.epam.reportportal.extension.CommonPluginCommand;
@@ -39,6 +39,12 @@ import com.epam.reportportal.extension.bugtracking.InternalTicketAssembler;
 import com.epam.reportportal.extension.common.IntegrationTypeProperties;
 import com.epam.reportportal.extension.event.PluginEvent;
 import com.epam.reportportal.extension.event.StartLaunchEvent;
+import com.epam.reportportal.model.externalsystem.AllowedValue;
+import com.epam.reportportal.model.externalsystem.PostFormField;
+import com.epam.reportportal.model.externalsystem.PostTicketRQ;
+import com.epam.reportportal.model.externalsystem.Ticket;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.binary.impl.AttachmentDataStoreService;
 import com.epam.ta.reportportal.dao.IntegrationRepository;
 import com.epam.ta.reportportal.dao.IntegrationTypeRepository;
@@ -49,13 +55,7 @@ import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.log.Log;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
-import com.epam.ta.reportportal.ws.model.externalsystem.AllowedValue;
-import com.epam.ta.reportportal.ws.model.externalsystem.PostFormField;
-import com.epam.ta.reportportal.ws.model.externalsystem.PostTicketRQ;
-import com.epam.ta.reportportal.ws.model.externalsystem.Ticket;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import com.google.common.base.Suppliers;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;

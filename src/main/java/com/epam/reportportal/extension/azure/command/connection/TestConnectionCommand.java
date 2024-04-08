@@ -2,7 +2,7 @@ package com.epam.reportportal.extension.azure.command.connection;
 
 import static com.epam.reportportal.extension.azure.AzureExtension.PROJECT;
 import static com.epam.reportportal.extension.azure.AzureExtension.URL;
-import static com.epam.ta.reportportal.ws.reporting.ErrorType.UNABLE_INTERACT_WITH_INTEGRATION;
+import static com.epam.reportportal.rules.exception.ErrorType.UNABLE_INTERACT_WITH_INTEGRATION;
 
 import com.epam.reportportal.extension.PluginCommand;
 import com.epam.reportportal.extension.azure.rest.client.ApiClient;
@@ -13,8 +13,8 @@ import com.epam.reportportal.extension.azure.rest.client.api.ProjectsApi;
 import com.epam.reportportal.extension.azure.rest.client.auth.HttpBasicAuth;
 import com.epam.reportportal.extension.azure.rest.client.model.TeamProject;
 import com.epam.reportportal.extension.bugtracking.BtsConstants;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import java.util.Map;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.slf4j.Logger;
