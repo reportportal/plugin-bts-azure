@@ -1,17 +1,35 @@
 package com.epam.reportportal.extension.azure;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import com.epam.reportportal.extension.IntegrationGroupEnum;
 import com.epam.reportportal.extension.PluginCommand;
 import com.epam.reportportal.extension.azure.command.connection.TestConnectionCommand;
 import com.epam.reportportal.extension.azure.rest.client.ApiException;
-import com.epam.reportportal.extension.azure.rest.client.api.*;
-import com.epam.reportportal.extension.azure.rest.client.model.workitem.*;
+import com.epam.reportportal.extension.azure.rest.client.api.ClassificationNodesApi;
+import com.epam.reportportal.extension.azure.rest.client.api.FieldsApi;
+import com.epam.reportportal.extension.azure.rest.client.api.WorkItemTypesApi;
+import com.epam.reportportal.extension.azure.rest.client.api.WorkItemTypesFieldApi;
+import com.epam.reportportal.extension.azure.rest.client.api.WorkItemsApi;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItem;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemClassificationNode;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemField;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemType;
+import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItemTypeFieldWithReferences;
 import com.epam.reportportal.model.externalsystem.AllowedValue;
 import com.epam.reportportal.model.externalsystem.PostFormField;
 import com.epam.reportportal.model.externalsystem.PostTicketRQ;
 import com.epam.reportportal.model.externalsystem.Ticket;
 import com.epam.ta.reportportal.binary.impl.AttachmentDataStoreService;
-import com.epam.ta.reportportal.dao.*;
+import com.epam.ta.reportportal.dao.IntegrationRepository;
+import com.epam.ta.reportportal.dao.IntegrationTypeRepository;
+import com.epam.ta.reportportal.dao.LaunchRepository;
+import com.epam.ta.reportportal.dao.LogRepository;
+import com.epam.ta.reportportal.dao.TestItemRepository;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.integration.IntegrationParams;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
@@ -20,6 +38,14 @@ import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.sql.DataSource;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,14 +54,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
-
-import javax.sql.DataSource;
-import java.time.LocalDateTime;
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AzureExtensionTest {
