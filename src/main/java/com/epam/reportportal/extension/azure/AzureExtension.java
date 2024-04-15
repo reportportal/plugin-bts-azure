@@ -63,6 +63,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -751,7 +752,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   private String getFormattedMessage(Log log) {
     StringBuilder messageBuilder = new StringBuilder();
     ofNullable(log.getLogTime()).ifPresent(logTime -> messageBuilder.append("Time: ")
-        .append(logTime.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss"))).append(", "));
+        .append(logTime.atOffset(ZoneOffset.UTC).toLocalDateTime()
+            .format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss"))).append(", "));
     ofNullable(log.getLogLevel()).ifPresent(
         logLevel -> messageBuilder.append("Level: ").append(logLevel).append(", "));
     messageBuilder.append("<br>").append("Log: ").append(log.getLogMessage());
