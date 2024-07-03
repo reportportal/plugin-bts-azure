@@ -108,7 +108,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
   private static final String DOCUMENTATION_LINK_FIELD = "documentationLink";
   private static final String DOCUMENTATION_LINK =
-      "https://reportportal.io/docs/plugins/AzureDevOpsBTS";
+      "https://reportportal.io/docs/plugins/AzureDevOps/";
   public static final String BINARY_DATA_PROPERTIES_FILE_ID = "azure-binary-data.properties";
 
   public static final String SCHEMA_SCRIPTS_DIR = "schema";
