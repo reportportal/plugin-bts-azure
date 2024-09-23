@@ -43,7 +43,7 @@ export const IntegrationFormFields = (props) => {
         isRequired
       >
         <FieldErrorHint provideHint={false}>
-          <FieldText maxLength={55} defaultWidth={false} />
+          <FieldText defaultWidth={false} />
         </FieldErrorHint>
       </FieldElement>
       <FieldElement
@@ -65,7 +65,7 @@ export const IntegrationFormFields = (props) => {
         isRequired
       >
         <FieldErrorHint provideHint={false}>
-          <FieldText maxLength={55} defaultWidth={false} />
+          <FieldText defaultWidth={false} />
         </FieldErrorHint>
       </FieldElement>
       <FieldElement name="authType" disabled={disabled} label="Authorization type">

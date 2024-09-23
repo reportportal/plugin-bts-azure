@@ -14,8 +14,8 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * Link description.
  */
-@ApiModel(description = "Link description.")
+@Schema(description = "Link description.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class Link {
   @SerializedName("attributes")
@@ -52,7 +52,7 @@ public class Link {
    * Collection of link attributes.
    * @return attributes
   **/
-  @ApiModelProperty(value = "Collection of link attributes.")
+  @Schema(description = "Collection of link attributes.")
   public Map<String, Object> getAttributes() {
     return attributes;
   }
@@ -70,7 +70,7 @@ public class Link {
    * Relation type.
    * @return rel
   **/
-  @ApiModelProperty(value = "Relation type.")
+  @Schema(description = "Relation type.")
   public String getRel() {
     return rel;
   }
@@ -88,7 +88,7 @@ public class Link {
    * Link url.
    * @return url
   **/
-  @ApiModelProperty(value = "Link url.")
+  @Schema(description = "Link url.")
   public String getUrl() {
     return url;
   }

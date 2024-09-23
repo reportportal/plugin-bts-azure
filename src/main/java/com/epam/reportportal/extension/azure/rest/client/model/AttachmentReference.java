@@ -13,22 +13,15 @@
 
 package com.epam.reportportal.extension.azure.rest.client.model;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import java.io.IOException;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
- * 
+ *
  */
-@ApiModel(description = "")
+@Schema(description = "")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-09-09T08:22:48.319Z")
 public class AttachmentReference {
   @SerializedName("id")
@@ -42,11 +35,12 @@ public class AttachmentReference {
     return this;
   }
 
-   /**
+  /**
    * Get id
+   *
    * @return id
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
   public UUID getId() {
     return id;
   }
@@ -60,11 +54,12 @@ public class AttachmentReference {
     return this;
   }
 
-   /**
+  /**
    * Get url
+   *
    * @return url
-  **/
-  @ApiModelProperty(value = "")
+   **/
+  @Schema(description = "")
   public String getUrl() {
     return url;
   }
@@ -72,7 +67,6 @@ public class AttachmentReference {
   public void setUrl(String url) {
     this.url = url;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -83,8 +77,8 @@ public class AttachmentReference {
       return false;
     }
     AttachmentReference attachmentReference = (AttachmentReference) o;
-    return Objects.equals(this.id, attachmentReference.id) &&
-        Objects.equals(this.url, attachmentReference.url);
+    return Objects.equals(this.id, attachmentReference.id) && Objects.equals(
+        this.url, attachmentReference.url);
   }
 
   @Override
@@ -92,12 +86,11 @@ public class AttachmentReference {
     return Objects.hash(id, url);
   }
 
-
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class AttachmentReference {\n");
-    
+
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    url: ").append(toIndentedString(url)).append("\n");
     sb.append("}");

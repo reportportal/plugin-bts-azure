@@ -14,8 +14,8 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +24,7 @@ import java.util.UUID;
 /**
  * Describes a field on a work item and it&#39;s properties specific to that work item type.
  */
-@ApiModel(description = "Describes a field on a work item and it's properties specific to that work item type.")
+@Schema(description = "Describes a field on a work item and it's properties specific to that work item type.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemField extends WorkItemTrackingResource {
   @SerializedName("canSortBy")
@@ -78,7 +78,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * Indicates whether the field is sortable in server queries.
    * @return canSortBy
   **/
-  @ApiModelProperty(value = "Indicates whether the field is sortable in server queries.")
+  @Schema(description = "Indicates whether the field is sortable in server queries.")
   public Boolean isCanSortBy() {
     return canSortBy;
   }
@@ -96,7 +96,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * The description of the field.
    * @return description
   **/
-  @ApiModelProperty(value = "The description of the field.")
+  @Schema(description = "The description of the field.")
   public String getDescription() {
     return description;
   }
@@ -114,7 +114,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * Indicates whether this field is deleted.
    * @return isDeleted
   **/
-  @ApiModelProperty(value = "Indicates whether this field is deleted.")
+  @Schema(description = "Indicates whether this field is deleted.")
   public Boolean isIsDeleted() {
     return isDeleted;
   }
@@ -132,7 +132,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * Indicates whether this field is an identity field.
    * @return isIdentity
   **/
-  @ApiModelProperty(value = "Indicates whether this field is an identity field.")
+  @Schema(description = "Indicates whether this field is an identity field.")
   public Boolean isIsIdentity() {
     return isIdentity;
   }
@@ -150,7 +150,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * Indicates whether this instance is picklist.
    * @return isPicklist
   **/
-  @ApiModelProperty(value = "Indicates whether this instance is picklist.")
+  @Schema(description = "Indicates whether this instance is picklist.")
   public Boolean isIsPicklist() {
     return isPicklist;
   }
@@ -168,7 +168,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * Indicates whether this instance is a suggested picklist .
    * @return isPicklistSuggested
   **/
-  @ApiModelProperty(value = "Indicates whether this instance is a suggested picklist .")
+  @Schema(description = "Indicates whether this instance is a suggested picklist .")
   public Boolean isIsPicklistSuggested() {
     return isPicklistSuggested;
   }
@@ -186,7 +186,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * Indicates whether the field can be queried in the server.
    * @return isQueryable
   **/
-  @ApiModelProperty(value = "Indicates whether the field can be queried in the server.")
+  @Schema(description = "Indicates whether the field can be queried in the server.")
   public Boolean isIsQueryable() {
     return isQueryable;
   }
@@ -204,7 +204,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * The name of the field.
    * @return name
   **/
-  @ApiModelProperty(value = "The name of the field.")
+  @Schema(description = "The name of the field.")
   public String getName() {
     return name;
   }
@@ -222,7 +222,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * If this field is picklist, the identifier of the picklist associated, otherwise null
    * @return picklistId
   **/
-  @ApiModelProperty(value = "If this field is picklist, the identifier of the picklist associated, otherwise null")
+  @Schema(description = "If this field is picklist, the identifier of the picklist associated, otherwise null")
   public UUID getPicklistId() {
     return picklistId;
   }
@@ -240,7 +240,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * Indicates whether the field is [read only].
    * @return readOnly
   **/
-  @ApiModelProperty(value = "Indicates whether the field is [read only].")
+  @Schema(description = "Indicates whether the field is [read only].")
   public Boolean isReadOnly() {
     return readOnly;
   }
@@ -258,7 +258,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * The reference name of the field.
    * @return referenceName
   **/
-  @ApiModelProperty(value = "The reference name of the field.")
+  @Schema(description = "The reference name of the field.")
   public String getReferenceName() {
     return referenceName;
   }
@@ -284,7 +284,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * The supported operations on this field.
    * @return supportedOperations
   **/
-  @ApiModelProperty(value = "The supported operations on this field.")
+  @Schema(description = "The supported operations on this field.")
   public List<WorkItemFieldOperation> getSupportedOperations() {
     return supportedOperations;
   }
@@ -302,7 +302,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * The type of the field.
    * @return type
   **/
-  @ApiModelProperty(value = "The type of the field.")
+  @Schema(description = "The type of the field.")
   public Object getType() {
     return type;
   }
@@ -320,7 +320,7 @@ public class WorkItemField extends WorkItemTrackingResource {
    * The usage of the field.
    * @return usage
   **/
-  @ApiModelProperty(value = "The usage of the field.")
+  @Schema(description = "The usage of the field.")
   public Object getUsage() {
     return usage;
   }

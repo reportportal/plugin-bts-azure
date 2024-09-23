@@ -15,14 +15,13 @@ package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.epam.reportportal.extension.azure.rest.client.model.ReferenceLinks;
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
 /**
  * Base class for WIT REST resources.
  */
-@ApiModel(description = "Base class for WIT REST resources.")
+@Schema(description = "Base class for WIT REST resources.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemTrackingResource extends WorkItemTrackingResourceReference {
   @SerializedName("_links")
@@ -37,7 +36,7 @@ public class WorkItemTrackingResource extends WorkItemTrackingResourceReference 
    * Link references to related REST resources.
    * @return links
   **/
-  @ApiModelProperty(value = "Link references to related REST resources.")
+  @Schema(description = "Link references to related REST resources.")
   public ReferenceLinks getLinks() {
     return links;
   }

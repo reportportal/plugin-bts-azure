@@ -14,8 +14,7 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +24,7 @@ import java.util.Objects;
 /**
  * Describes a work item.
  */
-@ApiModel(description = "Describes a work item.")
+@Schema(description = "Describes a work item.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItem extends WorkItemTrackingResource {
   @SerializedName("commentVersionRef")
@@ -48,11 +47,12 @@ public class WorkItem extends WorkItemTrackingResource {
     return this;
   }
 
-   /**
+  /**
    * Reference to a specific version of the comment added/edited/deleted in this revision.
+   *
    * @return commentVersionRef
-  **/
-  @ApiModelProperty(value = "Reference to a specific version of the comment added/edited/deleted in this revision.")
+   **/
+  @Schema(description = "Reference to a specific version of the comment added/edited/deleted in this revision.")
   public WorkItemCommentVersionRef getCommentVersionRef() {
     return commentVersionRef;
   }
@@ -74,11 +74,12 @@ public class WorkItem extends WorkItemTrackingResource {
     return this;
   }
 
-   /**
+  /**
    * Map of field and values for the work item.
+   *
    * @return fields
-  **/
-  @ApiModelProperty(value = "Map of field and values for the work item.")
+   **/
+  @Schema(description = "Map of field and values for the work item.")
   public Map<String, Object> getFields() {
     return fields;
   }
@@ -92,11 +93,12 @@ public class WorkItem extends WorkItemTrackingResource {
     return this;
   }
 
-   /**
+  /**
    * The work item ID.
+   *
    * @return id
-  **/
-  @ApiModelProperty(value = "The work item ID.")
+   **/
+  @Schema(description = "The work item ID.")
   public Integer getId() {
     return id;
   }
@@ -118,11 +120,12 @@ public class WorkItem extends WorkItemTrackingResource {
     return this;
   }
 
-   /**
+  /**
    * Relations of the work item.
+   *
    * @return relations
-  **/
-  @ApiModelProperty(value = "Relations of the work item.")
+   **/
+  @Schema(description = "Relations of the work item.")
   public List<WorkItemRelation> getRelations() {
     return relations;
   }
@@ -136,11 +139,12 @@ public class WorkItem extends WorkItemTrackingResource {
     return this;
   }
 
-   /**
+  /**
    * Revision number of the work item.
+   *
    * @return rev
-  **/
-  @ApiModelProperty(value = "Revision number of the work item.")
+   **/
+  @Schema(description = "Revision number of the work item.")
   public Integer getRev() {
     return rev;
   }
@@ -148,7 +152,6 @@ public class WorkItem extends WorkItemTrackingResource {
   public void setRev(Integer rev) {
     this.rev = rev;
   }
-
 
   @Override
   public boolean equals(Object o) {
@@ -159,19 +162,16 @@ public class WorkItem extends WorkItemTrackingResource {
       return false;
     }
     WorkItem workItem = (WorkItem) o;
-    return Objects.equals(this.commentVersionRef, workItem.commentVersionRef) &&
-        Objects.equals(this.fields, workItem.fields) &&
-        Objects.equals(this.id, workItem.id) &&
-        Objects.equals(this.relations, workItem.relations) &&
-        Objects.equals(this.rev, workItem.rev) &&
-        super.equals(o);
+    return Objects.equals(this.commentVersionRef, workItem.commentVersionRef) && Objects.equals(
+        this.fields, workItem.fields) && Objects.equals(this.id, workItem.id) && Objects.equals(
+        this.relations, workItem.relations) && Objects.equals(this.rev, workItem.rev)
+        && super.equals(o);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(commentVersionRef, fields, id, relations, rev, super.hashCode());
   }
-
 
   @Override
   public String toString() {

@@ -14,15 +14,15 @@
 package com.epam.reportportal.extension.azure.rest.client.model;
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 import java.util.UUID;
 
 /**
  * 
  */
-@ApiModel(description = "")
+@Schema(description = "")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
 public class WebApiTeamRef {
   @SerializedName("id")
@@ -43,7 +43,7 @@ public class WebApiTeamRef {
    * Team (Identity) Guid. A Team Foundation ID.
    * @return id
   **/
-  @ApiModelProperty(value = "Team (Identity) Guid. A Team Foundation ID.")
+  @Schema(description = "Team (Identity) Guid. A Team Foundation ID.")
   public UUID getId() {
     return id;
   }
@@ -61,7 +61,7 @@ public class WebApiTeamRef {
    * Team name
    * @return name
   **/
-  @ApiModelProperty(value = "Team name")
+  @Schema(description = "Team name")
   public String getName() {
     return name;
   }
@@ -79,7 +79,7 @@ public class WebApiTeamRef {
    * Team REST API Url
    * @return url
   **/
-  @ApiModelProperty(value = "Team REST API Url")
+  @Schema(description = "Team REST API Url")
   public String getUrl() {
     return url;
   }
