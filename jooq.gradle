@@ -1,7 +1,5 @@
 jooq {
-    version = '3.12.4'
-    edition = 'OSS'
-    sample(sourceSets.main) {
+    configuration {
         jdbc {
             driver = 'org.postgresql.Driver'
             url = 'jdbc:postgresql://localhost:5432/reportportal'
@@ -35,6 +33,3 @@ jooq {
     }
 }
 
-generateSampleJooqSchemaSource {
-    enabled = false
-}
