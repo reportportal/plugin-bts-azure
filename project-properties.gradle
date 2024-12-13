@@ -1,5 +1,7 @@
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
 
 def commonScriptsUrl = 'https://raw.githubusercontent.com/reportportal/gradle-scripts/'
 
@@ -23,5 +25,5 @@ project.ext {
 }
 
 wrapper {
-    gradleVersion = '5.4.1'
+    gradleVersion = '8.10.2'
 }
