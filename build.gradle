@@ -26,7 +26,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.epam.reportportal:commons-bom:5.12.1')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.epam.reportportal:commons-bom:5.13.0')
     }
 }
 
@@ -37,8 +37,8 @@ dependencies {
         annotationProcessor 'com.epam.reportportal:plugin-api'
     } else {
         implementation 'com.github.reportportal:commons-dao:a98c172'
-        implementation 'com.github.reportportal:plugin-api:develop-SNAPSHOT'
-        annotationProcessor 'com.github.reportportal:plugin-api:develop-SNAPSHOT'
+        implementation 'com.github.reportportal:plugin-api:1c2f758'
+        annotationProcessor 'com.github.reportportal:plugin-api:1c2f758'
     }
     implementation 'org.hibernate:hibernate-core:5.6.15.Final'
 
@@ -118,6 +118,9 @@ shadowJar {
     configurations = [project.configurations.compileClasspath]
     zip64 true
     dependencies {
+        include(dependency('com.squareup.okhttp:.*:.*'))
+        include(dependency('io.gsonfire:gson-fire:.*'))
+        include(dependency('org.threeten:threetenbp:.*'))
     }
 }
 
