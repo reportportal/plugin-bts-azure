@@ -44,12 +44,11 @@ public class TestConnectionCommand implements PluginCommand<Boolean> {
     try {
         uriPath = new URL(organizationUrl);
     } catch (MalformedURLException e) {
-        LOGGER.error("Invalid Azure DevOps URL: " + e.getMessage(), e);
+        LOGGER.error("Invalid Azure DevOps URL, " + e.getMessage(), e);
         throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION,
                 String.format("Invalid Azure DevOps URL. Message: %s", e.getMessage()), e);
     }
     String baseUri = uriPath.getProtocol() + "://" + uriPath.getHost();
-    LOGGER.info("baseUri: " + baseUri);
     defaultClient.setBasePath(baseUri);
     String organizationName = uriPath.getPath().replaceFirst("/", "");
     String projectName = params.get(PROJECT).toString();
