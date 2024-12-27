@@ -303,6 +303,8 @@ public class JSON {
                     String date = in.nextString();
                     if (date.endsWith("+0000")) {
                         date = date.substring(0, date.length()-5) + "Z";
+                    }else if(date.matches(".*:[0-9][0-9]$")) {
+                        date = date + ".000Z";
                     }
                     return OffsetDateTime.parse(date, formatter);
             }

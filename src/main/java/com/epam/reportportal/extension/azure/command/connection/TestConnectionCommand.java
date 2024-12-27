@@ -20,12 +20,16 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+
 public class TestConnectionCommand implements PluginCommand<Boolean> {
 
   private final BasicTextEncryptor basicTextEncryptor;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(TestConnectionCommand.class);
-  private static final String API_VERSION = "6.0";
+  private static final String API_VERSION = "5.1";
 
   public TestConnectionCommand(BasicTextEncryptor basicTextEncryptor) {
     this.basicTextEncryptor = basicTextEncryptor;
@@ -36,7 +40,18 @@ public class TestConnectionCommand implements PluginCommand<Boolean> {
     ApiClient defaultClient = Configuration.getDefaultApiClient();
 
     String organizationUrl = params.get(URL).toString();
-    String organizationName = organizationUrl.replace(defaultClient.getBasePath(), "");
+    URL uriPath;
+    try {
+        uriPath = new URL(organizationUrl);
+    } catch (MalformedURLException e) {
+        LOGGER.error("Invalid Azure DevOps URL: " + e.getMessage(), e);
+        throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION,
+                String.format("Invalid Azure DevOps URL. Message: %s", e.getMessage()), e);
+    }
+    String baseUri = uriPath.getProtocol() + "://" + uriPath.getHost();
+    LOGGER.info("baseUri: " + baseUri);
+    defaultClient.setBasePath(baseUri);
+    String organizationName = uriPath.getPath().replaceFirst("/", "");
     String projectName = params.get(PROJECT).toString();
     String personalAccessToken = basicTextEncryptor.decrypt(
         BtsConstants.OAUTH_ACCESS_KEY.getParam(integration.getParams(), String.class).orElseThrow(
