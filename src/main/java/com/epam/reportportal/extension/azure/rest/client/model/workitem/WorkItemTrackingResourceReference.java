@@ -21,7 +21,7 @@ import java.util.Objects;
  * Base class for work item tracking resource references.
  */
 @Schema(description = "Base class for work item tracking resource references.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemTrackingResourceReference {
   @SerializedName("url")
   private String url = null;

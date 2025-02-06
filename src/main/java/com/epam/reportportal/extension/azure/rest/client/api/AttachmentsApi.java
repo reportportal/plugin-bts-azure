@@ -21,20 +21,15 @@ import com.epam.reportportal.extension.azure.rest.client.Configuration;
 import com.epam.reportportal.extension.azure.rest.client.Pair;
 import com.epam.reportportal.extension.azure.rest.client.ProgressRequestBody;
 import com.epam.reportportal.extension.azure.rest.client.ProgressResponseBody;
-
-import com.google.gson.reflect.TypeToken;
-
-import java.io.IOException;
-
-
 import com.epam.reportportal.extension.azure.rest.client.model.AttachmentReference;
-import java.util.UUID;
-
+import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class AttachmentsApi {
     private ApiClient apiClient;

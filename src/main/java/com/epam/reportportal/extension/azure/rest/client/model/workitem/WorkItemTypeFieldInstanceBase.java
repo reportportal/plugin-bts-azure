@@ -23,7 +23,7 @@ import java.util.Objects;
  * Base field instance for workItemType fields.
  */
 @Schema(description = "Base field instance for workItemType fields.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemTypeFieldInstanceBase extends WorkItemFieldReference {
   @SerializedName("alwaysRequired")
   private Boolean alwaysRequired = null;

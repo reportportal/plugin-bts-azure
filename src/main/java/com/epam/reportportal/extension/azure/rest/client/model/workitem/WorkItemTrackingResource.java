@@ -22,7 +22,7 @@ import java.util.Objects;
  * Base class for WIT REST resources.
  */
 @Schema(description = "Base class for WIT REST resources.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemTrackingResource extends WorkItemTrackingResourceReference {
   @SerializedName("_links")
   private ReferenceLinks links = null;

@@ -20,7 +20,7 @@ import java.util.Objects;
  * 
  */
 @Schema(description = "")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
 public class Identity extends IdentityBase {
 
   @Override

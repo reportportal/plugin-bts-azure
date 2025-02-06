@@ -1,16 +1,14 @@
 package com.epam.reportportal.extension.azure.event.handler.plugin;
 
-import com.epam.reportportal.extension.event.PluginEvent;
 import com.epam.reportportal.extension.azure.event.handler.EventHandler;
 import com.epam.reportportal.extension.azure.info.PluginInfoProvider;
+import com.epam.reportportal.extension.event.PluginEvent;
 import com.epam.ta.reportportal.dao.IntegrationRepository;
 import com.epam.ta.reportportal.dao.IntegrationTypeRepository;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.integration.IntegrationParams;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
-
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
