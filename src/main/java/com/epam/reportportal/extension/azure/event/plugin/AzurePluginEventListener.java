@@ -1,10 +1,10 @@
 package com.epam.reportportal.extension.azure.event.plugin;
 
-import com.epam.reportportal.extension.event.PluginEvent;
-import com.epam.reportportal.extension.azure.event.EventHandlerFactory;
-import org.springframework.context.ApplicationListener;
-
 import static java.util.Optional.ofNullable;
+
+import com.epam.reportportal.extension.azure.event.EventHandlerFactory;
+import com.epam.reportportal.extension.event.PluginEvent;
+import org.springframework.context.ApplicationListener;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>

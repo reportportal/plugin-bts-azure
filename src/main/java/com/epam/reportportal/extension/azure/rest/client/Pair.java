@@ -13,7 +13,7 @@
 
 package com.epam.reportportal.extension.azure.rest.client;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
 public class Pair {
     private String name = "";
     private String value = "";

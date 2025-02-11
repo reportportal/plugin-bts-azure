@@ -14,7 +14,6 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
@@ -22,7 +21,7 @@ import java.util.Objects;
  * Describes a work item field operation.
  */
 @Schema(description = "Describes a work item field operation.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemFieldOperation {
   @SerializedName("name")
   private String name = null;

@@ -26,7 +26,7 @@ import java.util.UUID;
  * Defines a classification node for work item tracking.
  */
 @Schema(description = "Defines a classification node for work item tracking.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemClassificationNode extends WorkItemTrackingResource {
   @SerializedName("attributes")
   private Map<String, Object> attributes = null;

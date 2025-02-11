@@ -14,7 +14,6 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,7 @@ import java.util.UUID;
  * Describes a field on a work item and it&#39;s properties specific to that work item type.
  */
 @Schema(description = "Describes a field on a work item and it's properties specific to that work item type.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemField extends WorkItemTrackingResource {
   @SerializedName("canSortBy")
   private Boolean canSortBy = null;

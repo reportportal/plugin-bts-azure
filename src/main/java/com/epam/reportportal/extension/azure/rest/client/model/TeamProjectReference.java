@@ -14,7 +14,6 @@
 package com.epam.reportportal.extension.azure.rest.client.model;
 
 import com.google.gson.annotations.SerializedName;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 import java.util.UUID;
@@ -24,7 +23,7 @@ import org.threeten.bp.OffsetDateTime;
  * Represents a shallow reference to a TeamProject.
  */
 @Schema(description = "Represents a shallow reference to a TeamProject.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
 public class TeamProjectReference {
   @SerializedName("abbreviation")
   private String abbreviation = null;
