@@ -22,7 +22,7 @@ import java.util.UUID;
  *
  */
 @Schema(description = "")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-09-09T08:22:48.319Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-09-09T08:22:48.319Z")
 public class AttachmentReference {
   @SerializedName("id")
   private UUID id = null;
