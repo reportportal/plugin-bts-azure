@@ -65,9 +65,8 @@ public class ProjectsApi {
         Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/{organization}/_apis/projects/{projectId}"
-            .replaceAll("\\{" + "organization" + "\\}", apiClient.escapeString(organization.toString()))
-            .replaceAll("\\{" + "projectId" + "\\}", apiClient.escapeString(projectId.toString()));
+        String localVarPath = "/{organization}/_apis/projects"
+            .replaceAll("\\{" + "organization" + "\\}", apiClient.escapeString(organization.toString()));
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
