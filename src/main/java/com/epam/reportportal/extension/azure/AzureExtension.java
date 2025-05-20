@@ -120,6 +120,9 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   public static final String OAUTH_ACCESS_KEY = "oauthAccessKey";
 
   private static final String PLUGIN_ID = "Azure DevOps";
+  private static final String PLUGIN_NAME_FIELD = "name";
+
+  private static final String PLUGIN_NAME = "Azure DevOps";
 
   private static final String API_VERSION = "6.0";
 
@@ -244,6 +247,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   public Map<String, ?> getPluginParams() {
     Map<String, Object> params = new HashMap<>();
     params.put(DOCUMENTATION_LINK_FIELD, DOCUMENTATION_LINK);
+    params.put(PLUGIN_NAME_FIELD, PLUGIN_NAME);
     params.put(ALLOWED_COMMANDS, new ArrayList<>(pluginCommandMapping.get().keySet()));
     return params;
   }
