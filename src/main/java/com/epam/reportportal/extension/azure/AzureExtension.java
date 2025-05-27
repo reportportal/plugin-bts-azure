@@ -124,7 +124,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
   private static final String PLUGIN_NAME = "Azure DevOps";
 
-  private static final String API_VERSION = "6.0";
+  private static final String API_VERSION = "5.1";
 
   private static final String EXPAND = "All";
 
