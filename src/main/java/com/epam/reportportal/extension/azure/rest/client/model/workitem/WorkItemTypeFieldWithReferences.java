@@ -23,7 +23,7 @@ import java.util.Objects;
  * Field Instance of a workItemype with detailed references.
  */
 @Schema(description = "Field Instance of a workItemype with detailed references.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemTypeFieldWithReferences extends WorkItemTypeFieldInstanceBase {
   @SerializedName("allowedValues")
   private List<Object> allowedValues = null;

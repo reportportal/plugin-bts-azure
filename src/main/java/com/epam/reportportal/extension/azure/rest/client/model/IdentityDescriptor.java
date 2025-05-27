@@ -14,7 +14,6 @@
 package com.epam.reportportal.extension.azure.rest.client.model;
 
 import com.google.gson.annotations.SerializedName;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
@@ -22,7 +21,7 @@ import java.util.Objects;
  * An Identity descriptor is a wrapper for the identity type (Windows SID, Passport) along with a unique identifier such as the SID or PUID.
  */
 @Schema(description = "An Identity descriptor is a wrapper for the identity type (Windows SID, Passport) along with a unique identifier such as the SID or PUID.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
 public class IdentityDescriptor {
   @SerializedName("identifier")
   private String identifier = null;

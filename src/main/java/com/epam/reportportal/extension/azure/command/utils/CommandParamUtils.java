@@ -5,11 +5,11 @@ import static java.util.Optional.ofNullable;
 import com.epam.reportportal.rules.commons.validation.Suppliers;
 import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.reportportal.rules.exception.ReportPortalException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Path;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import javax.validation.ConstraintViolation;
-import javax.validation.Path;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>

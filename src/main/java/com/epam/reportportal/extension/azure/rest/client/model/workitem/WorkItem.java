@@ -25,7 +25,7 @@ import java.util.Objects;
  * Describes a work item.
  */
 @Schema(description = "Describes a work item.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItem extends WorkItemTrackingResource {
   @SerializedName("commentVersionRef")
   private WorkItemCommentVersionRef commentVersionRef = null;

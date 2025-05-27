@@ -14,7 +14,6 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
@@ -22,7 +21,7 @@ import java.util.Objects;
  * Work item type state name, color and state category
  */
 @Schema(description = "Work item type state name, color and state category")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemStateColor {
   @SerializedName("category")
   private String category = null;

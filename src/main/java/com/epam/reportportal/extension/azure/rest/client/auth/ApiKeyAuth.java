@@ -17,7 +17,7 @@ import com.epam.reportportal.extension.azure.rest.client.Pair;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-07-22T22:33:25.592Z")
 public class ApiKeyAuth implements Authentication {
   private final String location;
   private final String paramName;

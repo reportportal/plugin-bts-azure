@@ -2,10 +2,10 @@ package com.epam.reportportal.extension.azure.command.utils;
 
 import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.reportportal.rules.exception.ReportPortalException;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.validation.Validation;
-import javax.validation.Validator;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>

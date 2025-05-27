@@ -14,7 +14,6 @@
 package com.epam.reportportal.extension.azure.rest.client.model.workitem;
 
 import com.google.gson.annotations.SerializedName;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 
@@ -22,7 +21,7 @@ import java.util.Objects;
  * Reference to a work item icon.
  */
 @Schema(description = "Reference to a work item icon.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2021-08-03T21:33:08.123Z")
 public class WorkItemIcon {
   @SerializedName("id")
   private String id = null;

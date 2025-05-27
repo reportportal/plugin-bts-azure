@@ -197,9 +197,9 @@ class AzureExtensionTest {
 		data.add(new PostFormField("System_Description", "Description", "html", false,
 				List.of("Some description"), new ArrayList<>()));
 		postTicketRQ.setFields(data);
-		postTicketRQ.setIsIncludeLogs(true);
-		postTicketRQ.setIsIncludeComments(true);
-		postTicketRQ.setIsIncludeScreenshots(true);
+		postTicketRQ.setIncludeLogs(true);
+		postTicketRQ.setIncludeComments(true);
+		postTicketRQ.setIncludeScreenshots(true);
 		postTicketRQ.setTestItemId(12L);
 		Map<Long, String> backLinks = new HashMap<>();
 		backLinks.put(12L, "https://alpha.reportportal.io/");

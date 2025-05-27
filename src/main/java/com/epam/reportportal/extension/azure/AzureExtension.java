@@ -58,6 +58,7 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
 import com.google.common.base.Suppliers;
 import com.google.common.io.ByteStreams;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -76,7 +77,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -120,6 +120,9 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   public static final String OAUTH_ACCESS_KEY = "oauthAccessKey";
 
   private static final String PLUGIN_ID = "Azure DevOps";
+  private static final String PLUGIN_NAME_FIELD = "name";
+
+  private static final String PLUGIN_NAME = "Azure DevOps";
 
   private static final String API_VERSION = "6.0";
 
@@ -244,6 +247,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   public Map<String, ?> getPluginParams() {
     Map<String, Object> params = new HashMap<>();
     params.put(DOCUMENTATION_LINK_FIELD, DOCUMENTATION_LINK);
+    params.put(PLUGIN_NAME_FIELD, PLUGIN_NAME);
     params.put(ALLOWED_COMMANDS, new ArrayList<>(pluginCommandMapping.get().keySet()));
     return params;
   }
