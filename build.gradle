@@ -26,7 +26,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.epam.reportportal:commons-bom:5.13.0')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.epam.reportportal:commons-bom:5.14.2')
     }
 }
 
@@ -38,9 +38,9 @@ dependencies {
         implementation 'com.epam.reportportal:plugin-api'
         annotationProcessor 'com.epam.reportportal:plugin-api'
     } else {
-        implementation 'com.github.reportportal:commons-dao:de4c71f'
-        implementation 'com.github.reportportal:plugin-api:73594bc'
-        annotationProcessor 'com.github.reportportal:plugin-api:73594bc'
+        implementation 'com.github.reportportal:commons-dao:9b8b695'
+        implementation 'com.github.reportportal:plugin-api:f59b724'
+        annotationProcessor 'com.github.reportportal:plugin-api:f59b724'
     }
     implementation "io.swagger.core.v3:swagger-annotations-jakarta:2.2.27"
     implementation 'com.squareup.okhttp:okhttp:2.7.5'
