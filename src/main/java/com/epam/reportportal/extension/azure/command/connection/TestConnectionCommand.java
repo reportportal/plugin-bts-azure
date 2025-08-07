@@ -56,12 +56,9 @@ public class TestConnectionCommand implements PluginCommand<Boolean> {
           );
       return response.getStatusCode() == 200;
     } catch (ApiException e) {
-      LOGGER.error("Unable to connect to Azure DevOps: " + e.getMessage(), e);
+      LOGGER.error("Unable to connect to Azure DevOps: {}", e.getMessage(), e);
       throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION,
-          String.format("Unable to connect to Azure DevOps. Code: %s, Message: %s", e.getCode(),
-              e.getMessage()
-          ), e
-      );
+          String.format("Unable to connect to Azure DevOps. Code: %s", e.getCode()), e);
     }
   }
 
