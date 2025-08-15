@@ -329,7 +329,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
       );
       return Optional.of(convertWorkItemToTicket(workItem));
     } catch (ApiException e) {
-      LOGGER.error("Unable to load ticket: " + e.getMessage(), e);
+      LOGGER.error("Unable to load ticket: {}", e.getMessage(), e);
       return Optional.empty();
     }
   }
@@ -365,11 +365,9 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
       }
       return convertWorkItemToTicket(workItem);
     } catch (ApiException e) {
-      LOGGER.error("Unable to post issue: " + e.getMessage(), e);
+      LOGGER.error("Unable to post issue: {}", e.getMessage(), e);
       throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION,
-          String.format("Unable to post issue. Code: %s, Message: %s log - ", e.getCode(),
-              e.getMessage()
-          ), e
+          String.format("Unable to post issue. Code: %s ", e.getCode()), e
       );
     }
   }
@@ -470,12 +468,9 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
       }
       return sortTicketFields(ticketFields, issueType);
     } catch (ApiException e) {
-      LOGGER.error("Unable to load ticket fields: " + e.getMessage(), e);
+      LOGGER.error("Unable to load ticket fields: {}", e.getMessage(), e);
       throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION,
-          String.format("Unable to load ticket fields. Code: %s, Message: %s", e.getCode(),
-              e.getMessage()
-          ), e
-      );
+          String.format("Unable to load ticket fields. Code: %s", e.getCode()), e);
     }
   }
 
@@ -489,12 +484,9 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
           issueTypesApi.workItemTypesList(organizationName, params.getProjectName(), API_VERSION);
       return issueTypes.stream().map(WorkItemType::getName).collect(Collectors.toList());
     } catch (ApiException e) {
-      LOGGER.error("Unable to load issue types: " + e.getMessage(), e);
+      LOGGER.error("Unable to load issue types: {}", e.getMessage(), e);
       throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION,
-          String.format("Unable to load issue types. Code: %s, Message: %s", e.getCode(),
-              e.getMessage()
-          ), e
-      );
+          String.format("Unable to load issue types. Code: %s", e.getCode()), e);
     }
   }
 
