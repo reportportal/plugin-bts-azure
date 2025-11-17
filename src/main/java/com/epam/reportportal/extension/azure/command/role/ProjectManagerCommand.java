@@ -2,17 +2,17 @@ package com.epam.reportportal.extension.azure.command.role;
 
 import static java.util.Optional.ofNullable;
 
-import com.epam.reportportal.rules.commons.validation.BusinessRule;
-import com.epam.reportportal.rules.exception.ErrorType;
-import com.epam.reportportal.rules.exception.ReportPortalException;
-import com.epam.ta.reportportal.commons.ReportPortalUser;
-import com.epam.ta.reportportal.dao.ProjectRepository;
-import com.epam.ta.reportportal.dao.organization.OrganizationRepositoryCustom;
-import com.epam.ta.reportportal.entity.organization.Organization;
-import com.epam.ta.reportportal.entity.organization.OrganizationRole;
-import com.epam.ta.reportportal.entity.project.Project;
-import com.epam.ta.reportportal.entity.project.ProjectRole;
-import com.epam.ta.reportportal.entity.user.UserRole;
+import com.epam.reportportal.infrastructure.persistence.commons.ReportPortalUser;
+import com.epam.reportportal.infrastructure.persistence.dao.ProjectRepository;
+import com.epam.reportportal.infrastructure.persistence.dao.organization.OrganizationRepositoryCustom;
+import com.epam.reportportal.infrastructure.persistence.entity.organization.Organization;
+import com.epam.reportportal.infrastructure.persistence.entity.organization.OrganizationRole;
+import com.epam.reportportal.infrastructure.persistence.entity.project.Project;
+import com.epam.reportportal.infrastructure.persistence.entity.project.ProjectRole;
+import com.epam.reportportal.infrastructure.persistence.entity.user.UserRole;
+import com.epam.reportportal.infrastructure.rules.commons.validation.BusinessRule;
+import com.epam.reportportal.infrastructure.rules.exception.ErrorType;
+import com.epam.reportportal.infrastructure.rules.exception.ReportPortalException;
 import java.util.Map.Entry;
 
 /**

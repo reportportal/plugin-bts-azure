@@ -2,9 +2,9 @@ package com.epam.reportportal.extension.azure.command.utils;
 
 import static java.util.Optional.ofNullable;
 
-import com.epam.reportportal.rules.commons.validation.Suppliers;
-import com.epam.reportportal.rules.exception.ErrorType;
-import com.epam.reportportal.rules.exception.ReportPortalException;
+import com.epam.reportportal.infrastructure.rules.commons.validation.Suppliers;
+import com.epam.reportportal.infrastructure.rules.exception.ErrorType;
+import com.epam.reportportal.infrastructure.rules.exception.ReportPortalException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;

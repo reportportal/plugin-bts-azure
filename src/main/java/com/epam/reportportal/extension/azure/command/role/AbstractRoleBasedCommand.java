@@ -1,7 +1,7 @@
 package com.epam.reportportal.extension.azure.command.role;
 
 import com.epam.reportportal.extension.PluginCommand;
-import com.epam.ta.reportportal.entity.integration.Integration;
+import com.epam.reportportal.infrastructure.persistence.entity.integration.Integration;
 import java.util.Map;
 
 /**

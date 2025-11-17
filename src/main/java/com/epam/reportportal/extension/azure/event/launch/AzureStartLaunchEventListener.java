@@ -1,7 +1,7 @@
 package com.epam.reportportal.extension.azure.event.launch;
 
 import com.epam.reportportal.extension.event.StartLaunchEvent;
-import com.epam.ta.reportportal.dao.LaunchRepository;
+import com.epam.reportportal.infrastructure.persistence.dao.LaunchRepository;
 import org.springframework.context.ApplicationListener;
 
 /**

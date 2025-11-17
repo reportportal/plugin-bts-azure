@@ -5,8 +5,8 @@ import com.epam.reportportal.extension.azure.event.handler.EventHandler;
 import com.epam.reportportal.extension.azure.event.handler.plugin.PluginLoadedEventHandler;
 import com.epam.reportportal.extension.azure.info.PluginInfoProvider;
 import com.epam.reportportal.extension.event.PluginEvent;
-import com.epam.ta.reportportal.dao.IntegrationRepository;
-import com.epam.ta.reportportal.dao.IntegrationTypeRepository;
+import com.epam.reportportal.infrastructure.persistence.dao.IntegrationRepository;
+import com.epam.reportportal.infrastructure.persistence.dao.IntegrationTypeRepository;
 import java.util.HashMap;
 import java.util.Map;
 
