@@ -1,7 +1,7 @@
 package com.epam.reportportal.extension.azure.command.utils;
 
-import com.epam.reportportal.rules.exception.ErrorType;
-import com.epam.reportportal.rules.exception.ReportPortalException;
+import com.epam.reportportal.infrastructure.rules.exception.ErrorType;
+import com.epam.reportportal.infrastructure.rules.exception.ReportPortalException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.util.List;
