@@ -4,15 +4,14 @@ import static com.epam.reportportal.infrastructure.rules.exception.ErrorType.UNA
 import static com.epam.reportportal.infrastructure.rules.exception.ErrorType.UNABLE_TO_LOAD_BINARY_DATA;
 import static java.util.Optional.ofNullable;
 
+import com.epam.reportportal.core.events.domain.PluginUploadedEvent;
 import com.epam.reportportal.extension.CommonPluginCommand;
 import com.epam.reportportal.extension.IntegrationGroupEnum;
 import com.epam.reportportal.extension.PluginCommand;
 import com.epam.reportportal.extension.ReportPortalExtensionPoint;
 import com.epam.reportportal.extension.azure.command.connection.TestConnectionCommand;
 import com.epam.reportportal.extension.azure.entity.model.IntegrationParameters;
-import com.epam.reportportal.extension.azure.event.launch.AzureStartLaunchEventListener;
-import com.epam.reportportal.extension.azure.event.plugin.AzurePluginEventListener;
-import com.epam.reportportal.extension.azure.event.plugin.PluginEventHandlerFactory;
+import com.epam.reportportal.extension.azure.event.plugin.PluginLoadedEventListener;
 import com.epam.reportportal.extension.azure.info.impl.PluginInfoProviderImpl;
 import com.epam.reportportal.extension.azure.rest.client.ApiClient;
 import com.epam.reportportal.extension.azure.rest.client.ApiException;
@@ -37,8 +36,6 @@ import com.epam.reportportal.extension.bugtracking.BtsConstants;
 import com.epam.reportportal.extension.bugtracking.BtsExtension;
 import com.epam.reportportal.extension.bugtracking.InternalTicketAssembler;
 import com.epam.reportportal.extension.common.IntegrationTypeProperties;
-import com.epam.reportportal.extension.event.PluginEvent;
-import com.epam.reportportal.extension.event.StartLaunchEvent;
 import com.epam.reportportal.infrastructure.model.externalsystem.AllowedValue;
 import com.epam.reportportal.infrastructure.model.externalsystem.PostFormField;
 import com.epam.reportportal.infrastructure.model.externalsystem.PostTicketRQ;
@@ -151,8 +148,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   private final Supplier<Map<String, PluginCommand<?>>> pluginCommandMapping =
       new MemoizingSupplier<>(this::getCommands);
 
-  private final Supplier<ApplicationListener<PluginEvent>> pluginLoadedListenerSupplier;
-  private final Supplier<ApplicationListener<StartLaunchEvent>> startLaunchEventListenerSupplier;
+  private final Supplier<ApplicationListener<PluginUploadedEvent>> pluginLoadedListenerSupplier;
   private final MimeTypes mimeRepository;
 
   @Autowired
@@ -211,12 +207,11 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
         IntegrationTypeProperties.RESOURCES_DIRECTORY.getValue(initParams).map(String::valueOf)
             .orElse("");
 
-    pluginLoadedListenerSupplier = new MemoizingSupplier<>(() -> new AzurePluginEventListener(
-        PLUGIN_ID, new PluginEventHandlerFactory(integrationTypeRepository, integrationRepository,
-        new PluginInfoProviderImpl(resourcesDir, BINARY_DATA_PROPERTIES_FILE_ID)
-    )));
-    startLaunchEventListenerSupplier =
-        new MemoizingSupplier<>(() -> new AzureStartLaunchEventListener(launchRepository));
+    pluginLoadedListenerSupplier = new MemoizingSupplier<>(
+        () -> new PluginLoadedEventListener(PLUGIN_ID, integrationTypeRepository,
+            integrationRepository,
+            new PluginInfoProviderImpl(resourcesDir, BINARY_DATA_PROPERTIES_FILE_ID)
+        ));
     mimeRepository = TikaConfig.getDefaultConfig().getMimeRepository();
     ;
   }
@@ -279,7 +274,6 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
         ApplicationEventMulticaster.class
     );
     applicationEventMulticaster.addApplicationListener(pluginLoadedListenerSupplier.get());
-    applicationEventMulticaster.addApplicationListener(startLaunchEventListenerSupplier.get());
   }
 
   private void initSchema() throws IOException {
@@ -303,7 +297,6 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
         ApplicationEventMulticaster.class
     );
     applicationEventMulticaster.removeApplicationListener(pluginLoadedListenerSupplier.get());
-    applicationEventMulticaster.removeApplicationListener(startLaunchEventListenerSupplier.get());
   }
 
   private Map<String, PluginCommand<?>> getCommands() {

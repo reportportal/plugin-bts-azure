@@ -31,8 +31,8 @@ dependencies {
         implementation 'com.epam.reportportal:service-api'
         annotationProcessor 'com.epam.reportportal:service-api'
     } else {
-        implementation 'com.github.reportportal:service-api:3e34a90'
-        annotationProcessor 'com.github.reportportal:service-api:3e34a90'
+        implementation 'com.github.reportportal:service-api:a47f5cf'
+        annotationProcessor 'com.github.reportportal:service-api:a47f5cf'
     }
     implementation "io.swagger.core.v3:swagger-annotations-jakarta:2.2.27"
     implementation 'com.squareup.okhttp:okhttp:2.7.5'
