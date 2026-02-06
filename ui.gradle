@@ -3,7 +3,7 @@ node {
     npmVersion = '10.2.4'
     download = true
     workDir = layout.buildDirectory.dir('ui').get().asFile
-    npmWorkDir = file("${project.rootDir}/ui")
+    npmWorkDir = layout.buildDirectory.dir('npm').get().asFile
     nodeProjectDir = file("${project.rootDir}/ui")
 }
 
