@@ -2,8 +2,9 @@ node {
     version = '20.11.0'
     npmVersion = '10.2.4'
     download = true
-    workDir = file("${project.buildDir}/ui")
-    nodeModulesDir = file("${project.rootDir}/ui")
+    workDir = layout.buildDirectory.dir('ui').get().asFile
+    npmWorkDir = layout.buildDirectory.dir('npm').get().asFile
+    nodeProjectDir = file("${project.rootDir}/ui")
 }
 
 npm_run_build {
