@@ -1,12 +1,12 @@
 package com.epam.reportportal.extension.azure.event.plugin;
 
-import com.epam.reportportal.core.events.domain.PluginUploadedEvent;
+import com.epam.reportportal.base.core.events.domain.PluginUploadedEvent;
 import com.epam.reportportal.extension.azure.info.PluginInfoProvider;
-import com.epam.reportportal.infrastructure.persistence.dao.IntegrationRepository;
-import com.epam.reportportal.infrastructure.persistence.dao.IntegrationTypeRepository;
-import com.epam.reportportal.infrastructure.persistence.entity.integration.Integration;
-import com.epam.reportportal.infrastructure.persistence.entity.integration.IntegrationParams;
-import com.epam.reportportal.infrastructure.persistence.entity.integration.IntegrationType;
+import com.epam.reportportal.base.infrastructure.persistence.dao.IntegrationRepository;
+import com.epam.reportportal.base.infrastructure.persistence.dao.IntegrationTypeRepository;
+import com.epam.reportportal.base.infrastructure.persistence.entity.integration.Integration;
+import com.epam.reportportal.base.infrastructure.persistence.entity.integration.IntegrationParams;
+import com.epam.reportportal.base.infrastructure.persistence.entity.integration.IntegrationType;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
