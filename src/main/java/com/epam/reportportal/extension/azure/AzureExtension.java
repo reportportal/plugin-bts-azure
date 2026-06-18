@@ -6,8 +6,10 @@ import com.epam.reportportal.base.infrastructure.persistence.dao.IntegrationRepo
 import com.epam.reportportal.base.infrastructure.persistence.dao.IntegrationTypeRepository;
 import com.epam.reportportal.base.infrastructure.persistence.dao.LogRepository;
 import com.epam.reportportal.base.infrastructure.persistence.dao.ProjectRepository;
+import com.epam.reportportal.base.infrastructure.persistence.dao.ProjectUserRepository;
 import com.epam.reportportal.base.infrastructure.persistence.dao.TestItemRepository;
-import com.epam.reportportal.base.infrastructure.persistence.dao.organization.OrganizationRepositoryCustom;
+import com.epam.reportportal.base.infrastructure.persistence.dao.organization.OrganizationRepository;
+import com.epam.reportportal.base.infrastructure.persistence.dao.organization.OrganizationUserRepository;
 import com.epam.reportportal.base.infrastructure.persistence.filesystem.DataEncoder;
 import com.epam.reportportal.extension.CommonPluginCommand;
 import com.epam.reportportal.extension.IntegrationGroupEnum;
@@ -92,7 +94,13 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   private ProjectRepository projectRepository;
 
   @Autowired
-  private OrganizationRepositoryCustom organizationRepository;
+  private OrganizationUserRepository organizationUserRepository;
+
+  @Autowired
+  private OrganizationRepository organizationRepository;
+
+  @Autowired
+  private ProjectUserRepository projectUserRepository;
 
   @Autowired
   private TestItemRepository itemRepository;
@@ -144,11 +152,18 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   @Override
   public Map<String, ExtensionCommand<?>> getIntegrationExtensionCommands() {
     List<ExtensionCommand<?>> commands = new ArrayList<>();
-    commands.add(new TestConnectionCommand(clientProvider.get(), projectRepository, organizationRepository));
-    commands.add(new GetIssueTypesCommand(clientProvider.get(), projectRepository, organizationRepository));
-    commands.add(new GetTicketFieldsCommand(clientProvider.get(), projectRepository, organizationRepository));
+    commands.add(new TestConnectionCommand(clientProvider.get(), projectRepository,
+        organizationUserRepository, organizationRepository, projectUserRepository
+    ));
+    commands.add(new GetIssueTypesCommand(clientProvider.get(), projectRepository,
+        organizationUserRepository, organizationRepository, projectUserRepository
+    ));
+    commands.add(new GetTicketFieldsCommand(clientProvider.get(), projectRepository,
+        organizationUserRepository, organizationRepository, projectUserRepository
+    ));
     commands.add(new PostTicketCommand(clientProvider.get(), itemRepository, logRepository,
-        attachmentDataStoreService, dataEncoder, projectRepository, organizationRepository
+        attachmentDataStoreService, dataEncoder, projectRepository, organizationUserRepository,
+        organizationRepository, projectUserRepository
     ));
     return commands.stream()
         .collect(Collectors.toMap(NamedPluginCommand::getName, command -> command));
@@ -157,7 +172,9 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   @Override
   public Map<String, ExtensionCommand<?>> getCommonExtensionCommands() {
     List<ExtensionCommand<?>> commands = new ArrayList<>();
-    commands.add(new GetTicketCommand(clientProvider.get(), projectRepository, organizationRepository));
+    commands.add(new GetTicketCommand(clientProvider.get(), projectRepository,
+        organizationUserRepository, organizationRepository, projectUserRepository
+    ));
     return commands.stream()
         .collect(Collectors.toMap(NamedPluginCommand::getName, command -> command));
   }

@@ -33,8 +33,8 @@ dependencies {
         implementation 'com.epam.reportportal:service-api'
         annotationProcessor 'com.epam.reportportal:service-api'
     } else {
-        implementation 'com.github.reportportal:service-api:82fa7c7'
-        annotationProcessor 'com.github.reportportal:service-api:82fa7c7'
+        implementation 'com.github.reportportal:service-api:0141b9e'
+        annotationProcessor 'com.github.reportportal:service-api:0141b9e'
     }
     implementation "io.swagger.core.v3:swagger-annotations-jakarta:2.2.27"
     implementation 'com.squareup.okhttp:okhttp:2.7.5'
@@ -130,4 +130,3 @@ task assemblePlugins(type: Copy) {
 }
 
 compileJava.dependsOn npm_run_build
-build.dependsOn jacocoTestReport

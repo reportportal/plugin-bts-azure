@@ -14,8 +14,10 @@ import com.epam.reportportal.base.infrastructure.model.externalsystem.Ticket;
 import com.epam.reportportal.base.infrastructure.persistence.binary.impl.AttachmentDataStoreService;
 import com.epam.reportportal.base.infrastructure.persistence.dao.LogRepository;
 import com.epam.reportportal.base.infrastructure.persistence.dao.ProjectRepository;
+import com.epam.reportportal.base.infrastructure.persistence.dao.ProjectUserRepository;
 import com.epam.reportportal.base.infrastructure.persistence.dao.TestItemRepository;
-import com.epam.reportportal.base.infrastructure.persistence.dao.organization.OrganizationRepositoryCustom;
+import com.epam.reportportal.base.infrastructure.persistence.dao.organization.OrganizationRepository;
+import com.epam.reportportal.base.infrastructure.persistence.dao.organization.OrganizationUserRepository;
 import com.epam.reportportal.base.infrastructure.persistence.entity.attachment.Attachment;
 import com.epam.reportportal.base.infrastructure.persistence.entity.integration.Integration;
 import com.epam.reportportal.base.infrastructure.persistence.entity.item.TestItem;
@@ -80,8 +82,11 @@ public class PostTicketCommand extends AbstractExtensionCommand<Ticket> {
   public PostTicketCommand(AzureApiClientProvider clientProvider,
       TestItemRepository itemRepository, LogRepository logRepository,
       AttachmentDataStoreService attachmentDataStoreService, DataEncoder dataEncoder,
-      ProjectRepository projectRepository, OrganizationRepositoryCustom organizationRepository) {
-    super(projectRepository, organizationRepository);
+      ProjectRepository projectRepository, OrganizationUserRepository organizationUserRepository,
+      OrganizationRepository organizationRepository, ProjectUserRepository projectUserRepository) {
+    super(projectRepository, organizationUserRepository, organizationRepository,
+        projectUserRepository
+    );
     this.clientProvider = clientProvider;
     this.itemRepository = itemRepository;
     this.logRepository = logRepository;

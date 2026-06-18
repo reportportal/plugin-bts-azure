@@ -8,7 +8,9 @@ import com.epam.reportportal.api.model.PluginCommandRQ;
 import com.epam.reportportal.base.infrastructure.model.externalsystem.AllowedValue;
 import com.epam.reportportal.base.infrastructure.model.externalsystem.PostFormField;
 import com.epam.reportportal.base.infrastructure.persistence.dao.ProjectRepository;
-import com.epam.reportportal.base.infrastructure.persistence.dao.organization.OrganizationRepositoryCustom;
+import com.epam.reportportal.base.infrastructure.persistence.dao.ProjectUserRepository;
+import com.epam.reportportal.base.infrastructure.persistence.dao.organization.OrganizationRepository;
+import com.epam.reportportal.base.infrastructure.persistence.dao.organization.OrganizationUserRepository;
 import com.epam.reportportal.base.infrastructure.persistence.entity.integration.Integration;
 import com.epam.reportportal.base.infrastructure.rules.exception.ErrorType;
 import com.epam.reportportal.base.infrastructure.rules.exception.ReportPortalException;
@@ -45,8 +47,11 @@ public class GetTicketFieldsCommand extends AbstractExtensionCommand<List<PostFo
   private final AzureApiClientProvider clientProvider;
 
   public GetTicketFieldsCommand(AzureApiClientProvider clientProvider,
-      ProjectRepository projectRepository, OrganizationRepositoryCustom organizationRepository) {
-    super(projectRepository, organizationRepository);
+      ProjectRepository projectRepository, OrganizationUserRepository organizationUserRepository,
+      OrganizationRepository organizationRepository, ProjectUserRepository projectUserRepository) {
+    super(projectRepository, organizationUserRepository, organizationRepository,
+        projectUserRepository
+    );
     this.clientProvider = clientProvider;
   }
 
