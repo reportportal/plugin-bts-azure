@@ -23,7 +23,6 @@ import com.epam.reportportal.base.infrastructure.persistence.entity.integration.
 import com.epam.reportportal.base.infrastructure.persistence.entity.item.TestItem;
 import com.epam.reportportal.base.infrastructure.persistence.entity.log.Log;
 import com.epam.reportportal.base.infrastructure.persistence.filesystem.DataEncoder;
-import com.epam.reportportal.base.infrastructure.rules.exception.ErrorType;
 import com.epam.reportportal.base.infrastructure.rules.exception.ReportPortalException;
 import com.epam.reportportal.extension.azure.client.AzureApiClientProvider;
 import com.epam.reportportal.extension.azure.rest.client.ApiClient;
@@ -36,6 +35,7 @@ import com.epam.reportportal.extension.azure.rest.client.model.workitem.JsonPatc
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItem;
 import com.epam.reportportal.extension.bugtracking.InternalTicketAssembler;
 import com.epam.reportportal.extension.command.AbstractExtensionCommand;
+import com.epam.reportportal.extension.util.RequestEntityConverter;
 import com.google.common.base.Suppliers;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
@@ -76,13 +76,15 @@ public class PostTicketCommand extends AbstractExtensionCommand<Ticket> {
   private final LogRepository logRepository;
   private final AttachmentDataStoreService attachmentDataStoreService;
   private final DataEncoder dataEncoder;
+  private final RequestEntityConverter requestEntityConverter;
   private final MimeTypes mimeRepository;
   private final Supplier<InternalTicketAssembler> ticketAssembler;
 
   public PostTicketCommand(AzureApiClientProvider clientProvider,
       TestItemRepository itemRepository, LogRepository logRepository,
       AttachmentDataStoreService attachmentDataStoreService, DataEncoder dataEncoder,
-      ProjectRepository projectRepository, OrganizationUserRepository organizationUserRepository,
+      RequestEntityConverter requestEntityConverter, ProjectRepository projectRepository,
+      OrganizationUserRepository organizationUserRepository,
       OrganizationRepository organizationRepository, ProjectUserRepository projectUserRepository) {
     super(projectRepository, organizationUserRepository, organizationRepository,
         projectUserRepository
@@ -92,6 +94,7 @@ public class PostTicketCommand extends AbstractExtensionCommand<Ticket> {
     this.logRepository = logRepository;
     this.attachmentDataStoreService = attachmentDataStoreService;
     this.dataEncoder = dataEncoder;
+    this.requestEntityConverter = requestEntityConverter;
     this.mimeRepository = TikaConfig.getDefaultConfig().getMimeRepository();
     this.ticketAssembler = Suppliers.memoize(
         () -> new InternalTicketAssembler(logRepository, itemRepository, attachmentDataStoreService,
@@ -110,7 +113,8 @@ public class PostTicketCommand extends AbstractExtensionCommand<Ticket> {
 
   @Override
   protected Ticket invokeCommand(Integration integration, PluginCommandRQ rq) {
-    PostTicketRQ ticketRQ = getEntity(ENTITY_PARAM, rq.getArguments(), PostTicketRQ.class);
+    PostTicketRQ ticketRQ =
+        requestEntityConverter.getEntity(ENTITY_PARAM, rq.getArguments(), PostTicketRQ.class);
 
     ApiClient client = clientProvider.provide(integration);
     String orgName = clientProvider.extractOrganizationName(client,
@@ -139,21 +143,6 @@ public class PostTicketCommand extends AbstractExtensionCommand<Ticket> {
       throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION,
           String.format("Unable to post issue. Code: %s ", e.getCode()), e
       );
-    }
-  }
-
-  private <T> T getEntity(String key, Map<String, Object> params, Class<T> clazz) {
-    try {
-      Object raw = params.get(key);
-      if (raw == null) {
-        throw new ReportPortalException(ErrorType.BAD_REQUEST_ERROR,
-            "Parameter '" + key + "' was not provided"
-        );
-      }
-      com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-      return mapper.readValue(mapper.writeValueAsString(raw), clazz);
-    } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-      throw new ReportPortalException(ErrorType.BAD_REQUEST_ERROR, e.getMessage());
     }
   }
 
