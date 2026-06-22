@@ -27,6 +27,8 @@ import com.epam.reportportal.extension.azure.info.impl.PluginInfoProviderImpl;
 import com.epam.reportportal.extension.azure.utils.MemoizingSupplier;
 import com.epam.reportportal.extension.command.ExtensionCommand;
 import com.epam.reportportal.extension.common.IntegrationTypeProperties;
+import com.epam.reportportal.extension.util.RequestEntityConverter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -70,6 +72,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
 
   private final String resourcesDir;
   private final Supplier<AzureApiClientProvider> clientProvider;
+  private final Supplier<RequestEntityConverter> requestEntityConverterSupplier;
 
   private final Supplier<Map<String, ExtensionCommand<?>>> pluginCommandMapping =
       new MemoizingSupplier<>(this::getIntegrationExtensionCommands);
@@ -117,11 +120,16 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   @Autowired
   private LogRepository logRepository;
 
+  @Autowired
+  private ObjectMapper objectMapper;
+
   public AzureExtension(Map<String, Object> initParams) {
     resourcesDir =
         IntegrationTypeProperties.RESOURCES_DIRECTORY.getValue(initParams).map(String::valueOf)
             .orElse("");
     clientProvider = new MemoizingSupplier<>(() -> new AzureApiClientProvider(basicTextEncryptor));
+    requestEntityConverterSupplier =
+        new MemoizingSupplier<>(() -> new RequestEntityConverter(objectMapper));
     pluginLoadedListenerSupplier = new MemoizingSupplier<>(
         () -> new PluginLoadedEventListener(PLUGIN_ID, integrationTypeRepository,
             integrationRepository,
@@ -162,8 +170,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
         organizationUserRepository, organizationRepository, projectUserRepository
     ));
     commands.add(new PostTicketCommand(clientProvider.get(), itemRepository, logRepository,
-        attachmentDataStoreService, dataEncoder, projectRepository, organizationUserRepository,
-        organizationRepository, projectUserRepository
+        attachmentDataStoreService, dataEncoder, requestEntityConverterSupplier.get(),
+        projectRepository, organizationUserRepository, organizationRepository, projectUserRepository
     ));
     return commands.stream()
         .collect(Collectors.toMap(NamedPluginCommand::getName, command -> command));
