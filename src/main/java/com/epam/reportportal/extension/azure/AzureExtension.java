@@ -8,6 +8,7 @@ import com.epam.reportportal.base.infrastructure.persistence.dao.LogRepository;
 import com.epam.reportportal.base.infrastructure.persistence.dao.ProjectRepository;
 import com.epam.reportportal.base.infrastructure.persistence.dao.ProjectUserRepository;
 import com.epam.reportportal.base.infrastructure.persistence.dao.TestItemRepository;
+import com.epam.reportportal.base.infrastructure.persistence.dao.TicketRepository;
 import com.epam.reportportal.base.infrastructure.persistence.dao.organization.OrganizationRepository;
 import com.epam.reportportal.base.infrastructure.persistence.dao.organization.OrganizationUserRepository;
 import com.epam.reportportal.base.infrastructure.persistence.filesystem.DataEncoder;
@@ -17,8 +18,8 @@ import com.epam.reportportal.extension.NamedPluginCommand;
 import com.epam.reportportal.extension.PluginCommand;
 import com.epam.reportportal.extension.ReportPortalExtensionPoint;
 import com.epam.reportportal.extension.azure.client.AzureApiClientProvider;
+import com.epam.reportportal.extension.azure.command.GetIssueCommand;
 import com.epam.reportportal.extension.azure.command.GetIssueTypesCommand;
-import com.epam.reportportal.extension.azure.command.GetTicketCommand;
 import com.epam.reportportal.extension.azure.command.GetTicketFieldsCommand;
 import com.epam.reportportal.extension.azure.command.PostTicketCommand;
 import com.epam.reportportal.extension.azure.command.TestConnectionCommand;
@@ -121,6 +122,9 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   private LogRepository logRepository;
 
   @Autowired
+  private TicketRepository ticketRepository;
+
+  @Autowired
   private ObjectMapper objectMapper;
 
   public AzureExtension(Map<String, Object> initParams) {
@@ -180,8 +184,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   @Override
   public Map<String, ExtensionCommand<?>> getCommonExtensionCommands() {
     List<ExtensionCommand<?>> commands = new ArrayList<>();
-    commands.add(new GetTicketCommand(clientProvider.get(), projectRepository,
-        organizationUserRepository, organizationRepository, projectUserRepository
+    commands.add(new GetIssueCommand(clientProvider.get(), ticketRepository, integrationRepository,
+        projectRepository, organizationUserRepository, organizationRepository, projectUserRepository
     ));
     return commands.stream()
         .collect(Collectors.toMap(NamedPluginCommand::getName, command -> command));

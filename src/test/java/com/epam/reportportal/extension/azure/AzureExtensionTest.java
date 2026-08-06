@@ -41,7 +41,7 @@ class AzureExtensionTest {
 
   @Test
   void getCommonCommandReturnsNull() {
-    assertNull(azureExtension.getCommonCommand("getTicket"));
+    assertNull(azureExtension.getCommonCommand("getIssue"));
   }
 
   @Test
@@ -56,7 +56,7 @@ class AzureExtensionTest {
   @Test
   void commonExtensionCommandsContainsExpectedCommands() {
     Map<String, ExtensionCommand<?>> commands = azureExtension.getCommonExtensionCommands();
-    assertTrue(commands.containsKey("getTicket"));
+    assertTrue(commands.containsKey("getIssue"));
   }
 
   @Test
