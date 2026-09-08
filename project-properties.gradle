@@ -10,7 +10,8 @@ project.ext {
     dependencyRepos = ["plugin-api", "commons-bom"]
     releaseMode = project.hasProperty("releaseMode")
     pluginsDir = "$buildDir/plugins"
-    scriptsUrl = commonScriptsUrl + (releaseMode ? getProperty('scripts.version') : 'develop')
+    scriptsUrl = commonScriptsUrl + 'd2edb27108854279543e14505d30d848d17059c9'
+    //scriptsUrl = commonScriptsUrl + (releaseMode ? getProperty('scripts.version') : 'develop')
     excludeTests = [
             '**/entity/**'
     ]

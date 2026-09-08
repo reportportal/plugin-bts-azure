@@ -10,8 +10,9 @@ apply from: 'jooq.gradle'
 apply from: 'ui.gradle'
 apply from: "$scriptsUrl/jacoco.gradle"
 
-def scriptsUrl = 'https://raw.githubusercontent.com/reportportal/gradle-scripts/' +
-        (releaseMode ? getProperty('scripts.version') : 'develop')
+//def scriptsUrl = 'https://raw.githubusercontent.com/reportportal/gradle-scripts/' +
+ //       (releaseMode ? getProperty('scripts.version') : 'develop')
+def scriptsUrl = 'https://raw.githubusercontent.com/reportportal/gradle-scripts/d2edb27108854279543e14505d30d848d17059c9'
 
 apply from: scriptsUrl + '/release-fat.gradle'
 apply from: scriptsUrl + '/signing.gradle'
