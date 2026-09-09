@@ -26,6 +26,7 @@ import com.epam.reportportal.extension.azure.command.TestConnectionCommand;
 import com.epam.reportportal.extension.azure.event.plugin.PluginLoadedEventListener;
 import com.epam.reportportal.extension.azure.info.impl.PluginInfoProviderImpl;
 import com.epam.reportportal.extension.azure.utils.MemoizingSupplier;
+import com.epam.reportportal.extension.bugtracking.BtsActivityPublisher;
 import com.epam.reportportal.extension.command.ExtensionCommand;
 import com.epam.reportportal.extension.common.IntegrationTypeProperties;
 import com.epam.reportportal.extension.util.RequestEntityConverter;
@@ -127,6 +128,9 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   @Autowired
   private ObjectMapper objectMapper;
 
+  @Autowired
+  private BtsActivityPublisher btsActivityPublisher;
+
   public AzureExtension(Map<String, Object> initParams) {
     resourcesDir =
         IntegrationTypeProperties.RESOURCES_DIRECTORY.getValue(initParams).map(String::valueOf)
@@ -175,7 +179,8 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
     ));
     commands.add(new PostTicketCommand(clientProvider.get(), itemRepository, logRepository,
         attachmentDataStoreService, dataEncoder, requestEntityConverterSupplier.get(),
-        projectRepository, organizationUserRepository, organizationRepository, projectUserRepository
+        projectRepository, organizationUserRepository, organizationRepository, projectUserRepository,
+        btsActivityPublisher
     ));
     return commands.stream()
         .collect(Collectors.toMap(NamedPluginCommand::getName, command -> command));
