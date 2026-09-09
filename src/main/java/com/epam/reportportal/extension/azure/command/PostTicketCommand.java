@@ -33,6 +33,7 @@ import com.epam.reportportal.extension.azure.rest.client.model.AttachmentInfo;
 import com.epam.reportportal.extension.azure.rest.client.model.AttachmentReference;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.JsonPatchOperation;
 import com.epam.reportportal.extension.azure.rest.client.model.workitem.WorkItem;
+import com.epam.reportportal.extension.bugtracking.BtsActivityPublisher;
 import com.epam.reportportal.extension.bugtracking.InternalTicketAssembler;
 import com.epam.reportportal.extension.command.AbstractExtensionCommand;
 import com.epam.reportportal.extension.util.RequestEntityConverter;
@@ -79,13 +80,15 @@ public class PostTicketCommand extends AbstractExtensionCommand<Ticket> {
   private final RequestEntityConverter requestEntityConverter;
   private final MimeTypes mimeRepository;
   private final Supplier<InternalTicketAssembler> ticketAssembler;
+  private final BtsActivityPublisher btsActivityPublisher;
 
   public PostTicketCommand(AzureApiClientProvider clientProvider,
       TestItemRepository itemRepository, LogRepository logRepository,
       AttachmentDataStoreService attachmentDataStoreService, DataEncoder dataEncoder,
       RequestEntityConverter requestEntityConverter, ProjectRepository projectRepository,
       OrganizationUserRepository organizationUserRepository,
-      OrganizationRepository organizationRepository, ProjectUserRepository projectUserRepository) {
+      OrganizationRepository organizationRepository, ProjectUserRepository projectUserRepository,
+      BtsActivityPublisher btsActivityPublisher) {
     super(projectRepository, organizationUserRepository, organizationRepository,
         projectUserRepository
     );
@@ -100,6 +103,7 @@ public class PostTicketCommand extends AbstractExtensionCommand<Ticket> {
         () -> new InternalTicketAssembler(logRepository, itemRepository, attachmentDataStoreService,
             dataEncoder
         ));
+    this.btsActivityPublisher = btsActivityPublisher;
   }
 
   @Override
@@ -137,7 +141,9 @@ public class PostTicketCommand extends AbstractExtensionCommand<Ticket> {
             API_VERSION, null, null, null, null
         );
       }
-      return toTicket(workItem);
+      Ticket ticket = toTicket(workItem);
+      btsActivityPublisher.publishTicketPostedEvent(ticket, ticketRQ, rq.getContext(), integration);
+      return ticket;
     } catch (ApiException e) {
       LOGGER.error("Unable to post issue: {}", e.getMessage(), e);
       throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION,
