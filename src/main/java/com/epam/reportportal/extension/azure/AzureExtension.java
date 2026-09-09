@@ -59,6 +59,7 @@ import com.epam.ta.reportportal.filesystem.DataEncoder;
 import com.google.common.base.Suppliers;
 import com.google.common.io.ByteStreams;
 import jakarta.annotation.PostConstruct;
+import java.net.URI;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -518,6 +519,14 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   }
 
   private String extractOrganizationNameFromUrl(ApiClient client, String organizationUrl) {
+    URI uri = URI.create(organizationUrl);
+    String path = uri.getPath();
+
+    if (path != null && path.matches("(?i)^/tfs/[^/]+/?$")) {
+      client.setBasePath(uri.getScheme() + "://" + uri.getRawAuthority() + "/tfs");
+      return path.substring("/tfs/".length()).replaceAll("/+$", "");
+    }
+
     return organizationUrl.replace(client.getBasePath(), "");
   }
 

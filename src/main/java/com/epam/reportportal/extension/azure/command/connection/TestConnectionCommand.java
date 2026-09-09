@@ -19,6 +19,7 @@ import java.util.Map;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.net.URI;
 
 public class TestConnectionCommand implements PluginCommand<Boolean> {
 
@@ -36,7 +37,19 @@ public class TestConnectionCommand implements PluginCommand<Boolean> {
     ApiClient defaultClient = Configuration.getDefaultApiClient();
 
     String organizationUrl = params.get(URL).toString();
-    String organizationName = organizationUrl.replace(defaultClient.getBasePath(), "");
+    URI uri = URI.create(organizationUrl);
+    String path = uri.getPath();
+
+    String organizationName;
+    
+    defaultClient.setVerifyingSsl(false);
+    if (path != null && path.matches("(?i)^/tfs/[^/]+/?$")) {
+      defaultClient.setBasePath(
+          uri.getScheme() + "://" + uri.getRawAuthority() + "/tfs");
+      organizationName = path.substring("/tfs/".length()).replaceAll("/+$", "");
+    } else {
+      organizationName = organizationUrl.replace(defaultClient.getBasePath(), "");
+    }
     String projectName = params.get(PROJECT).toString();
     String personalAccessToken = basicTextEncryptor.decrypt(
         BtsConstants.OAUTH_ACCESS_KEY.getParam(integration.getParams(), String.class).orElseThrow(
@@ -56,9 +69,23 @@ public class TestConnectionCommand implements PluginCommand<Boolean> {
           );
       return response.getStatusCode() == 200;
     } catch (ApiException e) {
-      LOGGER.error("Unable to connect to Azure DevOps: {}", e.getMessage(), e);
-      throw new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION,
-          String.format("Unable to connect to Azure DevOps. Code: %s", e.getCode()), e);
+        LOGGER.error(
+            "Unable to connect to Azure DevOps. code={}, message={}, cause={}",
+            e.getCode(),
+            e.getMessage(),
+            e.getCause(),
+            e
+        );
+
+        throw new ReportPortalException(
+            UNABLE_INTERACT_WITH_INTEGRATION,
+            String.format(
+                "Unable to connect to Azure DevOps. Code: %s, message: %s",
+                e.getCode(),
+                e.getMessage()
+            ),
+            e
+        );
     }
   }
 
