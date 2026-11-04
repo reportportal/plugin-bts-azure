@@ -1,14 +1,10 @@
 plugins {
-    id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
-    id 'com.gradleup.shadow' version '9.3.1'
+    id 'com.gradleup.shadow' version '9.6.1'
     id "com.github.node-gradle.node" version "7.1.0"
-    id "org.jooq.jooq-codegen-gradle" version "3.19.18"
-    id("io.freefair.lombok") version "9.5.0"
 }
 
 apply from: 'project-properties.gradle'
-apply from: 'jooq.gradle'
 apply from: 'ui.gradle'
 apply from: "$scriptsUrl/jacoco.gradle"
 
@@ -26,16 +22,19 @@ repositories {
     }
 }
 
-ext['spring-boot.version'] = "${springBootVersion}"
-
 dependencies {
     if (releaseMode) {
         implementation 'com.epam.reportportal:service-api'
-        annotationProcessor 'com.epam.reportportal:service-api'
+        annotationProcessor('com.epam.reportportal:service-api') {
+            exclude group: 'org.springframework.modulith', module: 'spring-modulith-apt'
+        }
     } else {
-        implementation 'com.github.reportportal:service-api:73c327819e'
-        annotationProcessor 'com.github.reportportal:service-api:73c327819e'
+        implementation 'com.github.reportportal:service-api:d4b2f7c'
+        annotationProcessor('com.github.reportportal:service-api:d4b2f7c') {
+            exclude group: 'org.springframework.modulith', module: 'spring-modulith-apt'
+        }
     }
+    compileOnly 'tools.jackson.core:jackson-databind'
     implementation "io.swagger.core.v3:swagger-annotations-jakarta:2.2.27"
     implementation 'com.squareup.okhttp:okhttp:2.7.5'
     implementation 'com.squareup.okio:okio:1.6.0'
@@ -44,7 +43,7 @@ dependencies {
     implementation 'org.threeten:threetenbp:1.3.5'
 
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.mockito:mockito-junit-jupiter:5.21.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -109,7 +108,7 @@ shadowJar {
     }
 }
 
-task plugin(type: Jar) {
+tasks.register('plugin', Jar) {
     getArchiveBaseName().set("plugin-${pluginId}")
     into('classes') {
         with jar
@@ -120,12 +119,12 @@ task plugin(type: Jar) {
     archiveExtension.set('zip')
 }
 
-task assemblePlugin(type: Copy) {
+tasks.register('assemblePlugin', Copy) {
     from plugin
     into pluginsDir
 }
 
-task assemblePlugins(type: Copy) {
+tasks.register('assemblePlugins', Copy) {
     dependsOn subprojects.assemblePlugin
 }
 

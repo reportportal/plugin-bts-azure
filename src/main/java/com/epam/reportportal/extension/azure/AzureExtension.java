@@ -30,7 +30,6 @@ import com.epam.reportportal.extension.bugtracking.BtsActivityPublisher;
 import com.epam.reportportal.extension.command.ExtensionCommand;
 import com.epam.reportportal.extension.common.IntegrationTypeProperties;
 import com.epam.reportportal.extension.util.RequestEntityConverter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,6 +53,7 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import tools.jackson.databind.json.JsonMapper;
 
 @Extension
 public class AzureExtension implements ReportPortalExtensionPoint, DisposableBean {
@@ -126,7 +126,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   private TicketRepository ticketRepository;
 
   @Autowired
-  private ObjectMapper objectMapper;
+  private JsonMapper jsonMapper;
 
   @Autowired
   private BtsActivityPublisher btsActivityPublisher;
@@ -137,7 +137,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
             .orElse("");
     clientProvider = new MemoizingSupplier<>(() -> new AzureApiClientProvider(basicTextEncryptor));
     requestEntityConverterSupplier =
-        new MemoizingSupplier<>(() -> new RequestEntityConverter(objectMapper));
+        new MemoizingSupplier<>(() -> new RequestEntityConverter(jsonMapper));
     pluginLoadedListenerSupplier = new MemoizingSupplier<>(
         () -> new PluginLoadedEventListener(PLUGIN_ID, integrationTypeRepository,
             integrationRepository,
@@ -155,11 +155,15 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
     return params;
   }
 
+  // TODO remove once service-api drops getCommonCommand from ReportPortalExtensionPoint
+  @Deprecated
   @Override
   public CommonPluginCommand<?> getCommonCommand(String commandName) {
     return null;
   }
 
+  // TODO remove once service-api drops getIntegrationCommand from ReportPortalExtensionPoint
+  @Deprecated
   @Override
   public PluginCommand<?> getIntegrationCommand(String commandName) {
     return null;

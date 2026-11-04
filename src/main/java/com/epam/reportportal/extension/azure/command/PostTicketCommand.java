@@ -54,7 +54,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.config.TikaConfig;
 import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
@@ -98,7 +97,7 @@ public class PostTicketCommand extends AbstractExtensionCommand<Ticket> {
     this.attachmentDataStoreService = attachmentDataStoreService;
     this.dataEncoder = dataEncoder;
     this.requestEntityConverter = requestEntityConverter;
-    this.mimeRepository = TikaConfig.getDefaultConfig().getMimeRepository();
+    this.mimeRepository = MimeTypes.getDefaultMimeTypes();
     this.ticketAssembler = Suppliers.memoize(
         () -> new InternalTicketAssembler(logRepository, itemRepository, attachmentDataStoreService,
             dataEncoder
