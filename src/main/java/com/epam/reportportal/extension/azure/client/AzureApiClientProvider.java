@@ -5,7 +5,6 @@ import static com.epam.reportportal.base.infrastructure.rules.exception.ErrorTyp
 import com.epam.reportportal.base.infrastructure.persistence.entity.integration.Integration;
 import com.epam.reportportal.base.infrastructure.rules.exception.ReportPortalException;
 import com.epam.reportportal.extension.azure.rest.client.ApiClient;
-import com.epam.reportportal.extension.azure.rest.client.Configuration;
 import com.epam.reportportal.extension.azure.rest.client.auth.HttpBasicAuth;
 import com.epam.reportportal.extension.bugtracking.BtsConstants;
 import org.jasypt.util.text.BasicTextEncryptor;
@@ -26,7 +25,7 @@ public class AzureApiClientProvider {
             .orElseThrow(() -> new ReportPortalException(UNABLE_INTERACT_WITH_INTEGRATION,
                 "OAUTH key cannot be NULL"
             )));
-    ApiClient client = Configuration.getDefaultApiClient();
+    ApiClient client = new ApiClient();
     HttpBasicAuth basicAuth = (HttpBasicAuth) client.getAuthentication(AUTH_NAME);
     basicAuth.setPassword(personalAccessToken);
     return client;
