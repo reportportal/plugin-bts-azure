@@ -68,7 +68,7 @@ public class AzureExtension implements ReportPortalExtensionPoint, DisposableBea
   private static final String DOCUMENTATION_LINK_FIELD = "documentationLink";
   private static final String DOCUMENTATION_LINK =
       "https://reportportal.io/docs/plugins/AzureDevOps/";
-  private static final String PLUGIN_ID = "azure-devops";
+  private static final String PLUGIN_ID = "plugin-bts-azure";
   private static final String PLUGIN_NAME_FIELD = "name";
   private static final String PLUGIN_NAME = "Azure DevOps";
 
